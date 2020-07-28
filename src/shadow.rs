@@ -9,9 +9,15 @@ struct Environment {
     cargo_lock: String,
 }
 
+enum BuildChannel {
+    Debug,
+    Release,
+}
+
 struct Project {
     project_version: String,
     build_time: String,
+    release_channel: BuildChannel,
 }
 
 struct Git {
