@@ -23,7 +23,8 @@ struct Project {
 struct Git {
     tag: String,
     branch: String,
-    commit_id: String,
+    commit_hash: String,
+    short_commit_hash: String,
     git_version: String,
     commit_date: String,
     contributor: String,
