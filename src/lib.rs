@@ -1,3 +1,5 @@
+mod shadow;
+
 #[cfg(test)]
 mod tests {
     #[test]
