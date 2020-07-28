@@ -1,11 +1,9 @@
-struct Shadow {
-
-
-}
+struct Shadow {}
 
 struct Environment {
     os: String,
     rust_version: String,
+    rust_channel: String,
     cargo_version: String,
     cargo_tree: String,
     cargo_lock: String,
