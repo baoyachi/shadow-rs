@@ -7,7 +7,7 @@ description = "A tool record compiled project much information,version info,depe
 keywords = ["shadow", "flag","snapshot","metadata","compile"]
 readme = "README.md"
 repository = "https://github.com/baoyachi/shadow-rs"
-license = "MIT License"
+license = "MIT AND Apache-2.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
