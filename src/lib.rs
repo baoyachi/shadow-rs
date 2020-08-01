@@ -4,6 +4,6 @@ mod shadow;
 mod tests {
     #[test]
     fn test_hello() {
-        assert_eq!(2 + 2, 4)
+        println!("{}",env!("CARGO_PKG_NAME"));
     }
 }
