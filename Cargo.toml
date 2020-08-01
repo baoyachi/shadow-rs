@@ -4,6 +4,11 @@ version = "0.1.0"
 authors = ["baoyachi <liaoymxsdl@gmail.com>"]
 edition = "2018"
 description = "A tool record compiled project much information,version info,dependence info.Like shadow,if compiled,never change.forever follow your project."
+keywords = ["shadow", "flag","build flag","metadata","compile flag"]
+readme = "README.md"
+repository = "https://github.com/baoyachi/shadow-rs"
+license = "MIT License"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
