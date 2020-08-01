@@ -1,4 +1,5 @@
 mod shadow;
+mod channel;
 
 #[cfg(test)]
 mod tests {

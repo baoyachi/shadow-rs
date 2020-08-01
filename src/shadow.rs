@@ -1,4 +1,5 @@
 use chrono::Local;
+use crate::channel::*;
 
 #[derive(Default, Debug)]
 struct Shadow {
@@ -15,23 +16,19 @@ struct Environment {
     cargo_lock: String,
 }
 
-#[derive(Debug)]
-enum BuildChannel {
-    Debug,
-    Release,
-}
 
 #[derive(Default, Debug)]
 struct Project {
     pkg_name: String,
     build_time: String,
-    release_channel: Option<BuildChannel>,
+    build_channel: BuildChannel,
 }
 
 impl Project {
     fn get_project(&mut self) {
         self.pkg_name = env!("CARGO_PKG_NAME").into();
         self.build_time = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
+        self.build_channel = build_channel()
     }
 }
 
@@ -56,6 +53,6 @@ mod tests {
     fn test_project() {
         let mut project = Project::default();
         project.get_project();
-        println!("{:?}",project);
+        println!("{:?}", project);
     }
 }
