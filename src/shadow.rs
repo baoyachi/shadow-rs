@@ -8,7 +8,7 @@ struct Shadow {
 
 #[derive(Default, Debug)]
 struct Environment {
-    os: String,
+    build_os: String,
     rust_version: String,
     rust_channel: String,
     cargo_version: String,
@@ -43,6 +43,10 @@ struct Git {
     git_version: String,
     commit_date: String,
     contributor: String,
+}
+
+impl Git{
+
 }
 
 #[cfg(test)]

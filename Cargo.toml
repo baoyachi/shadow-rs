@@ -13,3 +13,4 @@ license = "MIT AND Apache-2.0"
 
 [dependencies]
 chrono = "0.4.13"
+clap = "2.33.1"
