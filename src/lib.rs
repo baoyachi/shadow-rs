@@ -3,7 +3,7 @@ mod channel;
 mod git;
 
 
-pub const SHADOW_RS_ENV_PREFIX: &str = "SHADOW_RUST_ENV";
+pub const SHADOW_RS_ENV_PREFIX: &str = "_SHADOW_RUST_ENV_";
 
 #[cfg(test)]
 mod tests {
