@@ -44,16 +44,16 @@ impl Git {
         }
     }
 
-    pub fn print_git() {
-        use std::env;
-
-        let key = "git";
-        let git = Git::new("./");
-        let string = format!("{:?}", git);
-
-        env::set_var(key, string);
-        println!("{:?}", env::var(key));
-    }
+    // pub fn print_git() {
+    //     use std::env;
+    //
+    //     let key = "git";
+    //     let git = Git::new("./");
+    //     let string = format!("{:?}", git);
+    //
+    //     env::set_var(key, string);
+    //     println!("{:?}", env::var(key));
+    // }
 }
 
 #[cfg(test)]

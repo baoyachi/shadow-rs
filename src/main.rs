@@ -1,14 +1,13 @@
-use std::fs;
-
 mod git;
 mod shadow;
 mod channel;
 
 fn main() {
-    // git::Git::print_git();
-    println!("{:?}",shadow::Environment::new());
+    println!("{:?}",shadow::SystemEnv::new());
 
-
-
-
+    //     use std::env;
+    // for (key, value) in env::vars() {
+    //     println!("{}: {}", key, value);
+    // }
+    //     println!("{:?}", env::var("RUSTC_WRAPPER"));
 }
