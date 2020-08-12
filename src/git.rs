@@ -1,7 +1,7 @@
 use std::path::Path;
 
 #[derive(Default, Debug)]
-struct Git {
+pub struct Git {
     tag: String,
     git_version: String,
     branch: String,
@@ -13,7 +13,7 @@ struct Git {
 }
 
 impl Git {
-    fn new<P: AsRef<Path>>(path: P) -> Git {
+    pub fn new<P: AsRef<Path>>(path: P) -> Git {
         let repo = git2::Repository::open(path).unwrap();
         let reference = repo.head().unwrap();
 
@@ -42,6 +42,17 @@ impl Git {
             author_name: author_name.unwrap().to_string(),
             author_email: author_email.unwrap().to_string(),
         }
+    }
+
+    pub fn print_git() {
+        use std::env;
+
+        let key = "git";
+        let git = Git::new("./");
+        let string = format!("{:?}", git);
+
+        env::set_var(key, string);
+        println!("{:?}", env::var(key));
     }
 }
 
