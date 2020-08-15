@@ -45,25 +45,4 @@ impl Git {
             author_email: author_email.unwrap().to_string(),
         })
     }
-
-    // pub fn print_git() {
-    //     use std::env;
-    //
-    //     let key = "git";
-    //     let git = Git::new("./");
-    //     let string = format!("{:?}", git);
-    //
-    //     env::set_var(key, string);
-    //     println!("{:?}", env::var(key));
-    // }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_git_init() {
-        println!("{:?}", Git::new("./"));
-    }
 }

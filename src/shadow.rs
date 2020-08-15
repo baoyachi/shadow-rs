@@ -5,22 +5,7 @@ use chrono::Local;
 use std::process::{Command, Stdio};
 use std::{env, fs};
 
-#[derive(Default, Debug)]
-pub struct Shadow {
-    project: Project,
-    sys_env: SystemEnv,
-    git: Git,
-}
 
-impl Shadow {
-    pub fn new() -> SdResult<Shadow> {
-        Ok(Shadow {
-            project: Project::new(),
-            sys_env: SystemEnv::new()?,
-            git: Git::new("./")?,
-        })
-    }
-}
 
 #[derive(Default, Debug)]
 pub struct SystemEnv {
@@ -66,7 +51,7 @@ pub struct Project {
 }
 
 impl Project {
-    fn new() -> Project {
+    pub fn new() -> Project {
         let pkg_name = env!("CARGO_PKG_NAME").to_string();
         let build_time = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
         let build_channel = build_channel();
