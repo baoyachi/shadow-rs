@@ -75,13 +75,3 @@ impl Git {
         Ok(Git { const_msg: vec })
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_git() {
-        println!("{:?}", Git::new("./").unwrap());
-    }
-}

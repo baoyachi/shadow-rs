@@ -24,6 +24,3 @@ impl std::convert::From<git2::Error> for ShadowError {
         ShadowError::String(e.to_string())
     }
 }
-
-#[cfg(test)]
-mod tests {}
