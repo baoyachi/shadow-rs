@@ -2,6 +2,7 @@ mod channel;
 mod err;
 mod git;
 mod shadow;
+mod build;
 
 pub const SHADOW_RS_ENV_PREFIX: &str = "_SHADOW_RUST_ENV_";
 
