@@ -26,6 +26,4 @@ impl std::convert::From<git2::Error> for ShadowError {
 }
 
 #[cfg(test)]
-mod tests {
-    
-}
+mod tests {}

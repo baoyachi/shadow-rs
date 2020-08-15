@@ -3,7 +3,7 @@ use crate::channel::*;
 use crate::err::SdResult;
 
 use chrono::Local;
-use std::process::{Command};
+use std::process::Command;
 use std::{env, fs};
 
 #[derive(Default, Debug)]
