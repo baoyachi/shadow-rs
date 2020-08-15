@@ -1,8 +1,10 @@
 use chrono::Local;
 use crate::channel::*;
 use std::{env, fs};
+use crate::err::SdResult;
 use std::process::{Command, Stdio};
 use crate::git::Git;
+
 
 #[derive(Default, Debug)]
 pub struct Shadow {
@@ -15,7 +17,7 @@ impl Shadow {
     pub fn new() -> Shadow {
         Shadow {
             project: Project::new(),
-            sys_env: SystemEnv::new(),
+            sys_env: SystemEnv::new().unwrap(),
             git: Git::new("./"),
         }
     }
@@ -32,7 +34,7 @@ pub struct SystemEnv {
 }
 
 impl SystemEnv {
-    pub fn new() -> SystemEnv {
+    pub fn new() -> SdResult<SystemEnv> {
         let build_os = format!("{}-{}", env::consts::OS, env::consts::ARCH);
         let rustup_output = Command::new("rustup")
             .arg("default")
@@ -48,18 +50,18 @@ impl SystemEnv {
             .arg("-V")
             .output().unwrap();
 
-        let cargo_version = String::from_utf8(cargo_version_output.stdout).unwrap();
+        let cargo_version = String::from_utf8(cargo_version_output.stdout)?;
 
         let cargo_lock = fs::read_to_string("Cargo.lock").unwrap();
 
-        SystemEnv {
+        Ok(SystemEnv {
             build_os,
             rust_version: rust_version.trim().to_string(),
             rust_channel: rustup.trim().to_string(),
             cargo_version: cargo_version.trim().to_string(),
             cargo_tree: "".to_string(),
             cargo_lock: cargo_lock.to_string(),
-        }
+        })
     }
 }
 
@@ -94,14 +96,6 @@ mod tests {
 
     #[test]
     fn test_environment() {
-        println!("{:?}", SystemEnv::new());
-    }
-
-
-    #[test]
-    fn test_project() {
-        let mut project = Project::default();
-        project.get_project();
-        println!("{:?}", project);
+        println!("{:?}", SystemEnv::new().unwrap());
     }
 }

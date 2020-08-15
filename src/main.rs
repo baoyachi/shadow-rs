@@ -1,9 +1,10 @@
 mod git;
 mod shadow;
 mod channel;
+mod err;
 
 fn main() {
-    println!("{:?}",shadow::SystemEnv::new());
+    // println!("{:?}",shadow::SystemEnv::new());
 
     //     use std::env;
     // for (key, value) in env::vars() {
