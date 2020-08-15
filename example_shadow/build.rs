@@ -1,7 +1,6 @@
-use shadow_rs::err::SdResult;
-use std::error::Error;
-
 fn main() -> shadow_rs::err::SdResult<()> {
-    shadow_rs::Shadow::new(&std::env::var("OUT_DIR").unwrap())?;
+    let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
+    let out_path = std::env::var("OUT_DIR")?;
+    shadow_rs::Shadow::new(src_path, out_path)?;
     Ok(())
 }
