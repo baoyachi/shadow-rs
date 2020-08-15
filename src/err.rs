@@ -2,9 +2,17 @@ use std::string::FromUtf8Error;
 
 pub type SdResult<T> = Result<T, ShadowError>;
 
-#[derive(Debug)]
+#[derive(Debug, )]
 pub enum ShadowError {
     String(String),
+}
+
+impl ToString for ShadowError {
+    fn to_string(&self) -> String {
+        match self {
+            ShadowError::String(e) => e.to_string()
+        }
+    }
 }
 
 impl From<std::string::FromUtf8Error> for ShadowError {

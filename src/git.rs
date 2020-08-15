@@ -13,7 +13,7 @@ const COMMIT_EMAIL: ShadowConst = "COMMIT_EMAIL";
 #[derive(Default, Debug)]
 struct Git {
     git_path: String,
-    map: HashMap<ShadowConst, RefCell<ConstVal>>,
+    pub map: HashMap<ShadowConst, RefCell<ConstVal>>,
 }
 
 impl Git {
@@ -24,6 +24,11 @@ impl Git {
         git.map.insert(COMMIT_AUTHOR, ConstVal::new("display current commit author"));
         git.map.insert(COMMIT_EMAIL, ConstVal::new("display current commit email"));
         git.map.insert(COMMIT_DATE, ConstVal::new("display current commit date"));
+
+        if let Err(e) = git.init() {
+            println!("{}",e.to_string());
+        }
+
         git
     }
 
@@ -49,7 +54,7 @@ impl Git {
 
         let commit = reference.peel_to_commit()?;
 
-        update_val(COMMIT_DATE,commit.time().seconds().to_string());
+        update_val(COMMIT_DATE, commit.time().seconds().to_string());
 
         let author = commit.author();
         if let Some(v) = author.email() {

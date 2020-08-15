@@ -8,7 +8,7 @@ use std::{env, fs};
 
 #[derive(Default, Debug)]
 pub struct SystemEnv {
-    pub const_msg: Vec<ConstVal>,
+    pub map: HashMap<ShadowConst, RefCell<ConstVal>>,
 }
 
 const BUILD_OS: &str = "BUILD_OS";
