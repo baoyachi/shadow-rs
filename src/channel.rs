@@ -1,18 +1,27 @@
 #[derive(Debug)]
-pub enum BuildChannel {
+pub enum BuildRustChannel {
     Debug,
     Release,
 }
 
-impl Default for BuildChannel {
+impl Default for BuildRustChannel {
     fn default() -> Self {
-        BuildChannel::Debug
+        BuildRustChannel::Debug
     }
 }
 
-pub fn build_channel() -> BuildChannel {
+pub fn build_channel() -> BuildRustChannel {
     if cfg!(debug_assertions) {
-        return BuildChannel::Debug;
+        return BuildRustChannel::Debug;
     }
-    return BuildChannel::Release;
+    return BuildRustChannel::Release;
+}
+
+impl ToString for BuildRustChannel {
+    fn to_string(&self) -> String {
+        match self {
+            BuildRustChannel::Debug => "debug".to_string(),
+            BuildRustChannel::Release => "release".to_string(),
+        }
+    }
 }

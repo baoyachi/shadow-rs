@@ -1,4 +1,4 @@
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Clone)]
 pub struct ConstMessage {
     pub desc: String,
     pub key: String,
@@ -6,7 +6,7 @@ pub struct ConstMessage {
     pub t: ConstType,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ConstType {
     OptStr,
     Str,

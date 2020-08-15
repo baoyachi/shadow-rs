@@ -1,17 +1,10 @@
+use crate::build::{ConstMessage, ConstType};
 use crate::err::SdResult;
 use std::path::Path;
-use crate::build::{ConstMessage, ConstType};
 
 #[derive(Default, Debug)]
 pub struct Git {
-    tag: ConstMessage,
-    git_version: ConstMessage,
-    branch: ConstMessage,
-    commit_hash: ConstMessage,
-    short_commit_hash: ConstMessage,
-    commit_date: ConstMessage,
-    author_name: ConstMessage,
-    author_email: ConstMessage,
+    pub const_msg: Vec<ConstMessage>,
 }
 
 const BRANCH: &str = "BRANCH";
@@ -21,7 +14,7 @@ const COMMIT_AUTHOR: &str = "COMMIT_AUTHOR";
 const COMMIT_EMAIL: &str = "COMMIT_EMAIL";
 
 impl Git {
-    pub fn new<P: AsRef<Path>>(path: P) -> SdResult<Vec<ConstMessage>> {
+    pub fn new<P: AsRef<Path>>(path: P) -> SdResult<Git> {
         let mut vec = vec![];
         let repo = git2::Repository::open(path)?;
         let reference = repo.head()?;
@@ -72,14 +65,14 @@ impl Git {
             t: ConstType::Str,
         });
 
-        let mut desc_opt = git2::DescribeOptions::new();
-        desc_opt.describe_tags().show_commit_oid_as_fallback(true);
-        let tag = repo
-            .describe(&desc_opt)
-            .and_then(|desc| desc.format(None))
-            .unwrap();
+        // let mut desc_opt = git2::DescribeOptions::new();
+        // desc_opt.describe_tags().show_commit_oid_as_fallback(true);
+        // let tag = repo
+        //     .describe(&desc_opt)
+        //     .and_then(|desc| desc.format(None))
+        //     .unwrap();
 
-        Ok(vec)
+        Ok(Git { const_msg: vec })
     }
 }
 
@@ -89,6 +82,6 @@ mod tests {
 
     #[test]
     fn test_git() {
-        println!("{:?}",Git::new("./").unwrap());
+        println!("{:?}", Git::new("./").unwrap());
     }
 }
