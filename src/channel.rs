@@ -10,7 +10,6 @@ impl Default for BuildChannel {
     }
 }
 
-
 pub fn build_channel() -> BuildChannel {
     if cfg!(debug_assertions) {
         return BuildChannel::Debug;

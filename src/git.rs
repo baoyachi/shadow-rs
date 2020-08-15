@@ -1,3 +1,4 @@
+use crate::err::SdResult;
 use std::path::Path;
 
 #[derive(Default, Debug)]
@@ -13,13 +14,13 @@ pub struct Git {
 }
 
 impl Git {
-    pub fn new<P: AsRef<Path>>(path: P) -> Git {
-        let repo = git2::Repository::open(path).unwrap();
-        let reference = repo.head().unwrap();
+    pub fn new<P: AsRef<Path>>(path: P) -> SdResult<Git> {
+        let repo = git2::Repository::open(path)?;
+        let reference = repo.head()?;
 
         let branch = reference.shorthand();
         let commit_id = reference.target();
-        let commit = reference.peel_to_commit().unwrap();
+        let commit = reference.peel_to_commit()?;
         let author = commit.author();
         let commit_date = commit.time().seconds();
         let author_name = author.name();
@@ -29,9 +30,10 @@ impl Git {
         desc_opt.describe_tags().show_commit_oid_as_fallback(true);
         let tag = repo
             .describe(&desc_opt)
-            .and_then(|desc| desc.format(None)).unwrap();
+            .and_then(|desc| desc.format(None))
+            .unwrap();
 
-        Git {
+        Ok(Git {
             tag: tag.to_string(),
             git_version: "".to_string(),
             short_commit_hash: "".to_string(),
@@ -41,7 +43,7 @@ impl Git {
             commit_date: commit_date.to_string(),
             author_name: author_name.unwrap().to_string(),
             author_email: author_email.unwrap().to_string(),
-        }
+        })
     }
 
     // pub fn print_git() {

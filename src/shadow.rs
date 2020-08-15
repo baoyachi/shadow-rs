@@ -1,10 +1,9 @@
-use chrono::Local;
 use crate::channel::*;
-use std::{env, fs};
 use crate::err::SdResult;
-use std::process::{Command, Stdio};
 use crate::git::Git;
-
+use chrono::Local;
+use std::process::{Command, Stdio};
+use std::{env, fs};
 
 #[derive(Default, Debug)]
 pub struct Shadow {
@@ -14,12 +13,12 @@ pub struct Shadow {
 }
 
 impl Shadow {
-    pub fn new() -> Shadow {
-        Shadow {
+    pub fn new() -> SdResult<Shadow> {
+        Ok(Shadow {
             project: Project::new(),
-            sys_env: SystemEnv::new().unwrap(),
-            git: Git::new("./"),
-        }
+            sys_env: SystemEnv::new()?,
+            git: Git::new("./")?,
+        })
     }
 }
 
@@ -36,23 +35,17 @@ pub struct SystemEnv {
 impl SystemEnv {
     pub fn new() -> SdResult<SystemEnv> {
         let build_os = format!("{}-{}", env::consts::OS, env::consts::ARCH);
-        let rustup_output = Command::new("rustup")
-            .arg("default")
-            .output().unwrap();
-        let rustup = String::from_utf8(rustup_output.stdout).unwrap();
+        let rustup_output = Command::new("rustup").arg("default").output()?;
+        let rustup = String::from_utf8(rustup_output.stdout)?;
 
-        let rust_version_output = Command::new("rustc")
-            .arg("-V")
-            .output().unwrap();
-        let rust_version = String::from_utf8(rust_version_output.stdout).unwrap();
+        let rust_version_output = Command::new("rustc").arg("-V").output()?;
+        let rust_version = String::from_utf8(rust_version_output.stdout)?;
 
-        let cargo_version_output = Command::new("cargo")
-            .arg("-V")
-            .output().unwrap();
+        let cargo_version_output = Command::new("cargo").arg("-V").output()?;
 
         let cargo_version = String::from_utf8(cargo_version_output.stdout)?;
 
-        let cargo_lock = fs::read_to_string("Cargo.lock").unwrap();
+        let cargo_lock = fs::read_to_string("Cargo.lock")?;
 
         Ok(SystemEnv {
             build_os,
@@ -64,7 +57,6 @@ impl SystemEnv {
         })
     }
 }
-
 
 #[derive(Default, Debug)]
 pub struct Project {
@@ -83,19 +75,5 @@ impl Project {
             build_time,
             build_channel,
         }
-    }
-}
-
-
-impl Shadow {}
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_environment() {
-        println!("{:?}", SystemEnv::new().unwrap());
     }
 }

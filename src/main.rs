@@ -1,7 +1,7 @@
-mod git;
-mod shadow;
 mod channel;
 mod err;
+mod git;
+mod shadow;
 
 fn main() {
     // println!("{:?}",shadow::SystemEnv::new());
