@@ -24,3 +24,9 @@ impl std::convert::From<git2::Error> for ShadowError {
         ShadowError::String(e.to_string())
     }
 }
+
+impl std::convert::From<std::env::VarError> for ShadowError {
+    fn from(e: std::env::VarError) -> Self {
+        ShadowError::String(e.to_string())
+    }
+}

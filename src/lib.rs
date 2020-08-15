@@ -24,16 +24,17 @@ pub struct Shadow {
 }
 
 impl Shadow {
-    pub fn new<P: Into<String>>(path: P) -> SdResult<Shadow> {
-        let path = path.into();
-        let build_path = format!("{}/{}", path, SHADOW_RS);
-        let shadow_path = Path::new(&build_path);
-        Ok(Shadow {
-            f: File::create(shadow_path)?,
+    pub fn new<P: AsRef<Path>>(src_path: P, out_path: P) -> SdResult<()> {
+        let out_path = Path::new(&out_path.as_ref()).join(SHADOW_RS);
+        let mut shadow = Shadow {
+            f: File::create(out_path)?,
             project: Project::new(),
             sys_env: SystemEnv::new()?,
-            git: Git::new(Path::new(&path))?,
-        })
+            git: Git::new(src_path)?,
+        };
+        shadow.gen_const()?;
+        println!("shadow build success");
+        Ok(())
     }
 
     fn gen_const(&mut self) -> SdResult<()> {
@@ -77,8 +78,12 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_build() {
-        let mut shadow = Shadow::new("./").unwrap();
-        shadow.gen_const().unwrap();
+    fn test_build() -> SdResult<()> {
+        let src = "./";
+        let dst = "./";
+
+
+        Shadow::new(src, dst)?;
+        Ok(())
     }
 }
