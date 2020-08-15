@@ -1,21 +1,34 @@
-#[derive(Default, Debug, Clone)]
-pub struct ConstMessage {
+use std::collections::HashMap;
+use std::cell::RefCell;
+
+pub type ShadowConst = &'static str;
+
+pub trait ShadowGen {
+    fn gen_const(&self) -> HashMap<ShadowConst, ConstVal>;
+}
+
+
+#[derive(Debug, Clone)]
+pub struct ConstVal {
     pub desc: String,
-    pub key: String,
-    pub val: String,
+    pub v: String,
     pub t: ConstType,
+}
+
+impl ConstVal {
+    pub fn new<S: Into<String>>(desc: S) -> RefCell<ConstVal> {
+        RefCell::new(ConstVal {
+            desc: desc.into(),
+            v: "".to_string(),
+            t: ConstType::OptStr,
+        })
+    }
 }
 
 #[derive(Debug, Clone)]
 pub enum ConstType {
     OptStr,
     Str,
-}
-
-impl Default for ConstType {
-    fn default() -> Self {
-        ConstType::OptStr
-    }
 }
 
 impl ToString for ConstType {
