@@ -1,9 +1,9 @@
 use crate::build::*;
 use crate::channel::*;
 use crate::err::SdResult;
-use crate::git::Git;
+
 use chrono::Local;
-use std::process::{Command, Stdio};
+use std::process::{Command};
 use std::{env, fs};
 
 #[derive(Default, Debug)]
@@ -16,7 +16,7 @@ const RUST_VERSION: &str = "RUST_VERSION";
 const RUST_CHANNEL: &str = "RUST_CHANNEL";
 const CARGO_VERSION: &str = "CARGO_VERSION";
 const CARGO_LOCK: &str = "CARGO_LOCK";
-const CARGO_TREE: &str = "CARGO_TREE";
+// const CARGO_TREE: &str = "CARGO_TREE";
 
 impl SystemEnv {
     pub fn new() -> SdResult<Self> {
@@ -98,7 +98,7 @@ impl Project {
 
         vec.push(ConstMessage {
             desc: "display project build by rust channel [debug or release]".to_string(),
-            key: BUILD_TIME.to_string(),
+            key: BUILD_RUST_CHANNEL.to_string(),
             val: build_channel().to_string(),
             t: ConstType::Str,
         });
