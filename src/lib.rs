@@ -14,7 +14,6 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
 
-
 const SHADOW_RS: &str = "shadow.rs";
 
 #[derive(Debug)]
