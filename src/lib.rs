@@ -1,8 +1,8 @@
-pub mod build;
+mod build;
 pub mod channel;
-pub mod env;
+mod env;
 pub mod err;
-pub mod git;
+mod git;
 
 use build::*;
 use env::*;

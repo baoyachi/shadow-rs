@@ -13,10 +13,10 @@ fn main() {
     println!("{}",shadow::RUST_VERSION);
     println!("{}",shadow::RUST_CHANNEL);
     println!("{}",shadow::CARGO_VERSION);
-    println!("{:?}",shadow::CARGO_LOCK);
+    println!("{}",shadow::CARGO_LOCK);
 
-    println!("{:?}",shadow::PROJECT_NAME);
-    println!("{:?}",shadow::BUILD_TIME);
-    println!("{:?}",shadow::BUILD_RUST_CHANNEL);
+    println!("{}",shadow::PROJECT_NAME);
+    println!("{}",shadow::BUILD_TIME);
+    println!("{}",shadow::BUILD_RUST_CHANNEL);
 
 }
