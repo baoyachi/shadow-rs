@@ -1,4 +1,10 @@
 # shadow-rs
+[gh-image]: https://github.com/baoyachi/shadow-rs/workflows/main/badge.svg
+[cratesio-image]: https://img.shields.io/crates/v/shadow-rs.svg
+[cratesio]: https://crates.io/crates/shadow-rs
+[docsrs-image]: https://docs.rs/shadow-rs/badge.svg
+[docsrs]: https://docs.rs/shadow-rs
+
 A tool record compiled project much information,version info,dependence info.Like shadow,if compiled,never change.forever follow your project.
 
 When you published a rust binary. Sometimes you need to know the dependencies of the current project.
@@ -66,3 +72,5 @@ fn main() {
 }
 ```
 you can also use const with `clap`.
+
+If you have any question,you can create [issue](https://github.com/baoyachi/shadow-rs/issues/new).

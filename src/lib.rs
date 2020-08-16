@@ -17,6 +17,8 @@ use std::path::Path;
 
 const SHADOW_RS: &str = "shadow.rs";
 
+/// record compiled project much information.
+/// version info,dependence info.Like shadow,if compiled,never change.forever follow your project.
 #[derive(Debug)]
 pub struct Shadow {
     f: File,
