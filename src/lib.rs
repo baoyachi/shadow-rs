@@ -75,6 +75,7 @@ impl Shadow {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::path::Path;
 
     #[test]
     fn test_build() -> SdResult<()> {
