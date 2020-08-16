@@ -17,6 +17,9 @@ We can use this information to quickly trace the history version of the project.
 n
 This project can do this things that can help you quick get above information. let's configuration in your project/.
 
+## example
+You can also see [shadow_example](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow) how to configuration.
+
 ## step 1
 in your `cargo.toml` `packgae` with package add with below config 
 ```toml
