@@ -26,7 +26,16 @@ pub struct Shadow {
 impl Shadow {
     pub fn new(src_path: String, out_path: String) -> SdResult<()> {
         let src_path = Path::new(src_path.as_str());
-        let out_path = Path::new(out_path.as_str()).join(SHADOW_RS);
+
+        let out = {
+            let path = Path::new(out_path.as_str());
+            if !out_path.ends_with("/") {
+                path.join(format!("{}/{}", out_path, SHADOW_RS))
+            } else {
+                path.join(SHADOW_RS)
+            }
+        };
+
 
         let mut map = Git::new(&src_path);
         for (k, v) in Project::new() {
@@ -37,7 +46,7 @@ impl Shadow {
         }
 
         let mut shadow = Shadow {
-            f: File::create(out_path)?,
+            f: File::create(out)?,
             map,
         };
         shadow.gen_const()?;
