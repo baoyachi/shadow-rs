@@ -11,7 +11,7 @@ use std::collections::HashMap;
 
 #[derive(Default, Debug)]
 pub struct SystemEnv {
-    pub map: HashMap<ShadowConst, RefCell<ConstVal>>,
+    map: HashMap<ShadowConst, RefCell<ConstVal>>,
 }
 
 const BUILD_OS: ShadowConst = "BUILD_OS";
@@ -90,7 +90,7 @@ impl SystemEnv {
 
 #[derive(Default, Debug)]
 pub struct Project {
-    pub map: HashMap<ShadowConst, RefCell<ConstVal>>,
+    map: HashMap<ShadowConst, RefCell<ConstVal>>,
 }
 
 const PROJECT_NAME: ShadowConst = "PROJECT_NAME";
