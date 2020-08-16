@@ -1,10 +1,11 @@
 # shadow-rs
 
-![gh-image](https://github.com/baoyachi/shadow-rs/workflows/build/badge.svg)
-![cratesio-image](https://img.shields.io/crates/v/shadow-rs.svg)
+[gh-image]: https://github.com/baoyachi/shadow-rs/workflows/build/badge.svg
+[cratesio-image]: https://img.shields.io/crates/v/shadow-rs.svg
 [cratesio]: https://crates.io/crates/shadow-rs
-![docsrs-image](https://docs.rs/shadow-rs/badge.svg)
+[docsrs-image]: https://docs.rs/shadow-rs/badge.svg
 [docsrs]: https://docs.rs/shadow-rs
+
 
 A tool record compiled project much information,version info,dependence info.Like shadow,if compiled,never change.forever follow your project.
 
