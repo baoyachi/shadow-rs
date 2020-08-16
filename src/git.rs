@@ -1,5 +1,6 @@
 use crate::build::{ConstType, ConstVal, ShadowConst};
 use crate::err::*;
+use chrono::{DateTime, NaiveDateTime, Utc};
 use std::cell::RefCell;
 use std::collections::HashMap;
 
@@ -59,7 +60,10 @@ impl Git {
 
         let commit = reference.peel_to_commit()?;
 
-        update_val(COMMIT_DATE, commit.time().seconds().to_string());
+        let time_stamp = commit.time().seconds().to_string().parse::<i64>()?;
+        let dt = NaiveDateTime::from_timestamp(time_stamp, 0);
+        let date_time = DateTime::<Utc>::from_utc(dt, Utc);
+        update_val(COMMIT_DATE, date_time.to_rfc3339());
 
         let author = commit.author();
         if let Some(v) = author.email() {

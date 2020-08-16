@@ -24,7 +24,25 @@ pub struct Shadow {
 }
 
 impl Shadow {
-    pub fn new(src_path: String, out_path: String) -> SdResult<()> {
+    /// generated rust const by exec:`cargo build`
+    ///
+    ///```rust
+    /// pub const RUST_VERSION :&str = "rustc 1.45.0 (5c1f21c3b 2020-07-13)";
+    /// pub const BUILD_RUST_CHANNEL :&str = "debug";
+    /// pub const COMMIT_AUTHOR :&str = "baoyachi";
+    /// pub const BUILD_TIME :&str = "2020-08-16 13:48:52";
+    /// pub const COMMIT_DATE :&str = "2020-08-16 13:12:52";
+    /// pub const COMMIT_EMAIL :&str = "xxx@gmail.com";
+    /// pub const PROJECT_NAME :&str = "shadow-rs";
+    /// pub const RUST_CHANNEL :&str = "stable-x86_64-apple-darwin (default)";
+    /// pub const BRANCH :&str = "master";
+    /// pub const CARGO_LOCK :&str = "";
+    /// pub const CARGO_VERSION :&str = "cargo 1.45.0 (744bd1fbb 2020-06-15)";
+    /// pub const BUILD_OS :&str = "macos-x86_64";
+    /// pub const COMMIT_HASH :&str = "386741540d73c194a3028b96b92fdeb53ca2788a";
+    ///
+    /// ```
+    pub fn build(src_path: String, out_path: String) -> SdResult<()> {
         let src_path = Path::new(src_path.as_str());
 
         let out = {
@@ -94,7 +112,7 @@ mod tests {
 
     #[test]
     fn test_build() -> SdResult<()> {
-        Shadow::new("./".into(), "./".into())?;
+        Shadow::build("./".into(), "./".into())?;
         Ok(())
     }
 }

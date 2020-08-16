@@ -38,3 +38,8 @@ impl std::convert::From<std::env::VarError> for ShadowError {
         ShadowError::String(e.to_string())
     }
 }
+impl std::convert::From<std::num::ParseIntError> for ShadowError {
+    fn from(e: std::num::ParseIntError) -> Self {
+        ShadowError::String(e.to_string())
+    }
+}
