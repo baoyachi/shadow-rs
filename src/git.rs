@@ -1,8 +1,8 @@
-use crate::build::{ConstVal, ConstType, ShadowGen, ShadowConst};
+use crate::build::{ConstType, ConstVal, ShadowConst, ShadowGen};
 use crate::err::*;
-use std::path::Path;
-use std::collections::HashMap;
 use std::cell::RefCell;
+use std::collections::HashMap;
+use std::path::Path;
 
 const BRANCH: ShadowConst = "BRANCH";
 const COMMIT_HASH: ShadowConst = "COMMIT_HASH";
@@ -11,25 +11,35 @@ const COMMIT_AUTHOR: ShadowConst = "COMMIT_AUTHOR";
 const COMMIT_EMAIL: ShadowConst = "COMMIT_EMAIL";
 
 #[derive(Default, Debug)]
-struct Git {
+pub struct Git {
     git_path: String,
     pub map: HashMap<ShadowConst, RefCell<ConstVal>>,
 }
 
 impl Git {
-    fn new(path: String) -> Self {
-        let mut git = Git { git_path: path, map: HashMap::new() };
-        git.map.insert(BRANCH, ConstVal::new("display current branch"));
-        git.map.insert(COMMIT_HASH, ConstVal::new("display current commit_id"));
-        git.map.insert(COMMIT_AUTHOR, ConstVal::new("display current commit author"));
-        git.map.insert(COMMIT_EMAIL, ConstVal::new("display current commit email"));
-        git.map.insert(COMMIT_DATE, ConstVal::new("display current commit date"));
+    pub(crate) fn new(path: String) -> HashMap<ShadowConst, RefCell<ConstVal>> {
+        let mut git = Git {
+            git_path: path,
+            map: HashMap::new(),
+        };
+        git.map
+            .insert(BRANCH, ConstVal::new("display current branch"));
+        git.map
+            .insert(COMMIT_HASH, ConstVal::new("display current commit_id"));
+        git.map.insert(
+            COMMIT_AUTHOR,
+            ConstVal::new("display current commit author"),
+        );
+        git.map
+            .insert(COMMIT_EMAIL, ConstVal::new("display current commit email"));
+        git.map
+            .insert(COMMIT_DATE, ConstVal::new("display current commit date"));
 
         if let Err(e) = git.init() {
-            println!("{}",e.to_string());
+            println!("{}", e.to_string());
         }
 
-        git
+        git.map
     }
 
     fn init(&mut self) -> SdResult<()> {
@@ -76,7 +86,6 @@ mod tests {
     #[test]
     fn test_2() {
         let mut git = Git::new("./".to_string());
-        git.init();
         println!("git2:{:?}", git);
     }
 }

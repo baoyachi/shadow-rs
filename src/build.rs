@@ -1,12 +1,11 @@
-use std::collections::HashMap;
 use std::cell::RefCell;
+use std::collections::HashMap;
 
 pub type ShadowConst = &'static str;
 
 pub trait ShadowGen {
     fn gen_const(&self) -> HashMap<ShadowConst, ConstVal>;
 }
-
 
 #[derive(Debug, Clone)]
 pub struct ConstVal {
