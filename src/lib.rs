@@ -13,6 +13,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
+use std::path::Path;
 
 const SHADOW_RS: &str = "shadow.rs";
 
@@ -23,10 +24,11 @@ pub struct Shadow {
 }
 
 impl Shadow {
-    pub fn new(src_path: &std::path::Path, out_path: &std::path::Path) -> SdResult<()> {
-        let out_path = out_path.join(SHADOW_RS);
+    pub fn new(src_path: String, out_path: String) -> SdResult<()> {
+        let src_path = Path::new(src_path.as_str());
+        let out_path = Path::new(out_path.as_str()).join(SHADOW_RS);
 
-        let mut map = Git::new(src_path);
+        let mut map = Git::new(&src_path);
         for (k, v) in Project::new() {
             map.insert(k, v);
         }
@@ -75,14 +77,10 @@ impl Shadow {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::Path;
 
     #[test]
     fn test_build() -> SdResult<()> {
-        let src = Path::new("./");
-        let dst = Path::new("./");
-
-        Shadow::new(src, dst)?;
+        Shadow::new("./".into(), "./".into())?;
         Ok(())
     }
 }
