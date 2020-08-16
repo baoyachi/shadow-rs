@@ -36,7 +36,6 @@ impl Shadow {
             }
         };
 
-
         let mut map = Git::new(&src_path);
         for (k, v) in Project::new() {
             map.insert(k, v);
@@ -71,11 +70,17 @@ impl Shadow {
     fn write_const(&mut self, shadow_const: ShadowConst, val: RefCell<ConstVal>) -> SdResult<()> {
         let val = val.into_inner();
         let desc = format!("// {}", val.desc);
+
+        let (t, v) = match val.t {
+            ConstType::OptStr => (ConstType::Str.to_string(), "".into()),
+            ConstType::Str => (ConstType::Str.to_string(), val.v),
+        };
+
         let define = format!(
             "pub const {} :{} = \"{}\";",
             shadow_const.to_ascii_uppercase(),
-            val.t.to_string(),
-            val.v
+            t,
+            v
         );
         writeln!(&self.f, "{}", desc)?;
         writeln!(&self.f, "{}\n", define)?;
