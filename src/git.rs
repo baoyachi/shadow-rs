@@ -11,16 +11,12 @@ const COMMIT_EMAIL: ShadowConst = "COMMIT_EMAIL";
 
 #[derive(Default, Debug)]
 pub struct Git {
-    git_path: String,
-    pub map: HashMap<ShadowConst, RefCell<ConstVal>>,
+    map: HashMap<ShadowConst, RefCell<ConstVal>>,
 }
 
 impl Git {
-    pub(crate) fn new(path: String) -> HashMap<ShadowConst, RefCell<ConstVal>> {
-        let mut git = Git {
-            git_path: path,
-            map: HashMap::new(),
-        };
+    pub(crate) fn new(path: &std::path::Path) -> HashMap<ShadowConst, RefCell<ConstVal>> {
+        let mut git = Git::default();
         git.map
             .insert(BRANCH, ConstVal::new("display current branch"));
         git.map
@@ -34,15 +30,15 @@ impl Git {
         git.map
             .insert(COMMIT_DATE, ConstVal::new("display current commit date"));
 
-        if let Err(e) = git.init() {
+        if let Err(e) = git.init(path) {
             println!("{}", e.to_string());
         }
 
         git.map
     }
 
-    fn init(&mut self) -> SdResult<()> {
-        let repo = git2::Repository::open(&self.git_path)?;
+    fn init(&mut self, path: &std::path::Path) -> SdResult<()> {
+        let repo = git2::Repository::discover(path)?;
         let reference = repo.head()?;
 
         let update_val = |c: ShadowConst, v: String| {
@@ -75,16 +71,5 @@ impl Git {
         }
 
         Ok(())
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_2() {
-        let git = Git::new("./".to_string());
-        println!("git2:{:?}", git);
     }
 }

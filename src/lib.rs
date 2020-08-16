@@ -24,10 +24,10 @@ pub struct Shadow {
 }
 
 impl Shadow {
-    pub fn new(src_path: String, out_path: String) -> SdResult<()> {
-        let out_path = Path::new(&out_path).join(SHADOW_RS);
+    pub fn new(src_path: &std::path::Path, out_path: &std::path::Path) -> SdResult<()> {
+        let out_path = out_path.join(SHADOW_RS);
 
-        let mut map = Git::new(src_path.into());
+        let mut map = Git::new(src_path);
         for (k, v) in Project::new() {
             map.insert(k, v);
         }
@@ -79,10 +79,10 @@ mod tests {
 
     #[test]
     fn test_build() -> SdResult<()> {
-        let src = "./";
-        let dst = "./";
+        let src = Path::new("./");
+        let dst = Path::new("./");
 
-        Shadow::new(src.to_string(), dst.to_string())?;
+        Shadow::new(src, dst)?;
         Ok(())
     }
 }
