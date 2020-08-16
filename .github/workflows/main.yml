@@ -1,5 +1,5 @@
 
-name: lint
+name: build
 
 on:
   push:

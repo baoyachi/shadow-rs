@@ -1,5 +1,6 @@
 # shadow-rs
-[gh-image]: https://github.com/baoyachi/shadow-rs/workflows/main/badge.svg
+
+[gh-image]: https://github.com/baoyachi/shadow-rs/workflows/build/badge.svg
 [cratesio-image]: https://img.shields.io/crates/v/shadow-rs.svg
 [cratesio]: https://crates.io/crates/shadow-rs
 [docsrs-image]: https://docs.rs/shadow-rs/badge.svg
