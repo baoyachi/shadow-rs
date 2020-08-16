@@ -4,7 +4,7 @@ use crate::err::SdResult;
 
 use chrono::Local;
 use std::process::Command;
-use std::{env, fs};
+use std::{env};
 
 use std::cell::RefCell;
 use std::collections::HashMap;

@@ -1,8 +1,8 @@
-use crate::build::{ConstType, ConstVal, ShadowConst, ShadowGen};
+use crate::build::{ConstType, ConstVal, ShadowConst};
 use crate::err::*;
 use std::cell::RefCell;
 use std::collections::HashMap;
-use std::path::Path;
+
 
 const BRANCH: ShadowConst = "BRANCH";
 const COMMIT_HASH: ShadowConst = "COMMIT_HASH";
@@ -85,7 +85,7 @@ mod tests {
 
     #[test]
     fn test_2() {
-        let mut git = Git::new("./".to_string());
+        let git = Git::new("./".to_string());
         println!("git2:{:?}", git);
     }
 }
