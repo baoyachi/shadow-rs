@@ -3,8 +3,8 @@ use crate::channel::*;
 use crate::err::SdResult;
 
 use chrono::Local;
+use std::env;
 use std::process::Command;
-use std::{env};
 
 use std::cell::RefCell;
 use std::collections::HashMap;

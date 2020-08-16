@@ -3,7 +3,6 @@ use crate::err::*;
 use std::cell::RefCell;
 use std::collections::HashMap;
 
-
 const BRANCH: ShadowConst = "BRANCH";
 const COMMIT_HASH: ShadowConst = "COMMIT_HASH";
 const COMMIT_DATE: ShadowConst = "COMMIT_DATE";
