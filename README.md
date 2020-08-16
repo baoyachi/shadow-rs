@@ -1,6 +1,12 @@
-# shadow-rs
+[shadow-rs][docsrs]: compiled project much information
+========================================
+
+[![Chrono GitHub Actions][gh-image]][gh-checks]
+[![Chrono on crates.io][cratesio-image]][cratesio]
+[![Chrono on docs.rs][docsrs-image]][docsrs]
 
 [gh-image]: https://github.com/baoyachi/shadow-rs/workflows/build/badge.svg
+[gh-checks]: https://github.com/baoyachi/shadow-rs/actions?query=workflow%3Abuild
 [cratesio-image]: https://img.shields.io/crates/v/shadow-rs.svg
 [cratesio]: https://crates.io/crates/shadow-rs
 [docsrs-image]: https://docs.rs/shadow-rs/badge.svg
