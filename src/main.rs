@@ -1,9 +1,9 @@
 extern crate shadow_rs;
 
-use shadow_rs::Shadow;
+use shadow_rs::{SdResult, Shadow};
 use std::fs;
 
-fn main() -> shadow_rs::err::SdResult<()> {
+fn main() -> SdResult<()> {
     let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
 
     Shadow::build(src_path, "./".to_string())?;

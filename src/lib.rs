@@ -17,6 +17,8 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
+pub use err::{SdResult, ShadowError};
+
 const SHADOW_RS: &str = "shadow.rs";
 
 /// record compiled project much information.
