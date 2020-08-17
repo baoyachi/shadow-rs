@@ -1,8 +1,16 @@
+#[derive(Debug)]
 pub enum CIType {
     Github,
     Gitlab,
     Jenkins,
     Travis,
+    None,
+}
+
+impl Default for CIType {
+    fn default() -> Self {
+        Self::None
+    }
 }
 
 impl ToString for CIType {
@@ -12,6 +20,7 @@ impl ToString for CIType {
             CIType::Gitlab => "gitlab".into(),
             CIType::Jenkins => "jenkins".into(),
             CIType::Travis => "travis".into(),
+            _ => "none".into(),
         }
     }
 }
