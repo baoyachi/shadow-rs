@@ -1,5 +1,6 @@
 mod build;
 pub mod channel;
+mod ci;
 mod env;
 pub mod err;
 mod git;
@@ -9,6 +10,7 @@ use env::*;
 use err::*;
 use git::*;
 
+use crate::ci::CIType;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fs::File;
@@ -26,6 +28,25 @@ pub struct Shadow {
 }
 
 impl Shadow {
+    //try get current ci env
+    fn try_ci() -> CIType {
+        if let Some(c) = option_env!("GITLAB_CI") {
+            if c == "true" {
+                return CIType::Gitlab;
+            }
+        }
+
+        if let Some(c) = option_env!("GITHUB_ACTIONS") {
+            if c == "true" {
+                return CIType::Github;
+            }
+        }
+
+        //TODO completed [travis,jenkins] env
+
+        CIType::None
+    }
+
     /// generated rust const by exec:`cargo build`
     ///
     ///```rust
@@ -45,6 +66,7 @@ impl Shadow {
     ///
     /// ```
     pub fn build(src_path: String, out_path: String) -> SdResult<()> {
+        let ci_type = Self::try_ci();
         let src_path = Path::new(src_path.as_str());
 
         let out = {
@@ -56,7 +78,7 @@ impl Shadow {
             }
         };
 
-        let mut map = Git::new(&src_path);
+        let mut map = Git::new(&src_path, ci_type);
         for (k, v) in Project::new() {
             map.insert(k, v);
         }

@@ -3,9 +3,9 @@ name: build
 
 on:
   push:
-    branches: [main, master]
+    branches: [master,issue_*]
   pull_request:
-    branches: [main, master]
+    branches: [master,issue_*]
 
 jobs:
   lint:
@@ -20,6 +20,7 @@ jobs:
           override: true
       - name: Lint
         run: |
+              cargo run
               cargo fmt
               cargo fix
               cargo fix
