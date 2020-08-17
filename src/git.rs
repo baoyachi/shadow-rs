@@ -53,9 +53,7 @@ impl Git {
             }
         };
 
-        if let Some(v) = reference.shorthand() {
-            update_val(BRANCH, v.to_string());
-        }
+        update_val(BRANCH, self.get_branch(&reference));
 
         if let Some(v) = reference.target() {
             update_val(COMMIT_HASH, v.to_string());
@@ -90,7 +88,7 @@ impl Git {
                 if let Some(v) = option_env!("CI_COMMIT_REF_NAME") {//GITLAB_CI
                     branch = v;
                 }
-            },
+            }
             CIType::Github => {
                 if let Some(v) = option_env!("CI_COMMIT_REF_NAME") {//GITHUB_ACTIONS
                     branch = v;
