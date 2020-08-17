@@ -87,7 +87,12 @@ impl Git {
         }
         match self.ci_type {
             CIType::Gitlab => {
-                if let Some(v) = option_env!("CI_COMMIT_REF_NAME") {
+                if let Some(v) = option_env!("CI_COMMIT_REF_NAME") {//GITLAB_CI
+                    branch = v;
+                }
+            },
+            CIType::Github => {
+                if let Some(v) = option_env!("CI_COMMIT_REF_NAME") {//GITHUB_ACTIONS
                     branch = v;
                 }
             }

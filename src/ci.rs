@@ -24,3 +24,8 @@ impl ToString for CIType {
         }
     }
 }
+
+const GITLAB_CI: &str = "GITLAB_CI";
+const GITHUB_ACTIONS: &str = "GITHUB_ACTIONS";
+const GITLAB_COMMIT_BRANCH :&str= "CI_COMMIT_REF_NAME";
+const GITHUB_COMMIT_BRANCH :&str= "CI_COMMIT_REF_NAME";
