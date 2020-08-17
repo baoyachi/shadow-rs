@@ -1,5 +1,6 @@
 [shadow-rs][docsrs]: compiled project much information
 ========================================
+![shadow](./shadow-rs.png)
 
 [![Chrono GitHub Actions][gh-image]][gh-checks]
 [![Chrono on crates.io][cratesio-image]][cratesio]
