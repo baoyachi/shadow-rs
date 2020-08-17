@@ -21,6 +21,7 @@ jobs:
       - name: Lint
         run: |
               cargo run
-#              cargo fix
-#              cargo fix
-#              cargo build
+              cargo fmt
+              cargo fix
+              cargo fix
+              cargo build
