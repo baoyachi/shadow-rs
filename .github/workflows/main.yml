@@ -3,9 +3,9 @@ name: build
 
 on:
   push:
-    branches: [main, master,issue_*]
+    branches: [master,issue_8]
   pull_request:
-    branches: [main, master]
+    branches: [master,issue_8]
 
 jobs:
   lint:
