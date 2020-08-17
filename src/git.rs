@@ -3,6 +3,8 @@ use crate::err::*;
 use chrono::{DateTime, NaiveDateTime, Utc};
 use std::cell::RefCell;
 use std::collections::HashMap;
+use git2::Reference;
+use crate::ci::CIType;
 
 const BRANCH: ShadowConst = "BRANCH";
 const COMMIT_HASH: ShadowConst = "COMMIT_HASH";
@@ -13,6 +15,7 @@ const COMMIT_EMAIL: ShadowConst = "COMMIT_EMAIL";
 #[derive(Default, Debug)]
 pub struct Git {
     map: HashMap<ShadowConst, RefCell<ConstVal>>,
+    ci_type: CIType,
 }
 
 impl Git {
@@ -75,5 +78,23 @@ impl Git {
         }
 
         Ok(())
+    }
+
+    fn get_branch(&self, reference: &Reference<'_>) -> String {
+        let mut branch = "";
+        if let Some(v) = reference.shorthand() {
+            branch = v;
+        }
+        match self.ci_type {
+            CIType::Gitlab => {
+                if let Some(v) = option_env!("CI_COMMIT_REF_NAME") {
+                    branch = v;
+                }
+            }
+            _ => {}
+        }
+
+
+        branch.to_string()
     }
 }

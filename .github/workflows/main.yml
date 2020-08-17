@@ -20,7 +20,7 @@ jobs:
           override: true
       - name: Lint
         run: |
-              cargo fmt
-              cargo fix
-              cargo fix
-              cargo build
+              cargo run
+#              cargo fix
+#              cargo fix
+#              cargo build

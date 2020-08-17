@@ -3,6 +3,7 @@ pub mod channel;
 mod env;
 pub mod err;
 mod git;
+mod ci;
 
 use build::*;
 use env::*;
