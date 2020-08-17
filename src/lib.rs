@@ -1,21 +1,21 @@
 mod build;
 pub mod channel;
+mod ci;
 mod env;
 pub mod err;
 mod git;
-mod ci;
 
 use build::*;
 use env::*;
 use err::*;
 use git::*;
 
+use crate::ci::CIType;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
-use crate::ci::CIType;
 
 const SHADOW_RS: &str = "shadow.rs";
 
@@ -46,7 +46,6 @@ impl Shadow {
 
         CIType::None
     }
-
 
     /// generated rust const by exec:`cargo build`
     ///

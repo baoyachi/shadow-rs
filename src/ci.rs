@@ -25,5 +25,5 @@ impl ToString for CIType {
     }
 }
 
-pub const GITLAB_COMMIT_BRANCH :&str= "CI_COMMIT_REF_NAME";
-pub const GITHUB_COMMIT_BRANCH :&str= "CI_COMMIT_REF_NAME";
+pub const GITLAB_COMMIT_BRANCH: &str = "CI_COMMIT_REF_NAME";
+pub const GITHUB_COMMIT_BRANCH: &str = "CI_COMMIT_REF_NAME";

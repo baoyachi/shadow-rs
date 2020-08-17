@@ -1,10 +1,10 @@
 use crate::build::{ConstType, ConstVal, ShadowConst};
+use crate::ci::CIType;
 use crate::err::*;
 use chrono::{DateTime, NaiveDateTime, Utc};
+use git2::Reference;
 use std::cell::RefCell;
 use std::collections::HashMap;
-use git2::Reference;
-use crate::ci::CIType;
 
 const BRANCH: ShadowConst = "BRANCH";
 const COMMIT_HASH: ShadowConst = "COMMIT_HASH";
@@ -19,8 +19,14 @@ pub struct Git {
 }
 
 impl Git {
-    pub(crate) fn new(path: &std::path::Path, ci: CIType) -> HashMap<ShadowConst, RefCell<ConstVal>> {
-        let mut git = Git { map: Default::default(), ci_type: ci };
+    pub(crate) fn new(
+        path: &std::path::Path,
+        ci: CIType,
+    ) -> HashMap<ShadowConst, RefCell<ConstVal>> {
+        let mut git = Git {
+            map: Default::default(),
+            ci_type: ci,
+        };
         git.map
             .insert(BRANCH, ConstVal::new("display current branch"));
         git.map
@@ -85,18 +91,17 @@ impl Git {
         }
         match self.ci_type {
             CIType::Gitlab => {
-                if let Some(v) = option_env!("CI_COMMIT_REF_NAME") {//GITLAB_CI
+                if let Some(v) = option_env!("CI_COMMIT_REF_NAME") {
                     branch = v;
                 }
             }
             CIType::Github => {
-                if let Some(v) = option_env!("CI_COMMIT_REF_NAME") {//GITHUB_ACTIONS
+                if let Some(v) = option_env!("CI_COMMIT_REF_NAME") {
                     branch = v;
                 }
             }
             _ => {}
         }
-
 
         branch.to_string()
     }
