@@ -7,7 +7,7 @@ mod git;
 
 use build::*;
 use env::*;
-use err::*;
+
 use git::*;
 
 use crate::ci::CIType;
