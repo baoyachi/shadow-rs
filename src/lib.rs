@@ -15,6 +15,7 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
+use crate::ci::CIType;
 
 const SHADOW_RS: &str = "shadow.rs";
 
@@ -27,6 +28,23 @@ pub struct Shadow {
 }
 
 impl Shadow {
+    //try get current ci env
+    fn try_ci() -> CIType {
+        if let Some(c) = option_env!("GITLAB_CI") {
+            if c == "true" {
+                return CIType::Gitlab;
+            }
+        }
+
+        if let Some(c) = option_env!("GITHUB_ACTIONS") {
+            if c == "true" {
+                return CIType::Github;
+            }
+        }
+        CIType::None
+    }
+
+
     /// generated rust const by exec:`cargo build`
     ///
     ///```rust
@@ -46,6 +64,7 @@ impl Shadow {
     ///
     /// ```
     pub fn build(src_path: String, out_path: String) -> SdResult<()> {
+        let ci_type = Self::try_ci();
         let src_path = Path::new(src_path.as_str());
 
         let out = {
@@ -57,7 +76,7 @@ impl Shadow {
             }
         };
 
-        let mut map = Git::new(&src_path);
+        let mut map = Git::new(&src_path, ci_type);
         for (k, v) in Project::new() {
             map.insert(k, v);
         }

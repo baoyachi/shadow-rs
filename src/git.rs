@@ -19,8 +19,8 @@ pub struct Git {
 }
 
 impl Git {
-    pub(crate) fn new(path: &std::path::Path) -> HashMap<ShadowConst, RefCell<ConstVal>> {
-        let mut git = Git::default();
+    pub(crate) fn new(path: &std::path::Path, ci: CIType) -> HashMap<ShadowConst, RefCell<ConstVal>> {
+        let mut git = Git { map: Default::default(), ci_type: ci };
         git.map
             .insert(BRANCH, ConstVal::new("display current branch"));
         git.map
