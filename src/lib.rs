@@ -41,6 +41,9 @@ impl Shadow {
                 return CIType::Github;
             }
         }
+
+        //TODO completed [travis,jenkins] env
+
         CIType::None
     }
 
