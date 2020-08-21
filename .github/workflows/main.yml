@@ -24,4 +24,5 @@ jobs:
               cargo fmt
               cargo fix
               cargo fix
+              cargo clippy
               cargo build
