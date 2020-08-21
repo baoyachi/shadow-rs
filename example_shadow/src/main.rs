@@ -1,22 +1,22 @@
-pub mod shadow{
+pub mod shadow {
     include!(concat!(env!("OUT_DIR"), "/shadow.rs"));
 }
 
 fn main() {
-    println!("{}",shadow::BRANCH);
-    println!("{}",shadow::COMMIT_HASH);
-    println!("{}",shadow::COMMIT_DATE);
-    println!("{}",shadow::COMMIT_AUTHOR);
-    println!("{}",shadow::COMMIT_EMAIL);
+    println!("branch:{}", shadow::BRANCH);
+    println!("commit_id:{}", shadow::COMMIT_HASH);
+    // println!("short_commit:{}",shadow::SHORT_COMMIT);
+    println!("commit_date:{}", shadow::COMMIT_DATE);
+    println!("commit_author:{}", shadow::COMMIT_AUTHOR);
+    println!("commit_email:{}", shadow::COMMIT_EMAIL);
 
-    println!("{}",shadow::BUILD_OS);
-    println!("{}",shadow::RUST_VERSION);
-    println!("{}",shadow::RUST_CHANNEL);
-    println!("{}",shadow::CARGO_VERSION);
-    println!("{}",shadow::CARGO_LOCK);
+    println!("build_os:{}", shadow::BUILD_OS);
+    println!("rust_version:{}", shadow::RUST_VERSION);
+    println!("rust_channel:{}", shadow::RUST_CHANNEL);
+    println!("cargo_version:{}", shadow::CARGO_VERSION);
+    println!("cargo_lock:{}", shadow::CARGO_LOCK);
 
-    println!("{}",shadow::PROJECT_NAME);
-    println!("{}",shadow::BUILD_TIME);
-    println!("{}",shadow::BUILD_RUST_CHANNEL);
-
+    println!("project_name:{}", shadow::PROJECT_NAME);
+    println!("build_time:{}", shadow::BUILD_TIME);
+    println!("build_rust_channel:{}", shadow::BUILD_RUST_CHANNEL);
 }
