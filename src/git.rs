@@ -20,40 +20,6 @@ pub struct Git {
 }
 
 impl Git {
-    pub(crate) fn new(
-        path: &std::path::Path,
-        ci: CIType,
-    ) -> HashMap<ShadowConst, RefCell<ConstVal>> {
-        let mut git = Git {
-            map: Default::default(),
-            ci_type: ci,
-        };
-        git.map
-            .insert(BRANCH, ConstVal::new("display current branch"));
-        git.map
-            .insert(COMMIT_HASH, ConstVal::new("display current commit_id"));
-
-        git.map.insert(
-            SHORT_COMMIT,
-            ConstVal::new("display current short commit_id"),
-        );
-
-        git.map.insert(
-            COMMIT_AUTHOR,
-            ConstVal::new("display current commit author"),
-        );
-        git.map
-            .insert(COMMIT_EMAIL, ConstVal::new("display current commit email"));
-        git.map
-            .insert(COMMIT_DATE, ConstVal::new("display current commit date"));
-
-        if let Err(e) = git.init(path) {
-            println!("{}", e.to_string());
-        }
-
-        git.map
-    }
-
     fn init(&mut self, path: &std::path::Path) -> SdResult<()> {
         let repo = git2::Repository::discover(path)?;
         let reference = repo.head()?;
@@ -62,7 +28,7 @@ impl Git {
             if let Some(c) = self.map.get(c) {
                 let mut val = c.borrow_mut();
                 val.t = ConstType::Str;
-                val.v = v.to_string();
+                val.v = v;
             }
         };
 
@@ -121,6 +87,37 @@ impl Git {
     }
 }
 
+pub fn new_git(path: &std::path::Path, ci: CIType) -> HashMap<ShadowConst, RefCell<ConstVal>> {
+    let mut git = Git {
+        map: Default::default(),
+        ci_type: ci,
+    };
+    git.map
+        .insert(BRANCH, ConstVal::new("display current branch"));
+    git.map
+        .insert(COMMIT_HASH, ConstVal::new("display current commit_id"));
+
+    git.map.insert(
+        SHORT_COMMIT,
+        ConstVal::new("display current short commit_id"),
+    );
+
+    git.map.insert(
+        COMMIT_AUTHOR,
+        ConstVal::new("display current commit author"),
+    );
+    git.map
+        .insert(COMMIT_EMAIL, ConstVal::new("display current commit email"));
+    git.map
+        .insert(COMMIT_DATE, ConstVal::new("display current commit date"));
+
+    if let Err(e) = git.init(path) {
+        println!("{}", e.to_string());
+    }
+
+    git.map
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -128,7 +125,7 @@ mod tests {
 
     #[test]
     fn test_git() {
-        let map = Git::new(Path::new("./"), CIType::Github);
+        let map = new_git(Path::new("./"), CIType::Github);
         println!("map:{:?}", map);
     }
 }

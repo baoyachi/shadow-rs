@@ -14,7 +14,7 @@ pub fn build_channel() -> BuildRustChannel {
     if cfg!(debug_assertions) {
         return BuildRustChannel::Debug;
     }
-    return BuildRustChannel::Release;
+    BuildRustChannel::Release
 }
 
 impl ToString for BuildRustChannel {
