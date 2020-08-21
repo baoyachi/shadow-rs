@@ -69,7 +69,7 @@ impl Git {
         update_val(BRANCH, self.get_branch(&reference));
 
         if let Some(v) = reference.target() {
-            let mut commit = v.to_string();
+            let commit = v.to_string();
             update_val(COMMIT_HASH, commit.clone());
             let mut short_commit = commit.as_str();
 
