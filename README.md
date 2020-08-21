@@ -46,7 +46,7 @@ shadow-rs = "0.3"
 ## step 2
 in your project add file `build.rs`,then add with below config 
 ```rust
-fn main() -> shadow_rs::err::SdResult<()> {
+fn main() -> shadow_rs::SdResult<()> {
     let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
     let out_path = std::env::var("OUT_DIR")?;
     shadow_rs::Shadow::build(src_path, out_path)?;
@@ -68,6 +68,7 @@ then you can use const that's shadow build it.
 fn main() {
     println!("{}",shadow::BRANCH); //master
     println!("{}",shadow::COMMIT_HASH);//8405e28e64080a09525a6cf1b07c22fcaf71a5c5
+    println!("{}",shadow::SHORT_COMMIT);//8405e28e
     println!("{}",shadow::COMMIT_DATE);//2020-08-16T06:22:24+00:00
     println!("{}",shadow::COMMIT_AUTHOR);//baoyachi
     println!("{}",shadow::COMMIT_EMAIL);//xxx@gmail.com

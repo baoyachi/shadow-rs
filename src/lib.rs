@@ -73,18 +73,18 @@ impl Shadow {
 
         let out = {
             let path = Path::new(out_path.as_str());
-            if !out_path.ends_with("/") {
+            if !out_path.ends_with('/') {
                 path.join(format!("{}/{}", out_path, SHADOW_RS))
             } else {
                 path.join(SHADOW_RS)
             }
         };
 
-        let mut map = Git::new(&src_path, ci_type);
-        for (k, v) in Project::new() {
+        let mut map = new_git(&src_path, ci_type);
+        for (k, v) in new_project() {
             map.insert(k, v);
         }
-        for (k, v) in SystemEnv::new() {
+        for (k, v) in new_system_env() {
             map.insert(k, v);
         }
 
