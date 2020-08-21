@@ -5,7 +5,7 @@ pub mod shadow {
 fn main() {
     println!("branch:{}", shadow::BRANCH);
     println!("commit_id:{}", shadow::COMMIT_HASH);
-    // println!("short_commit:{}",shadow::SHORT_COMMIT);
+    println!("short_commit:{}",shadow::SHORT_COMMIT);
     println!("commit_date:{}", shadow::COMMIT_DATE);
     println!("commit_author:{}", shadow::COMMIT_AUTHOR);
     println!("commit_email:{}", shadow::COMMIT_EMAIL);
