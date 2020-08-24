@@ -19,6 +19,7 @@ const RUST_VERSION: ShadowConst = "RUST_VERSION";
 const RUST_CHANNEL: ShadowConst = "RUST_CHANNEL";
 const CARGO_VERSION: ShadowConst = "CARGO_VERSION";
 const CARGO_LOCK: ShadowConst = "CARGO_LOCK";
+const PKG_VERSION: ShadowConst = "PKG_VERSION";
 // const CARGO_TREE: &str = "CARGO_TREE";
 
 impl SystemEnv {
@@ -50,6 +51,11 @@ impl SystemEnv {
                 String::from_utf8(out.stdout)?.trim().to_string(),
             );
         }
+
+        if let Some(v) = option_env!("CARGO_PKG_VERSION") {
+            update_val(PKG_VERSION, v.to_string());
+        }
+
         Ok(())
     }
 }
@@ -77,6 +83,12 @@ pub fn new_system_env() -> HashMap<ShadowConst, RefCell<ConstVal>> {
         CARGO_VERSION,
         ConstVal::new("display build system cargo version"),
     );
+
+    env.map.insert(
+        PKG_VERSION,
+        ConstVal::new("display build current project version"),
+    );
+
     env.map.insert(
         CARGO_LOCK,
         ConstVal::new("display build project dependence cargo lock detail"),

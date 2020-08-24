@@ -77,6 +77,7 @@ fn main() {
     println!("{}",shadow::RUST_VERSION);//rustc 1.45.0 (5c1f21c3b 2020-07-13)
     println!("{}",shadow::RUST_CHANNEL);//stable-x86_64-apple-darwin (default)
     println!("{}",shadow::CARGO_VERSION);//cargo 1.45.0 (744bd1fbb 2020-06-15)
+    println!("{}",shadow::PKG_VERSION);//0.3.13
     println!("{}",shadow::CARGO_LOCK);
 
     println!("{}",shadow::PROJECT_NAME);//shadow-rs

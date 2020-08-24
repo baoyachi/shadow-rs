@@ -14,6 +14,7 @@ fn main() {
     println!("rust_version:{}", shadow::RUST_VERSION);
     println!("rust_channel:{}", shadow::RUST_CHANNEL);
     println!("cargo_version:{}", shadow::CARGO_VERSION);
+    println!("pkg_version:{}", shadow::PKG_VERSION);
     println!("cargo_lock:{}", shadow::CARGO_LOCK);
 
     println!("project_name:{}", shadow::PROJECT_NAME);
