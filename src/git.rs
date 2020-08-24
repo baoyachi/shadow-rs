@@ -125,11 +125,13 @@ pub fn new_git(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::Shadow;
     use std::path::Path;
 
     #[test]
     fn test_git() {
-        let map = new_git(Path::new("./"), CIType::Github);
+        let map = Shadow::get_env();
+        let map = new_git(Path::new("./"), CIType::Github, &map);
         println!("map:{:?}", map);
     }
 }
