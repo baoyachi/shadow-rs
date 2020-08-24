@@ -13,6 +13,7 @@ use git::*;
 use crate::ci::CIType;
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::env as std_env;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -47,18 +48,27 @@ const SHADOW_RS: &str = "shadow.rs";
 pub struct Shadow {
     f: File,
     map: HashMap<ShadowConst, RefCell<ConstVal>>,
+    std_env: HashMap<String, String>,
 }
 
 impl Shadow {
-    //try get current ci env
-    fn try_ci() -> CIType {
-        if let Some(c) = option_env!("GITLAB_CI") {
+    fn get_env() -> HashMap<String, String> {
+        let mut env_map = HashMap::new();
+        for (k, v) in std_env::vars() {
+            env_map.insert(k, v);
+        }
+        env_map
+    }
+
+    /// try get current ci env
+    fn try_ci(&self) -> CIType {
+        if let Some(c) = self.std_env.get("GITLAB_CI") {
             if c == "true" {
                 return CIType::Gitlab;
             }
         }
 
-        if let Some(c) = option_env!("GITHUB_ACTIONS") {
+        if let Some(c) = self.std_env.get("GITHUB_ACTIONS") {
             if c == "true" {
                 return CIType::Github;
             }
@@ -70,9 +80,6 @@ impl Shadow {
     }
 
     pub fn build(src_path: String, out_path: String) -> SdResult<()> {
-        let ci_type = Self::try_ci();
-        let src_path = Path::new(src_path.as_str());
-
         let out = {
             let path = Path::new(out_path.as_str());
             if !out_path.ends_with('/') {
@@ -82,18 +89,25 @@ impl Shadow {
             }
         };
 
-        let mut map = new_git(&src_path, ci_type);
-        for (k, v) in new_project() {
-            map.insert(k, v);
-        }
-        for (k, v) in new_system_env() {
-            map.insert(k, v);
-        }
-
         let mut shadow = Shadow {
             f: File::create(out)?,
-            map,
+            map: Default::default(),
+            std_env: Default::default(),
         };
+        shadow.std_env = Self::get_env();
+
+        let ci_type = shadow.try_ci();
+        let src_path = Path::new(src_path.as_str());
+
+        let mut map = new_git(&src_path, ci_type, &shadow.std_env);
+        for (k, v) in new_project(&shadow.std_env) {
+            map.insert(k, v);
+        }
+        for (k, v) in new_system_env(&shadow.std_env) {
+            map.insert(k, v);
+        }
+        shadow.map = map;
+
         shadow.gen_const()?;
         println!("shadow build success");
         Ok(())

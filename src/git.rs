@@ -20,7 +20,7 @@ pub struct Git {
 }
 
 impl Git {
-    fn init(&mut self, path: &std::path::Path) -> SdResult<()> {
+    fn init(&mut self, path: &std::path::Path, std_env: &HashMap<String, String>) -> SdResult<()> {
         let repo = git2::Repository::discover(path)?;
         let reference = repo.head()?;
 
@@ -32,7 +32,7 @@ impl Git {
             }
         };
 
-        update_val(BRANCH, self.get_branch(&reference));
+        update_val(BRANCH, self.get_branch(&reference, std_env));
 
         if let Some(v) = reference.target() {
             let commit = v.to_string();
@@ -64,19 +64,19 @@ impl Git {
         Ok(())
     }
 
-    fn get_branch(&self, reference: &Reference<'_>) -> String {
+    fn get_branch(&self, reference: &Reference<'_>, std_env: &HashMap<String, String>) -> String {
         let mut branch = "";
         if let Some(v) = reference.shorthand() {
             branch = v;
         }
         match self.ci_type {
             CIType::Gitlab => {
-                if let Some(v) = option_env!("CI_COMMIT_REF_NAME") {
+                if let Some(v) = std_env.get("CI_COMMIT_REF_NAME") {
                     branch = v;
                 }
             }
             CIType::Github => {
-                if let Some(v) = option_env!("CI_COMMIT_REF_NAME") {
+                if let Some(v) = std_env.get("CI_COMMIT_REF_NAME") {
                     branch = v;
                 }
             }
@@ -87,7 +87,11 @@ impl Git {
     }
 }
 
-pub fn new_git(path: &std::path::Path, ci: CIType) -> HashMap<ShadowConst, RefCell<ConstVal>> {
+pub fn new_git(
+    path: &std::path::Path,
+    ci: CIType,
+    std_env: &HashMap<String, String>,
+) -> HashMap<ShadowConst, RefCell<ConstVal>> {
     let mut git = Git {
         map: Default::default(),
         ci_type: ci,
@@ -111,7 +115,7 @@ pub fn new_git(path: &std::path::Path, ci: CIType) -> HashMap<ShadowConst, RefCe
     git.map
         .insert(COMMIT_DATE, ConstVal::new("display current commit date"));
 
-    if let Err(e) = git.init(path) {
+    if let Err(e) = git.init(path, std_env) {
         println!("{}", e.to_string());
     }
 

@@ -23,7 +23,7 @@ const PKG_VERSION: ShadowConst = "PKG_VERSION";
 // const CARGO_TREE: &str = "CARGO_TREE";
 
 impl SystemEnv {
-    fn init(&mut self) -> SdResult<()> {
+    fn init(&mut self, std_env: &HashMap<String, String>) -> SdResult<()> {
         let update_val = |c: ShadowConst, v: String| {
             if let Some(c) = self.map.get(c) {
                 let mut val = c.borrow_mut();
@@ -52,7 +52,7 @@ impl SystemEnv {
             );
         }
 
-        if let Some(v) = option_env!("CARGO_PKG_VERSION") {
+        if let Some(v) = std_env.get("CARGO_PKG_VERSION") {
             update_val(PKG_VERSION, v.to_string());
         }
 
@@ -60,7 +60,9 @@ impl SystemEnv {
     }
 }
 
-pub fn new_system_env() -> HashMap<ShadowConst, RefCell<ConstVal>> {
+pub fn new_system_env(
+    std_env: &HashMap<String, String>,
+) -> HashMap<ShadowConst, RefCell<ConstVal>> {
     let mut env = SystemEnv::default();
     env.map.insert(
         BUILD_OS,
@@ -94,7 +96,7 @@ pub fn new_system_env() -> HashMap<ShadowConst, RefCell<ConstVal>> {
         ConstVal::new("display build project dependence cargo lock detail"),
     );
 
-    if let Err(e) = env.init() {
+    if let Err(e) = env.init(std_env) {
         println!("{}", e.to_string());
     }
     env.map
@@ -109,7 +111,7 @@ const PROJECT_NAME: ShadowConst = "PROJECT_NAME";
 const BUILD_TIME: ShadowConst = "BUILD_TIME";
 const BUILD_RUST_CHANNEL: ShadowConst = "BUILD_RUST_CHANNEL";
 
-pub fn new_project() -> HashMap<ShadowConst, RefCell<ConstVal>> {
+pub fn new_project(std_env: &HashMap<String, String>) -> HashMap<ShadowConst, RefCell<ConstVal>> {
     let mut project = Project::default();
     project.map.insert(
         BUILD_TIME,
@@ -131,7 +133,7 @@ pub fn new_project() -> HashMap<ShadowConst, RefCell<ConstVal>> {
         .map
         .insert(PROJECT_NAME, ConstVal::new("display project name"));
 
-    if let (Some(v), Some(c)) = (option_env!("CARGO_PKG_NAME"), project.map.get(PROJECT_NAME)) {
+    if let (Some(v), Some(c)) = (std_env.get("CARGO_PKG_NAME"), project.map.get(PROJECT_NAME)) {
         let mut val = c.borrow_mut();
         val.t = ConstType::Str;
         val.v = v.to_string();
