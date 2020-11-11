@@ -1,11 +1,33 @@
+use clap::App;
+
 pub mod shadow {
     include!(concat!(env!("OUT_DIR"), "/shadow.rs"));
 }
 
+pub fn version() -> String {
+    format!(
+        r#"
+branch:{}
+commit-hash:{}
+build_time:{}
+build_env:{},{}
+"#,
+        shadow::BRANCH,
+        shadow::SHORT_COMMIT,
+        shadow::BUILD_TIME,
+        shadow::RUST_VERSION,
+        shadow::RUST_CHANNEL,
+    )
+}
+
 fn main() {
+    App::new("example_shadow")
+        .version(version().as_str())
+        .get_matches();
+
     println!("branch:{}", shadow::BRANCH);
     println!("commit_id:{}", shadow::COMMIT_HASH);
-    println!("short_commit:{}",shadow::SHORT_COMMIT);
+    println!("short_commit:{}", shadow::SHORT_COMMIT);
     println!("commit_date:{}", shadow::COMMIT_DATE);
     println!("commit_author:{}", shadow::COMMIT_AUTHOR);
     println!("commit_email:{}", shadow::COMMIT_EMAIL);
