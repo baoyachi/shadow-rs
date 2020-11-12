@@ -8,7 +8,7 @@ build = "build.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-shadow-rs = { version = "0.3", path = "../" }
+clap = "2.33.3"
 
 [build-dependencies]
-shadow-rs = { version = "0.3", path = "../" }
+shadow-rs = "0.3"
