@@ -36,9 +36,6 @@ in your `cargo.toml` `packgae` with package add with below config
 [package]
 build = "build.rs"
 
-[dependencies]
-shadow-rs = "0.3"
-
 [build-dependencies]
 shadow-rs = "0.3"
 ```
