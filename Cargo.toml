@@ -1,10 +1,10 @@
 [package]
 name = "shadow-rs"
-version = "0.3.15"
+version = "0.3.16"
 authors = ["baoyachi <liaoymxsdl@gmail.com>"]
 edition = "2018"
 description = "A tool record compiled project much information,version info,dependence info.Like shadow,if compiled,never change.forever follow your project."
-keywords = ["shadow", "flag","build","metadata","compile"]
+keywords = ["shadow", "build-script","build","metadata","compile"]
 readme = "README.md"
 repository = "https://github.com/baoyachi/shadow-rs"
 license = "MIT AND Apache-2.0"
