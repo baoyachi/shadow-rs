@@ -82,6 +82,9 @@ fn main() {
     println!("{}",shadow::BUILD_RUST_CHANNEL);//debug
 }
 ```
-you can also use const with `clap`.
+
+## Clap example 
+And you can also use const with [clap](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs#L24_L26).
+
 
 If you have any question,you can create [issue](https://github.com/baoyachi/shadow-rs/issues/new).

@@ -23,7 +23,7 @@ build_env:{},{}
 fn main() {
     App::new("example_shadow")
         .version(version().as_str())
-        .get_matches(); //USAGE: ./target/debug/example_shadow -V
+        .get_matches(); //USAGE: ./example_shadow -V
 
     println!("branch:{}", shadow::BRANCH);
     println!("commit_id:{}", shadow::COMMIT_HASH);
