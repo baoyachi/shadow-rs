@@ -53,10 +53,10 @@ impl SystemEnv {
         }
 
         if let Ok(out) = Command::new("cargo").arg("tree").output() {
-            update_val(
-                CARGO_TREE,
-                String::from_utf8(out.stdout)?.trim().to_string(),
-            );
+            let input = String::from_utf8(out.stdout)?;
+            if let Some(index) = input.find("\n") {
+                update_val(CARGO_TREE, input[index..].to_string());
+            }
         }
 
         if let Some(v) = std_env.get("CARGO_PKG_VERSION") {
