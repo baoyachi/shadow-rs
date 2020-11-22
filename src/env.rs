@@ -18,6 +18,7 @@ const BUILD_OS: ShadowConst = "BUILD_OS";
 const RUST_VERSION: ShadowConst = "RUST_VERSION";
 const RUST_CHANNEL: ShadowConst = "RUST_CHANNEL";
 const CARGO_VERSION: ShadowConst = "CARGO_VERSION";
+const CARGO_TREE: ShadowConst = "CARGO_TREE";
 const CARGO_LOCK: ShadowConst = "CARGO_LOCK";
 const PKG_VERSION: ShadowConst = "PKG_VERSION";
 // const CARGO_TREE: &str = "CARGO_TREE";
@@ -52,6 +53,14 @@ impl SystemEnv {
             );
         }
 
+        if let Ok(out) = Command::new("cargo").arg("tree").output() {
+            update_val(
+                CARGO_TREE,
+                String::from_utf8(out.stdout)?.trim().to_string(),
+            );
+        }
+
+
         if let Some(v) = std_env.get("CARGO_PKG_VERSION") {
             update_val(PKG_VERSION, v.to_string());
         }
@@ -84,6 +93,11 @@ pub fn new_system_env(
     env.map.insert(
         CARGO_VERSION,
         ConstVal::new("display build system cargo version"),
+    );
+
+    env.map.insert(
+        CARGO_TREE,
+        ConstVal::new("display build cargo dependencies.\n#[stable(since = \"1.44.0\")]"),
     );
 
     env.map.insert(
