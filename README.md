@@ -14,7 +14,7 @@
 [docsrs]: https://docs.rs/shadow-rs
 
 
-A tool record compiled project much information,version info,dependence info.Like shadow,if compiled,never change.forever follow your project.
+A build script tool compile project much information,version info,dependence info.Like shadow,if compiled,never change.forever follow your project.
 
 When you published a rust binary. Sometimes you need to know the dependencies of the current project.
 * Git version information
