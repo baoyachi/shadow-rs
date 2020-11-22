@@ -95,7 +95,7 @@ pub fn new_system_env(
 
     env.map.insert(
         CARGO_TREE,
-        ConstVal::new("display build cargo dependencies.\n#[stable(since = \"1.44.0\")]"),
+        ConstVal::new("display build cargo dependencies.It's used by rust version 1.44.0"),
     );
 
     env.map.insert(
