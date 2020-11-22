@@ -60,7 +60,6 @@ impl SystemEnv {
             );
         }
 
-
         if let Some(v) = std_env.get("CARGO_PKG_VERSION") {
             update_val(PKG_VERSION, v.to_string());
         }
