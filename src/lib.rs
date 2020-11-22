@@ -142,7 +142,7 @@ impl Shadow {
         };
 
         let define = format!(
-            "pub const {} :{} = \"{}\";",
+            "pub const {} :{} = r#\"{}\"#;",
             shadow_const.to_ascii_uppercase(),
             t,
             v
