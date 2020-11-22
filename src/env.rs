@@ -21,7 +21,6 @@ const CARGO_VERSION: ShadowConst = "CARGO_VERSION";
 const CARGO_TREE: ShadowConst = "CARGO_TREE";
 const CARGO_LOCK: ShadowConst = "CARGO_LOCK";
 const PKG_VERSION: ShadowConst = "PKG_VERSION";
-// const CARGO_TREE: &str = "CARGO_TREE";
 
 impl SystemEnv {
     fn init(&mut self, std_env: &HashMap<String, String>) -> SdResult<()> {
