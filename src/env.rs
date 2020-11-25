@@ -19,7 +19,6 @@ const RUST_VERSION: ShadowConst = "RUST_VERSION";
 const RUST_CHANNEL: ShadowConst = "RUST_CHANNEL";
 const CARGO_VERSION: ShadowConst = "CARGO_VERSION";
 const CARGO_TREE: ShadowConst = "CARGO_TREE";
-const CARGO_LOCK: ShadowConst = "CARGO_LOCK";
 const PKG_VERSION: ShadowConst = "PKG_VERSION";
 
 impl SystemEnv {
@@ -101,11 +100,6 @@ pub fn new_system_env(
     env.map.insert(
         PKG_VERSION,
         ConstVal::new("display build current project version"),
-    );
-
-    env.map.insert(
-        CARGO_LOCK,
-        ConstVal::new("display build project dependence cargo lock detail"),
     );
 
     if let Err(e) = env.init(std_env) {
