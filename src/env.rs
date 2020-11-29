@@ -8,7 +8,6 @@ use std::process::Command;
 
 use std::cell::RefCell;
 use std::collections::HashMap;
-use std::str::Lines;
 
 #[derive(Default, Debug)]
 pub struct SystemEnv {
@@ -55,7 +54,7 @@ impl SystemEnv {
         if let Ok(out) = Command::new("cargo").arg("tree").output() {
             let input = String::from_utf8(out.stdout)?;
             if let Some(index) = input.find('\n') {
-                let lines = filter_private_registry(input[index..].lines());
+                let lines = filter_private_registry(input[index..].split('\n').collect());
                 update_val(CARGO_TREE, lines);
             }
         }
@@ -68,14 +67,18 @@ impl SystemEnv {
     }
 }
 
-fn filter_private_registry(lines: Lines<'_>) -> String {
-    let mut tree = "".to_string();
+fn filter_private_registry(lines: Vec<&str>) -> String {
+    let mut tree = "\n".to_string();
     for line in lines {
-        if let Some(index) = line.find("(registry `") {
-            let dep = format!("{}(private)", line[..index].to_string());
-            tree = format!("{}\n{}", tree, dep);
+        let val = if let Some(index) = line.find("(registry `") {
+            format!("{}(private)", line[..index].to_string())
         } else {
-            tree = format!("{}\n{}", tree, line)
+            line.to_string()
+        };
+        if tree.trim().is_empty() {
+            tree = format!("{}{}", tree, val);
+        } else {
+            tree = format!("{}\n{}", tree, val);
         }
     }
     tree
