@@ -76,7 +76,7 @@ fn filter_private_registry(lines: Vec<&str>) -> String {
             line.to_string()
         };
         if tree.trim().is_empty() {
-            tree = format!("{}{}", tree, val);
+            tree.push_str(&val);
         } else {
             tree = format!("{}\n{}", tree, val);
         }
