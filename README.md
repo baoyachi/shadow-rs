@@ -5,6 +5,7 @@
 [![Chrono GitHub Actions][gh-image]][gh-checks]
 [![Chrono on crates.io][cratesio-image]][cratesio]
 [![Chrono on docs.rs][docsrs-image]][docsrs]
+[![dependency on depstatus][depstatus-image]][depstatus]
 
 [gh-image]: https://github.com/baoyachi/shadow-rs/workflows/build/badge.svg
 [gh-checks]: https://github.com/baoyachi/shadow-rs/actions?query=workflow%3Abuild
@@ -12,6 +13,8 @@
 [cratesio]: https://crates.io/crates/shadow-rs
 [docsrs-image]: https://docs.rs/shadow-rs/badge.svg
 [docsrs]: https://docs.rs/shadow-rs
+[depstatus-image]: https://deps.rs/repo/github/baoyachi/shadow-rs/status.svg
+[depstatus]:https://deps.rs/repo/github/baoyachi/shadow-rs
 
 
 A build script tool compile project much information,version info,dependence info.Like shadow,if compiled,never change.forever follow your project.
