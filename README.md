@@ -1,4 +1,4 @@
-[shadow-rs][docsrs]: compiled project much information
+[shadow-rs][docsrs]: A build script By Rust 
 ========================================
 ![shadow](./shadow-rs.png)
 
