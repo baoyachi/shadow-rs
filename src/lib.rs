@@ -1,3 +1,106 @@
+//! `shadow-rs` is a build script write by Rust
+//!
+//! It's can record compiled project much information.
+//! Like version info,dependence info.Like shadow,if compiled,never change.forever follow your project.
+//!
+//! Generated rust const by exec:`cargo build`
+//!
+//! # Example
+//!
+//! ```rust
+//! pub const RUST_VERSION :&str = "rustc 1.45.0 (5c1f21c3b 2020-07-13)";
+//! pub const BUILD_RUST_CHANNEL :&str = "debug";
+//! pub const COMMIT_AUTHOR :&str = "baoyachi";
+//! pub const BUILD_TIME :&str = "2020-08-16 13:48:52";
+//! pub const COMMIT_DATE :&str = "2020-08-16 13:12:52";
+//! pub const COMMIT_EMAIL :&str = "xxx@gmail.com";
+//! pub const PROJECT_NAME :&str = "shadow-rs";
+//! pub const RUST_CHANNEL :&str = "stable-x86_64-apple-darwin (default)";
+//! pub const BRANCH :&str = "master";
+//! pub const CARGO_LOCK :&str = r#"
+//! ├── chrono v0.4.19
+//! │   ├── libc v0.2.80
+//! │   ├── num-integer v0.1.44
+//! │   │   └── num-traits v0.2.14
+//! │   │       [build-dependencies]
+//! │   │       └── autocfg v1.0.1
+//! │   ├── num-traits v0.2.14 (*)
+//! │   └── time v0.1.44
+//! │       └── libc v0.2.80
+//! └── git2 v0.13.12
+//! ├── log v0.4.11
+//! │   └── cfg-if v0.1.10
+//! └── url v2.2.0
+//! ├── form_urlencoded v1.0.0
+//! │   └── percent-encoding v2.1.0
+//! └── percent-encoding v2.1.0"#;
+//! pub const CARGO_VERSION :&str = "cargo 1.45.0 (744bd1fbb 2020-06-15)";
+//! pub const BUILD_OS :&str = "macos-x86_64";
+//! pub const COMMIT_HASH :&str = "386741540d73c194a3028b96b92fdeb53ca2788a";
+//! pub const PKG_VERSION :&str = "0.3.13";
+//! ```
+//! # Quick Start
+//!
+//! ## step 1
+//! in your `cargo.toml` `packgae` with package add with below config
+//!
+//! ```toml
+//! [package]
+//! build = "build.rs"
+//!
+//! [build-dependencies]
+//! shadow-rs = "0.3"
+//! ```
+//!
+//! ## step 2
+//! in your project add file `build.rs`,then add with below config
+//!
+//! ```rust
+//! fn main() -> shadow_rs::SdResult<()> {
+//!    let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
+//!    let out_path = std::env::var("OUT_DIR")?;
+//!    shadow_rs::Shadow::build(src_path, out_path)?;
+//!    Ok(())
+//! }
+//! ```
+//!
+//! ## step 3
+//! in your project find `bin` rust file.
+//! It's usually `main.rs`, you can find `[bin]` file with `Cargo.toml`,then add with below config
+//! ```rust
+//! pub mod shadow{
+//!    include!(concat!(env!("OUT_DIR"), "/shadow.rs"));
+//! }
+//! ```
+//!
+//! ## step 4
+//! then you can use const that's shadow build it.
+//! ```rust
+//! fn main() {
+//!    println!("{}",shadow::BRANCH); //master
+//!    println!("{}",shadow::SHORT_COMMIT);//8405e28e
+//!    println!("{}",shadow::COMMIT_HASH);//8405e28e64080a09525a6cf1b07c22fcaf71a5c5
+//!    println!("{}",shadow::COMMIT_DATE);//2020-08-16T06:22:24+00:00
+//!    println!("{}",shadow::COMMIT_AUTHOR);//baoyachi
+//!    println!("{}",shadow::COMMIT_EMAIL);//xxx@gmail.com
+//!
+//!    println!("{}",shadow::BUILD_OS);//macos-x86_64
+//!    println!("{}",shadow::RUST_VERSION);//rustc 1.45.0 (5c1f21c3b 2020-07-13)
+//!    println!("{}",shadow::RUST_CHANNEL);//stable-x86_64-apple-darwin (default)
+//!    println!("{}",shadow::CARGO_VERSION);//cargo 1.45.0 (744bd1fbb 2020-06-15)
+//!    println!("{}",shadow::PKG_VERSION);//0.3.13
+//!    println!("{}",shadow::CARGO_TREE); //like command:cargo tree
+//!
+//!    println!("{}",shadow::PROJECT_NAME);//shadow-rs
+//!    println!("{}",shadow::BUILD_TIME);//2020-08-16 14:50:25
+//!    println!("{}",shadow::BUILD_RUST_CHANNEL);//debug
+//! }
+//!```
+//!
+//! ## Clap example
+//! And you can also use const with [clap](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs#L24_L26).
+//!
+
 mod build;
 pub mod channel;
 mod ci;
@@ -23,27 +126,6 @@ pub use err::{SdResult, ShadowError};
 
 const SHADOW_RS: &str = "shadow.rs";
 
-/// record compiled project much information.
-/// version info,dependence info.Like shadow,if compiled,never change.forever follow your project.
-/// generated rust const by exec:`cargo build`
-///
-///```rust
-/// pub const RUST_VERSION :&str = "rustc 1.45.0 (5c1f21c3b 2020-07-13)";
-/// pub const BUILD_RUST_CHANNEL :&str = "debug";
-/// pub const COMMIT_AUTHOR :&str = "baoyachi";
-/// pub const BUILD_TIME :&str = "2020-08-16 13:48:52";
-/// pub const COMMIT_DATE :&str = "2020-08-16 13:12:52";
-/// pub const COMMIT_EMAIL :&str = "xxx@gmail.com";
-/// pub const PROJECT_NAME :&str = "shadow-rs";
-/// pub const RUST_CHANNEL :&str = "stable-x86_64-apple-darwin (default)";
-/// pub const BRANCH :&str = "master";
-/// pub const CARGO_LOCK :&str = "";
-/// pub const CARGO_VERSION :&str = "cargo 1.45.0 (744bd1fbb 2020-06-15)";
-/// pub const BUILD_OS :&str = "macos-x86_64";
-/// pub const COMMIT_HASH :&str = "386741540d73c194a3028b96b92fdeb53ca2788a";
-/// pub const PKG_VERSION :&str = "0.3.13";
-///
-/// ```
 #[derive(Debug)]
 pub struct Shadow {
     f: File,
