@@ -75,8 +75,8 @@
 //!
 //! ## step 4
 //! then you can use const that's shadow build it.
-//! ```rust
-//! fn main() {
+//! ```no_run
+//!
 //!    println!("{}",shadow::BRANCH); //master
 //!    println!("{}",shadow::SHORT_COMMIT);//8405e28e
 //!    println!("{}",shadow::COMMIT_HASH);//8405e28e64080a09525a6cf1b07c22fcaf71a5c5
@@ -94,7 +94,7 @@
 //!    println!("{}",shadow::PROJECT_NAME);//shadow-rs
 //!    println!("{}",shadow::BUILD_TIME);//2020-08-16 14:50:25
 //!    println!("{}",shadow::BUILD_RUST_CHANNEL);//debug
-//! }
+//!
 //!```
 //!
 //! ## Clap example
