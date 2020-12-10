@@ -7,7 +7,7 @@
 //!
 //! # Example
 //!
-//! ```rust
+//! ```
 //! pub const RUST_VERSION :&str = "rustc 1.45.0 (5c1f21c3b 2020-07-13)";
 //! pub const BUILD_RUST_CHANNEL :&str = "debug";
 //! pub const COMMIT_AUTHOR :&str = "baoyachi";
@@ -55,7 +55,7 @@
 //! ## step 2
 //! in your project add file `build.rs`,then add with below config
 //!
-//! ```rust
+//! ```
 //! fn main() -> shadow_rs::SdResult<()> {
 //!    let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
 //!    let out_path = std::env::var("OUT_DIR")?;
@@ -67,7 +67,7 @@
 //! ## step 3
 //! in your project find `bin` rust file.
 //! It's usually `main.rs`, you can find `[bin]` file with `Cargo.toml`,then add with below config
-//! ```rust
+//! ```
 //! pub mod shadow{
 //!    include!(concat!(env!("OUT_DIR"), "/shadow.rs"));
 //! }
