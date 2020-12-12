@@ -1,4 +1,4 @@
-[shadow-rs][docsrs]: A build script By Rust 
+[shadow-rs][docsrs]: A build script write by Rust 
 ========================================
 ![shadow](./shadow-rs.png)
 
