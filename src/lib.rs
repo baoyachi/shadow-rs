@@ -98,11 +98,13 @@
 //!    println!("{}",shadow::BUILD_TIME);//2020-08-16 14:50:25
 //!    println!("{}",shadow::BUILD_RUST_CHANNEL);//debug
 //! }
-//!
 //!```
 //!
 //! ## Clap example
 //! And you can also use const with [clap](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs#L24_L26).
+//!
+//! For the user guide and futher documentation, please read
+//! [The shadow-rs document](https://github.com/baoyachi/shadow-rs).
 //!
 
 mod build;
