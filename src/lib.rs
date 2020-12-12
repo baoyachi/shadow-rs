@@ -76,7 +76,7 @@
 //! ```
 //!
 //! ## step 4
-//! then you can use const that's shadow build it.
+//! then you can use const that's shadow build it(main.rs).
 //!
 //! ```ignore
 //! fn main(){
