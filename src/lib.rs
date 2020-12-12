@@ -55,7 +55,8 @@
 //! ## step 2
 //! in your project add file `build.rs`,then add with below config
 //!
-//! ```
+//! ```ignore
+//! use shadow_rs;
 //! fn main() -> shadow_rs::SdResult<()> {
 //!    let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
 //!    let out_path = std::env::var("OUT_DIR")?;
@@ -67,7 +68,8 @@
 //! ## step 3
 //! in your project find `bin` rust file.
 //! It's usually `main.rs`, you can find `[bin]` file with `Cargo.toml`,then add with below config
-//! ```
+//!
+//! ```ignore
 //! pub mod shadow{
 //!    include!(concat!(env!("OUT_DIR"), "/shadow.rs"));
 //! }
@@ -75,8 +77,9 @@
 //!
 //! ## step 4
 //! then you can use const that's shadow build it.
-//! ```no_run
 //!
+//! ```ignore
+//! fn main(){
 //!    println!("{}",shadow::BRANCH); //master
 //!    println!("{}",shadow::SHORT_COMMIT);//8405e28e
 //!    println!("{}",shadow::COMMIT_HASH);//8405e28e64080a09525a6cf1b07c22fcaf71a5c5
@@ -94,6 +97,7 @@
 //!    println!("{}",shadow::PROJECT_NAME);//shadow-rs
 //!    println!("{}",shadow::BUILD_TIME);//2020-08-16 14:50:25
 //!    println!("{}",shadow::BUILD_RUST_CHANNEL);//debug
+//! }
 //!
 //!```
 //!
