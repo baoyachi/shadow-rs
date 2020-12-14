@@ -59,7 +59,6 @@
 //! In your project add file `build.rs`,then add with below config
 //!
 //! ```ignore
-//! use shadow_rs;
 //! fn main() -> shadow_rs::SdResult<()> {
 //!    shadow_rs::Shadow::new()
 //! }
