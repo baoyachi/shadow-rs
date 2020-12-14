@@ -116,6 +116,8 @@ And you can also use const with [clap](https://github.com/baoyachi/shadow-rs/blo
 If you have any question,you can create [issue](https://github.com/baoyachi/shadow-rs/issues/new).
 
 ## who use shadow-rs
+If you are using `shadow-rs`,please tell me.Or you can make a notes here,if you like:[collection use](https://github.com/baoyachi/shadow-rs/issues/19).
+
 <table>
   <tr>
     <td align="center"><a href="https://github.com/nushell/nushell"><img src="https://avatars3.githubusercontent.com/u/50749515?s=200&v=4" width="100px;" alt="nushell"/><br /><sub><b>nushell</b></sub></a><br /></td>
