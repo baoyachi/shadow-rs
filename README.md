@@ -114,3 +114,10 @@ And you can also use const with [clap](https://github.com/baoyachi/shadow-rs/blo
 | BUILD_RUST_CHANNEL | debug/release |  
 
 If you have any question,you can create [issue](https://github.com/baoyachi/shadow-rs/issues/new).
+
+## who use shadow-rs
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/nushell/nushell"><img src="https://avatars3.githubusercontent.com/u/50749515?s=200&v=4" width="100px;" alt="nushell"/><br /><sub><b>nushell</b></sub></a><br /></td>
+  </tr>
+</table>
