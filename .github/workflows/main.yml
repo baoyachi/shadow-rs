@@ -25,4 +25,4 @@ jobs:
               cargo fix
               cargo clippy
               cargo build
-              cd example_shadow && cargo run example_shadow
+              cd example_shadow && cargo run

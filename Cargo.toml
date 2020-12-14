@@ -1,6 +1,6 @@
 [package]
 name = "shadow-rs"
-version = "0.4.0"
+version = "0.4.1"
 authors = ["baoyachi <liaoymxsdl@gmail.com>"]
 edition = "2018"
 description = "A build script write by Rust"

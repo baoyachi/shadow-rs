@@ -66,7 +66,7 @@
 //!
 //! ## step 3
 //! In your project find `bin` rust file.It's usually `main.rs`, you can find `[bin]` file with `Cargo.toml`,then add with below config
-//! The `shadow!(build)` with `build` config,add Rust build mod in your project. Also you also use other name that you want configuration.
+//! The `shadow!(build)` with `build` config,add Rust build mod in your project. You can also replace it(build) with other name.
 //!
 //! ```ignore
 //! #[macro_use]
