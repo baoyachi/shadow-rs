@@ -37,7 +37,7 @@ fn main() {
     println!("rust_channel:{}", shadow::RUST_CHANNEL);
     println!("cargo_version:{}", shadow::CARGO_VERSION);
     println!("pkg_version:{}", shadow::PKG_VERSION);
-    println!("cargo_lock:{}", shadow::CARGO_LOCK);
+    println!("cargo_lock:{}", shadow::CARGO_TREE);
 
     println!("project_name:{}", shadow::PROJECT_NAME);
     println!("build_time:{}", shadow::BUILD_TIME);

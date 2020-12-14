@@ -167,6 +167,12 @@ impl Shadow {
         CIType::None
     }
 
+    pub fn new() -> SdResult<()> {
+        let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
+        let out_path = std::env::var("OUT_DIR")?;
+        Self::build(src_path, out_path)
+    }
+
     pub fn build(src_path: String, out_path: String) -> SdResult<()> {
         let out = {
             let path = Path::new(out_path.as_str());

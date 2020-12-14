@@ -26,3 +26,4 @@ jobs:
               cargo fix
               cargo clippy
               cargo build
+              cargo run example_shadow
