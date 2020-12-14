@@ -20,9 +20,9 @@ jobs:
           override: true
       - name: Lint
         run: |
-              cargo run
               cargo fmt
               cargo fix
               cargo fix
               cargo clippy
               cargo build
+              cargo run example_shadow
