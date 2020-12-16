@@ -131,7 +131,7 @@ use std::path::Path;
 
 pub use channel::BuildRustChannel;
 use chrono::Local;
-pub use err::{SdResult, ShadowError};
+pub use err::SdResult;
 
 const SHADOW_RS: &str = "shadow.rs";
 
