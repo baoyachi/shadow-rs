@@ -129,8 +129,8 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
-use chrono::Local;
 pub use channel::BuildRustChannel;
+use chrono::Local;
 pub use err::{SdResult, ShadowError};
 
 const SHADOW_RS: &str = "shadow.rs";
