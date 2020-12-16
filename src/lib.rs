@@ -110,10 +110,10 @@
 //!
 
 mod build;
-pub mod channel;
+mod channel;
 mod ci;
 mod env;
-pub mod err;
+mod err;
 mod git;
 
 use build::*;
@@ -130,6 +130,7 @@ use std::io::Write;
 use std::path::Path;
 
 use chrono::Local;
+pub use channel::BuildRustChannel;
 pub use err::{SdResult, ShadowError};
 
 const SHADOW_RS: &str = "shadow.rs";
@@ -149,8 +150,14 @@ macro_rules! shadow {
     };
 }
 
+pub fn new() -> SdResult<()> {
+    let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
+    let out_path = std::env::var("OUT_DIR")?;
+    Shadow::build(src_path, out_path)
+}
+
 #[derive(Debug)]
-pub struct Shadow {
+pub(crate) struct Shadow {
     f: File,
     map: HashMap<ShadowConst, RefCell<ConstVal>>,
     std_env: HashMap<String, String>,
@@ -184,13 +191,7 @@ impl Shadow {
         CIType::None
     }
 
-    pub fn new() -> SdResult<()> {
-        let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
-        let out_path = std::env::var("OUT_DIR")?;
-        Self::build(src_path, out_path)
-    }
-
-    pub fn build(src_path: String, out_path: String) -> SdResult<()> {
+    fn build(src_path: String, out_path: String) -> SdResult<()> {
         let out = {
             let path = Path::new(out_path.as_str());
             if !out_path.ends_with('/') {
