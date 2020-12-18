@@ -224,7 +224,6 @@ impl Shadow {
         //write version method
         shadow.write_version()?;
 
-        println!("shadow build success");
         Ok(())
     }
 
