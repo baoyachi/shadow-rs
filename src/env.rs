@@ -6,12 +6,11 @@ use chrono::Local;
 use std::env;
 use std::process::Command;
 
-use std::cell::RefCell;
 use std::collections::HashMap;
 
 #[derive(Default, Debug)]
 pub struct SystemEnv {
-    map: HashMap<ShadowConst, RefCell<ConstVal>>,
+    map: HashMap<ShadowConst, ConstVal>,
 }
 
 const BUILD_OS: ShadowConst = "BUILD_OS";
@@ -24,9 +23,8 @@ const PKG_VERSION: ShadowConst = "PKG_VERSION";
 
 impl SystemEnv {
     fn init(&mut self, std_env: &HashMap<String, String>) -> SdResult<()> {
-        let update_val = |c: ShadowConst, v: String| {
-            if let Some(c) = self.map.get(c) {
-                let mut val = c.borrow_mut();
+        let mut update_val = |c: ShadowConst, v: String| {
+            if let Some(mut val) = self.map.get_mut(c) {
                 val.t = ConstType::Str;
                 val.v = v;
             }
@@ -95,17 +93,15 @@ fn filter_private_registry(lines: Vec<&str>) -> String {
     tree
 }
 
-pub fn new_system_env(
-    std_env: &HashMap<String, String>,
-) -> HashMap<ShadowConst, RefCell<ConstVal>> {
+pub fn new_system_env(std_env: &HashMap<String, String>) -> HashMap<ShadowConst, ConstVal> {
     let mut env = SystemEnv::default();
     env.map.insert(
         BUILD_OS,
-        RefCell::new(ConstVal {
+        ConstVal {
             desc: "display build system os".to_string(),
             v: format!("{}-{}", env::consts::OS, env::consts::ARCH),
             t: ConstType::Str,
-        }),
+        },
     );
 
     env.map.insert(
@@ -144,37 +140,39 @@ pub fn new_system_env(
 
 #[derive(Default, Debug)]
 pub struct Project {
-    map: HashMap<ShadowConst, RefCell<ConstVal>>,
+    map: HashMap<ShadowConst, ConstVal>,
 }
 
 const PROJECT_NAME: ShadowConst = "PROJECT_NAME";
 const BUILD_TIME: ShadowConst = "BUILD_TIME";
 const BUILD_RUST_CHANNEL: ShadowConst = "BUILD_RUST_CHANNEL";
 
-pub fn new_project(std_env: &HashMap<String, String>) -> HashMap<ShadowConst, RefCell<ConstVal>> {
+pub fn new_project(std_env: &HashMap<String, String>) -> HashMap<ShadowConst, ConstVal> {
     let mut project = Project::default();
     project.map.insert(
         BUILD_TIME,
-        RefCell::new(ConstVal {
+        ConstVal {
             desc: "display project build time".to_string(),
             v: Local::now().format("%Y-%m-%d %H:%M:%S").to_string(),
             t: ConstType::Str,
-        }),
+        },
     );
     project.map.insert(
         BUILD_RUST_CHANNEL,
-        RefCell::new(ConstVal {
+        ConstVal {
             desc: "display project build by rust channel [debug or release]".to_string(),
             v: build_channel().to_string(),
             t: ConstType::Str,
-        }),
+        },
     );
     project
         .map
         .insert(PROJECT_NAME, ConstVal::new("display project name"));
 
-    if let (Some(v), Some(c)) = (std_env.get("CARGO_PKG_NAME"), project.map.get(PROJECT_NAME)) {
-        let mut val = c.borrow_mut();
+    if let (Some(v), Some(mut val)) = (
+        std_env.get("CARGO_PKG_NAME"),
+        project.map.get_mut(PROJECT_NAME),
+    ) {
         val.t = ConstType::Str;
         val.v = v.to_string();
     }

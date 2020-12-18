@@ -3,7 +3,6 @@ use crate::ci::CIType;
 use crate::err::*;
 use chrono::{DateTime, NaiveDateTime, Utc};
 use git2::Reference;
-use std::cell::RefCell;
 use std::collections::HashMap;
 
 const BRANCH: ShadowConst = "BRANCH";
@@ -15,34 +14,37 @@ const COMMIT_EMAIL: ShadowConst = "COMMIT_EMAIL";
 
 #[derive(Default, Debug)]
 pub struct Git {
-    map: HashMap<ShadowConst, RefCell<ConstVal>>,
+    map: HashMap<ShadowConst, ConstVal>,
     ci_type: CIType,
 }
 
 impl Git {
+    fn update_val(&mut self, c: ShadowConst, v: String) {
+        if let Some(val) = self.map.get_mut(c) {
+            *val = ConstVal {
+                desc: val.desc.clone(),
+                v,
+                t: ConstType::OptStr,
+            }
+        }
+    }
+
     fn init(&mut self, path: &std::path::Path, std_env: &HashMap<String, String>) -> SdResult<()> {
         let repo = git2::Repository::discover(path)?;
         let reference = repo.head()?;
 
-        let update_val = |c: ShadowConst, v: String| {
-            if let Some(c) = self.map.get(c) {
-                let mut val = c.borrow_mut();
-                val.t = ConstType::Str;
-                val.v = v;
-            }
-        };
-
-        update_val(BRANCH, self.get_branch(&reference, std_env));
+        let branch = self.get_branch(&reference, &std_env);
+        self.update_val(BRANCH, branch);
 
         if let Some(v) = reference.target() {
             let commit = v.to_string();
-            update_val(COMMIT_HASH, commit.clone());
+            self.update_val(COMMIT_HASH, commit.clone());
             let mut short_commit = commit.as_str();
 
             if commit.len() > 8 {
                 short_commit = &short_commit[0..8];
             }
-            update_val(SHORT_COMMIT, short_commit.to_string());
+            self.update_val(SHORT_COMMIT, short_commit.to_string());
         }
 
         let commit = reference.peel_to_commit()?;
@@ -50,15 +52,15 @@ impl Git {
         let time_stamp = commit.time().seconds().to_string().parse::<i64>()?;
         let dt = NaiveDateTime::from_timestamp(time_stamp, 0);
         let date_time = DateTime::<Utc>::from_utc(dt, Utc);
-        update_val(COMMIT_DATE, date_time.to_rfc3339());
+        self.update_val(COMMIT_DATE, date_time.to_rfc3339());
 
         let author = commit.author();
         if let Some(v) = author.email() {
-            update_val(COMMIT_EMAIL, v.to_string());
+            self.update_val(COMMIT_EMAIL, v.to_string());
         }
 
         if let Some(v) = author.name() {
-            update_val(COMMIT_AUTHOR, v.to_string());
+            self.update_val(COMMIT_AUTHOR, v.to_string());
         }
 
         Ok(())
@@ -91,7 +93,7 @@ pub fn new_git(
     path: &std::path::Path,
     ci: CIType,
     std_env: &HashMap<String, String>,
-) -> HashMap<ShadowConst, RefCell<ConstVal>> {
+) -> HashMap<ShadowConst, ConstVal> {
     let mut git = Git {
         map: Default::default(),
         ci_type: ci,

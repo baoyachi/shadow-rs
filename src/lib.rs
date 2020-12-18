@@ -122,7 +122,6 @@ use env::*;
 use git::*;
 
 use crate::ci::CIType;
-use std::cell::RefCell;
 use std::collections::HashMap;
 use std::env as std_env;
 use std::fs::File;
@@ -159,7 +158,7 @@ pub fn new() -> SdResult<()> {
 #[derive(Debug)]
 pub(crate) struct Shadow {
     f: File,
-    map: HashMap<ShadowConst, RefCell<ConstVal>>,
+    map: HashMap<ShadowConst, ConstVal>,
     std_env: HashMap<String, String>,
 }
 
@@ -245,8 +244,7 @@ impl Shadow {
         Ok(())
     }
 
-    fn write_const(&mut self, shadow_const: ShadowConst, val: RefCell<ConstVal>) -> SdResult<()> {
-        let val = val.into_inner();
+    fn write_const(&mut self, shadow_const: ShadowConst, val: ConstVal) -> SdResult<()> {
         let desc = format!("/// {}", val.desc);
 
         let (t, v) = match val.t {
