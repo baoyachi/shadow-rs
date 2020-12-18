@@ -267,7 +267,7 @@ impl Shadow {
     }
 
     fn write_version(&mut self) -> SdResult<()> {
-        const desc: &str = "/// The common version method. It's so easy to use this method";
+        let desc: &str = "/// The common version method. It's so easy to use this method";
 
         const VERSION_FN: &str = r##"pub fn version() -> String {
     format!(r#"
