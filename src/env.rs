@@ -19,6 +19,7 @@ const RUST_VERSION: ShadowConst = "RUST_VERSION";
 const RUST_CHANNEL: ShadowConst = "RUST_CHANNEL";
 const CARGO_VERSION: ShadowConst = "CARGO_VERSION";
 const CARGO_TREE: ShadowConst = "CARGO_TREE";
+const CARGO_METADATA: ShadowConst = "CARGO_METADATA";
 const PKG_VERSION: ShadowConst = "PKG_VERSION";
 
 impl SystemEnv {
@@ -57,6 +58,16 @@ impl SystemEnv {
                 let lines = filter_private_registry(input[index..].split('\n').collect());
                 update_val(CARGO_TREE, lines);
             }
+        }
+
+        if let Ok(out) = Command::new("cargo")
+            .args(&["metadata", "--format-version", "1"])
+            .output()
+        {
+            update_val(
+                CARGO_METADATA,
+                String::from_utf8(out.stdout)?.trim().to_string(),
+            );
         }
 
         if let Some(v) = std_env.get("CARGO_PKG_VERSION") {
@@ -113,6 +124,11 @@ pub fn new_system_env(
     env.map.insert(
         CARGO_TREE,
         ConstVal::new("display build cargo dependencies.It's used by rust version 1.44.0"),
+    );
+
+    env.map.insert(
+        CARGO_METADATA,
+        ConstVal::new("display build cargo dependencies by metadata.It's use by exec command `cargo metadata`"),
     );
 
     env.map.insert(

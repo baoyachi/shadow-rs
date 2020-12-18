@@ -9,7 +9,7 @@ build = "build.rs"
 
 [dependencies]
 clap = "2.33.3"
-shadow-rs = "0.4.0"
+shadow-rs = { path="./../../shadow-rs" }
 
 [build-dependencies]
-shadow-rs = "0.4.0"
+shadow-rs = { path="./../../shadow-rs" }
