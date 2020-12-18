@@ -220,6 +220,10 @@ impl Shadow {
         shadow.map = map;
 
         shadow.gen_const()?;
+
+        //write version method
+        shadow.write_version()?;
+
         println!("shadow build success");
         Ok(())
     }
@@ -260,6 +264,22 @@ impl Shadow {
         );
         writeln!(&self.f, "{}", desc)?;
         writeln!(&self.f, "{}\n", define)?;
+        Ok(())
+    }
+
+    fn write_version(&mut self) -> SdResult<()> {
+        const desc: &str = "/// The common version method. It's so easy to use this method";
+
+        const VERSION_FN: &str = r##"pub fn version() -> String {
+    format!(r#"
+branch:{}
+commit_hash:{}
+build_time:{}
+build_env:{},{}"#, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST_CHANNEL
+    )
+}"##;
+        writeln!(&self.f, "{}", desc)?;
+        writeln!(&self.f, "{}\n", VERSION_FN)?;
         Ok(())
     }
 }
