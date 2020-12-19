@@ -58,14 +58,16 @@ impl SystemEnv {
             }
         }
 
-        if let Ok(out) = Command::new("cargo")
+        if let Ok(_out) = Command::new("cargo")
             .args(&["metadata", "--format-version", "1"])
             .output()
         {
-            update_val(
-                CARGO_METADATA,
-                String::from_utf8(out.stdout)?.trim().to_string(),
-            );
+            //TODO completed
+
+            // update_val(
+            //     CARGO_METADATA,
+            //     String::from_utf8(out.stdout)?.trim().to_string(),
+            // );
         }
 
         if let Some(v) = std_env.get("CARGO_PKG_VERSION") {
