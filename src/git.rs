@@ -24,7 +24,7 @@ impl Git {
             *val = ConstVal {
                 desc: val.desc.clone(),
                 v,
-                t: ConstType::OptStr,
+                t: ConstType::Str,
             }
         }
     }
