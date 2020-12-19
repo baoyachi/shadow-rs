@@ -290,6 +290,13 @@ mod tests {
     #[test]
     fn test_build() -> SdResult<()> {
         Shadow::build("./".into(), "./".into())?;
+        mod test_build {
+            include!("./../shadow.rs");
+        }
+        //TODO iterator test_build const
+
+        // assert!(!test_build::BRANCH.is_empty());
+
         Ok(())
     }
 }
