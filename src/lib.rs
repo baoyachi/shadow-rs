@@ -291,7 +291,7 @@ mod tests {
     fn test_build() -> SdResult<()> {
         Shadow::build("./".into(), "./".into())?;
         mod test_build {
-            include!("./../shadow.rs");
+            include!("../shadow.rs");
         }
         //TODO iterator test_build const
 
