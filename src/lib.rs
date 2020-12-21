@@ -270,7 +270,8 @@ impl Shadow {
     fn write_version(&mut self) -> SdResult<()> {
         let desc: &str = "/// The common version method. It's so easy to use this method";
 
-        const VERSION_FN: &str = r##"pub fn version() -> String {
+        const VERSION_FN: &str = r##"#[warn(dead_code)]
+pub fn version() -> String {
     format!(r#"
 branch:{}
 commit_hash:{}

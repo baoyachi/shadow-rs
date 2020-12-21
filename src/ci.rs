@@ -2,8 +2,8 @@
 pub enum CIType {
     Github,
     Gitlab,
-    Jenkins,
-    Travis,
+    // Jenkins,
+    // Travis,
     None,
 }
 
@@ -18,8 +18,8 @@ impl ToString for CIType {
         match self {
             CIType::Github => "github".into(),
             CIType::Gitlab => "gitlab".into(),
-            CIType::Jenkins => "jenkins".into(),
-            CIType::Travis => "travis".into(),
+            // CIType::Jenkins => "jenkins".into(),
+            // CIType::Travis => "travis".into(),
             _ => "none".into(),
         }
     }
