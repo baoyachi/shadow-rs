@@ -5,25 +5,9 @@ extern crate shadow_rs;
 
 shadow!(build);
 
-pub fn version() -> String {
-    format!(
-        r#"
-branch:{}
-commit-hash:{}
-build_time:{}
-build_env:{},{}
-"#,
-        build::BRANCH,
-        build::SHORT_COMMIT,
-        build::BUILD_TIME,
-        build::RUST_VERSION,
-        build::RUST_CHANNEL,
-    )
-}
-
 fn main() {
     App::new("example_shadow")
-        .version(version().as_str())
+        .version(build::version().as_str())
         .get_matches(); //USAGE: ./example_shadow -V
 
     println!("branch:{}", build::BRANCH);

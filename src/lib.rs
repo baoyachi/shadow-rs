@@ -49,10 +49,10 @@
 //! build = "build.rs"
 //!
 //! [dependencies]
-//! shadow-rs = "0.4"
+//! shadow-rs = "0.5"
 //!
 //! [build-dependencies]
-//! shadow-rs = "0.4"
+//! shadow-rs = "0.5"
 //! ```
 //!
 //! ## step 2
@@ -60,7 +60,7 @@
 //!
 //! ```ignore
 //! fn main() -> shadow_rs::SdResult<()> {
-//!    shadow_rs::Shadow::new()
+//!    shadow_rs::new()
 //! }
 //! ```
 //!
@@ -82,6 +82,7 @@
 //!
 //! ```ignore
 //! fn main(){
+//!    println!("{}",build::version()); //print version() method
 //!    println!("{}",build::BRANCH); //master
 //!    println!("{}",build::SHORT_COMMIT);//8405e28e
 //!    println!("{}",build::COMMIT_HASH);//8405e28e64080a09525a6cf1b07c22fcaf71a5c5
@@ -110,10 +111,10 @@
 //!
 
 mod build;
-pub mod channel;
+mod channel;
 mod ci;
 mod env;
-pub mod err;
+mod err;
 mod git;
 
 use build::*;
@@ -122,15 +123,15 @@ use env::*;
 use git::*;
 
 use crate::ci::CIType;
-use std::cell::RefCell;
 use std::collections::HashMap;
 use std::env as std_env;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
+pub use channel::BuildRustChannel;
 use chrono::Local;
-pub use err::{SdResult, ShadowError};
+pub use err::SdResult;
 
 const SHADOW_RS: &str = "shadow.rs";
 
@@ -149,10 +150,16 @@ macro_rules! shadow {
     };
 }
 
+pub fn new() -> SdResult<()> {
+    let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
+    let out_path = std::env::var("OUT_DIR")?;
+    Shadow::build(src_path, out_path)
+}
+
 #[derive(Debug)]
-pub struct Shadow {
+pub(crate) struct Shadow {
     f: File,
-    map: HashMap<ShadowConst, RefCell<ConstVal>>,
+    map: HashMap<ShadowConst, ConstVal>,
     std_env: HashMap<String, String>,
 }
 
@@ -184,13 +191,7 @@ impl Shadow {
         CIType::None
     }
 
-    pub fn new() -> SdResult<()> {
-        let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
-        let out_path = std::env::var("OUT_DIR")?;
-        Self::build(src_path, out_path)
-    }
-
-    pub fn build(src_path: String, out_path: String) -> SdResult<()> {
+    fn build(src_path: String, out_path: String) -> SdResult<()> {
         let out = {
             let path = Path::new(out_path.as_str());
             if !out_path.ends_with('/') {
@@ -220,7 +221,10 @@ impl Shadow {
         shadow.map = map;
 
         shadow.gen_const()?;
-        println!("shadow build success");
+
+        //write version method
+        shadow.write_version()?;
+
         Ok(())
     }
 
@@ -244,8 +248,7 @@ impl Shadow {
         Ok(())
     }
 
-    fn write_const(&mut self, shadow_const: ShadowConst, val: RefCell<ConstVal>) -> SdResult<()> {
-        let val = val.into_inner();
+    fn write_const(&mut self, shadow_const: ShadowConst, val: ConstVal) -> SdResult<()> {
         let desc = format!("/// {}", val.desc);
 
         let (t, v) = match val.t {
@@ -261,6 +264,22 @@ impl Shadow {
         );
         writeln!(&self.f, "{}", desc)?;
         writeln!(&self.f, "{}\n", define)?;
+        Ok(())
+    }
+
+    fn write_version(&mut self) -> SdResult<()> {
+        let desc: &str = "/// The common version method. It's so easy to use this method";
+
+        const VERSION_FN: &str = r##"pub fn version() -> String {
+    format!(r#"
+branch:{}
+commit_hash:{}
+build_time:{}
+build_env:{},{}"#, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST_CHANNEL
+    )
+}"##;
+        writeln!(&self.f, "{}", desc)?;
+        writeln!(&self.f, "{}\n", VERSION_FN)?;
         Ok(())
     }
 }
