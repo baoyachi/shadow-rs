@@ -82,7 +82,7 @@
 //!
 //! ```ignore
 //! fn main(){
-//!    println!("{}",build::version); //print version() method
+//!    println!("{}",build::version()); //print version() method
 //!    println!("{}",build::BRANCH); //master
 //!    println!("{}",build::SHORT_COMMIT);//8405e28e
 //!    println!("{}",build::COMMIT_HASH);//8405e28e64080a09525a6cf1b07c22fcaf71a5c5
