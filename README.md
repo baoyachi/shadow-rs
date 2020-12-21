@@ -40,17 +40,17 @@ In your `cargo.toml` `packgae` with package add with below config
 build = "build.rs"
 
 [dependencies]
-shadow-rs = "0.4"
+shadow-rs = "0.5"
 
 [build-dependencies]
-shadow-rs = "0.4"
+shadow-rs = "0.5"
 ```
 
 ## step 2
 In your project add file `build.rs`,then add with below config 
 ```rust
 fn main() -> shadow_rs::SdResult<()> {
-    shadow_rs::Shadow::new()
+    shadow_rs::new()
 }
 ```
 
@@ -71,6 +71,7 @@ The `build` mod just we use `shadow!(build)` generated.
 
 ```rust
 fn main() {
+    println!("{}",build::version());//print version() method 
     println!("{}",build::BRANCH); //master
     println!("{}",build::SHORT_COMMIT);//8405e28e
     println!("{}",build::COMMIT_HASH);//8405e28e64080a09525a6cf1b07c22fcaf71a5c5
@@ -97,6 +98,7 @@ And you can also use const with [clap](https://github.com/baoyachi/shadow-rs/blo
 ## Support const table
 | const | example |
 | ------ | ------ |
+| version() | master/develop |
 | BRANCH | master/develop |
 | SHORT_COMMIT | 8405e28e |  
 | COMMIT_HASH | 8405e28e64080a09525a6cf1b07c22fcaf71a5c5 |  

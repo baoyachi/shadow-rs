@@ -49,10 +49,10 @@
 //! build = "build.rs"
 //!
 //! [dependencies]
-//! shadow-rs = "0.4"
+//! shadow-rs = "0.5"
 //!
 //! [build-dependencies]
-//! shadow-rs = "0.4"
+//! shadow-rs = "0.5"
 //! ```
 //!
 //! ## step 2
@@ -60,7 +60,7 @@
 //!
 //! ```ignore
 //! fn main() -> shadow_rs::SdResult<()> {
-//!    shadow_rs::Shadow::new()
+//!    shadow_rs::new()
 //! }
 //! ```
 //!
@@ -82,6 +82,7 @@
 //!
 //! ```ignore
 //! fn main(){
+//!    println!("{}",build::version); //print version() method
 //!    println!("{}",build::BRANCH); //master
 //!    println!("{}",build::SHORT_COMMIT);//8405e28e
 //!    println!("{}",build::COMMIT_HASH);//8405e28e64080a09525a6cf1b07c22fcaf71a5c5
