@@ -1,4 +1,3 @@
-use std::cell::RefCell;
 use std::collections::HashMap;
 
 pub type ShadowConst = &'static str;
@@ -15,12 +14,12 @@ pub struct ConstVal {
 }
 
 impl ConstVal {
-    pub fn new<S: Into<String>>(desc: S) -> RefCell<ConstVal> {
-        RefCell::new(ConstVal {
+    pub fn new<S: Into<String>>(desc: S) -> ConstVal {
+        ConstVal {
             desc: desc.into(),
             v: "".to_string(),
             t: ConstType::OptStr,
-        })
+        }
     }
 }
 
