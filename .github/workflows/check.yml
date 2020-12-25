@@ -28,7 +28,8 @@ jobs:
         run: cargo fix
       - name: Check with clippy
         if: runner.os == 'Windows'
-        run: set RUSTFLAGS="-D warnings";cargo clippy --all
+        run: cargo clippy --all
+        else run: RUSTFLAGS="-D warnings" cargo clippy --all
       - name: Build Release
         run: cargo build --release
       - name: Run tests
