@@ -26,10 +26,12 @@ jobs:
         run: cargo fmt --all -- --check
       - name: Check fix
         run: cargo fix
-      - name: Check with clippy
+      - name: Check with Windows clippy
         if: runner.os == 'Windows'
         run: cargo clippy --all
-        else run: RUSTFLAGS="-D warnings" cargo clippy --all
+      - name: Check with clippy
+        if: runner.os != 'Windows'
+        run: RUSTFLAGS="-D warnings" cargo clippy --all
       - name: Build Release
         run: cargo build --release
       - name: Run tests
