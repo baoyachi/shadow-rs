@@ -151,9 +151,19 @@ macro_rules! shadow {
 }
 
 pub fn new() -> SdResult<()> {
+    change_detection();
     let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
     let out_path = std::env::var("OUT_DIR")?;
     Shadow::build(src_path, out_path)
+}
+
+fn change_detection() {
+    git_change_detection();
+}
+
+/// check the git info is changed, trigger rerun.
+fn git_change_detection() {
+    println!("cargo:rerun-if-changed=.git/objects");
 }
 
 #[derive(Debug)]
