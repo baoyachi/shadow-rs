@@ -1,7 +1,7 @@
 use crate::build::{ConstType, ConstVal, ShadowConst};
 use crate::ci::CIType;
 use crate::err::*;
-use chrono::{DateTime, NaiveDateTime, Utc};
+use chrono::{DateTime, Local, NaiveDateTime, Utc};
 use git2::Reference;
 use std::collections::HashMap;
 
@@ -52,7 +52,11 @@ impl Git {
         let time_stamp = commit.time().seconds().to_string().parse::<i64>()?;
         let dt = NaiveDateTime::from_timestamp(time_stamp, 0);
         let date_time = DateTime::<Utc>::from_utc(dt, Utc);
-        self.update_val(COMMIT_DATE, date_time.to_rfc3339());
+        let date_time: DateTime<Local> = DateTime::from(date_time);
+        self.update_val(
+            COMMIT_DATE,
+            date_time.format("%Y-%m-%d %H:%M:%S").to_string(),
+        );
 
         let author = commit.author();
         if let Some(v) = author.email() {
