@@ -257,7 +257,8 @@ impl Shadow {
         };
 
         let define = format!(
-            "pub const {} :{} = r#\"{}\"#;",
+            "#[allow(dead_code)]\n\
+            pub const {} :{} = r#\"{}\"#;",
             shadow_const.to_ascii_uppercase(),
             t,
             v
@@ -270,7 +271,7 @@ impl Shadow {
     fn write_version(&mut self) -> SdResult<()> {
         let desc: &str = "/// The common version method. It's so easy to use this method";
 
-        const VERSION_FN: &str = r##"#[warn(dead_code)]
+        const VERSION_FN: &str = r##"#[allow(dead_code)]
 pub fn version() -> String {
     format!(r#"
 branch:{}
