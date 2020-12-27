@@ -25,7 +25,7 @@ jobs:
       - name: Check format
         run: cargo fmt --all -- --check
       - name: Check fix
-        run: cargo fix
+        run: cargo fix && cargo fix
       - name: Check with Windows clippy
         if: runner.os == 'Windows'
         run: cargo clippy --all
@@ -52,8 +52,8 @@ jobs:
         run: RUSTFLAGS="-D warnings" cargo clippy --all
         working-directory: ./example_shadow
 
-      - name: Build examples
-        run: cargo build --all --verbose --release
+      - name: Run examples
+        run: cargo run --release
         working-directory: ./example_shadow
 
       # build on nightly
