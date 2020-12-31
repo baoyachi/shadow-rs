@@ -156,6 +156,18 @@ pub fn new() -> SdResult<()> {
     Shadow::build(src_path, out_path)
 }
 
+/// Get current project is debug mode.
+///
+/// It's very useful. Debug mode is usually used for debugging information.
+/// For example, log printing, environment variable switch
+///
+/// The default is true
+///
+/// If we compile with `cargo build -- release`. Its return value is false.
+pub fn is_debug() -> bool {
+    channel::build_channel() == BuildRustChannel::Debug
+}
+
 #[derive(Debug)]
 pub(crate) struct Shadow {
     f: File,
