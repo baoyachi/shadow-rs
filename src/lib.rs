@@ -174,7 +174,7 @@ pub fn new() -> SdResult<()> {
 ///
 /// The default value is `true`.
 ///
-/// If we compile with `cargo build -- release`. It's return value is `false`.
+/// If we compile with `cargo build --release`. It's return value is `false`.
 pub fn is_debug() -> bool {
     channel::build_channel() == BuildRustChannel::Debug
 }
