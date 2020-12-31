@@ -10,7 +10,7 @@ fn main() {
         .version(build::version().as_str())
         .get_matches(); //USAGE: ./example_shadow -V
 
-    println!("debug:{}",shadow_rs::is_debug());//get build mode
+    println!("debug:{}", shadow_rs::is_debug()); //get build mode
 
     println!("branch:{}", build::BRANCH);
     println!("commit_id:{}", build::COMMIT_HASH);
