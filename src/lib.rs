@@ -82,6 +82,8 @@
 //!
 //! ```ignore
 //! fn main(){
+//!    println!("{}",shadow_rs::is_debug());//get build mode. cargo build --release return false.normally return true.
+//!
 //!    println!("{}",build::version()); //print version() method
 //!    println!("{}",build::BRANCH); //master
 //!    println!("{}",build::SHORT_COMMIT);//8405e28e
@@ -167,7 +169,7 @@ pub fn new() -> SdResult<()> {
     Shadow::build(src_path, out_path)
 }
 
-/// Get current project is debug mode.
+/// Get current project build mode.
 ///
 /// It's very useful. Debug mode is usually used for debugging information.
 /// For example, log printing, environment variable switch.
