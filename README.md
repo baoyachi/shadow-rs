@@ -95,7 +95,7 @@ fn main() {
 ```
 
 ## Clap example 
-And you can also use const with [clap](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs#L24_L26).
+And you can also use const with [clap](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs).
 
 ## Support const table
 | const | example |

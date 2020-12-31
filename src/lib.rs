@@ -106,7 +106,7 @@
 //!```
 //!
 //! ## Clap example
-//! And you can also use const with [clap](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs#L25_L27).
+//! And you can also use const with [clap](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs).
 //!
 //! For the user guide and futher documentation, please read
 //! [The shadow-rs document](https://github.com/baoyachi/shadow-rs).
