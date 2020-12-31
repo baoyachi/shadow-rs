@@ -150,6 +150,17 @@ macro_rules! shadow {
     };
 }
 
+/// It's shadow-rs Initialization entry.
+///
+/// In build.rs `main()` method call for this method.
+///
+/// # Examples
+///
+/// ```ignore
+/// fn main() -> shadow_rs::SdResult<()> {
+///    shadow_rs::new()
+/// }
+/// ```
 pub fn new() -> SdResult<()> {
     let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
     let out_path = std::env::var("OUT_DIR")?;
@@ -159,11 +170,11 @@ pub fn new() -> SdResult<()> {
 /// Get current project is debug mode.
 ///
 /// It's very useful. Debug mode is usually used for debugging information.
-/// For example, log printing, environment variable switch
+/// For example, log printing, environment variable switch.
 ///
-/// The default is true
+/// The default value is `true`.
 ///
-/// If we compile with `cargo build -- release`. Its return value is false.
+/// If we compile with `cargo build -- release`. It's return value is `false`.
 pub fn is_debug() -> bool {
     channel::build_channel() == BuildRustChannel::Debug
 }
