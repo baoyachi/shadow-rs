@@ -1,4 +1,4 @@
-[shadow-rs][docsrs]: A build script write by Rust 
+[shadow-rs][docsrs]: build-time information stored in your binary
 ========================================
 ![shadow](./shadow-rs.png)
 
@@ -17,25 +17,26 @@
 [depstatus]:https://deps.rs/repo/github/baoyachi/shadow-rs
 
 
-A build script tool compile project much information,version info,dependence info.Like shadow,if compiled,never change.forever follow your project.
+`shadow-rs` allows you to recall properties of the build process and environment at runtime, including:
 
-When you published a rust binary. Sometimes you need to know the dependencies of the current project.
-* Git version information
-* which version of rust compiled. 
-* Is it a debug or release version of rust.
-* Cargo dependent `cargo.lock` detail crates info.
-* ...
+* `Cargo.toml` project version
+* Dependency information
+* The Git commit that produced the build artifact (binary)
+* What version of the rust toolchain was used in compilation
+* The build variant, e.g. `debug` or `release`
+* (And more)
 
-We can use this information to quickly trace the history version of the project.
-n
-This project can do this things that can help you quick get above information. Let's configuration in your project.
+You can use this tool to check in production exactly where a binary came from and how it was built.
 
-## example
-You can also see [shadow_example](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow) how to configuration.
+# Full Examples
+* Check out the [shadow_example](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow) for a simple demonstration of how `shadow-rs` might be used to provide build-time information at run-time.
 
-## step 1
-In your `cargo.toml` `packgae` with package add with below config 
-```toml
+# Setup Guide
+
+### 1) Modify `Cargo.toml` fields
+Modify your `Cargo.toml` like so:
+
+```TOML
 [package]
 build = "build.rs"
 
@@ -46,17 +47,19 @@ shadow-rs = "0.5"
 shadow-rs = "0.5"
 ```
 
-## step 2
-In your project add file `build.rs`,then add with below config 
+### 2) Create `build.rs` file
+
+Now in the root of your project (same directory as `Cargo.toml`) add a file `build.rs`:
+
 ```rust
 fn main() -> shadow_rs::SdResult<()> {
     shadow_rs::new()
 }
 ```
 
-## step 3
-In your project find `bin` rust file.It's usually `main.rs`, you can find file with `Cargo.toml`,then add with below config
-The `shadow!(build)` with `build` config,add Rust build mod in your project. You can also replace it(build) with other name.
+### 3) Integrate Shadow
+
+In your root rust file (e.g. `main.rs`, or `lib.rs`):
 
 ```rust
 #[macro_use]
@@ -65,37 +68,37 @@ extern crate shadow_rs;
 shadow!(build);
 ```
 
-## step 4
-Then you can use const that's shadow build it(main.rs).
-The `build` mod just we use `shadow!(build)` generated. 
+**Notice that the `shadow!` macro is provided the identifier `build`.  You can now use this identifier to access build-time information.**
+
+### 4) Done. Use Shadow.
 
 ```rust
 fn main() {
-    println!("{}",shadow_rs::is_debug());//get build mode. cargo build --release return false.normally return true.
-
-    println!("{}",build::version());//print version() method 
-    println!("{}",build::BRANCH); //master
-    println!("{}",build::SHORT_COMMIT);//8405e28e
-    println!("{}",build::COMMIT_HASH);//8405e28e64080a09525a6cf1b07c22fcaf71a5c5
-    println!("{}",build::COMMIT_DATE);//2020-08-16T06:22:24+00:00
-    println!("{}",build::COMMIT_AUTHOR);//baoyachi
-    println!("{}",build::COMMIT_EMAIL);//xxx@gmail.com
-
-    println!("{}",build::BUILD_OS);//macos-x86_64
-    println!("{}",build::RUST_VERSION);//rustc 1.45.0 (5c1f21c3b 2020-07-13)
-    println!("{}",build::RUST_CHANNEL);//stable-x86_64-apple-darwin (default)
-    println!("{}",build::CARGO_VERSION);//cargo 1.45.0 (744bd1fbb 2020-06-15)
-    println!("{}",build::PKG_VERSION);//0.3.13
-    println!("{}",build::CARGO_TREE); //like command:cargo tree
-
-    println!("{}",build::PROJECT_NAME);//shadow-rs
-    println!("{}",build::BUILD_TIME);//2020-08-16 14:50:25
-    println!("{}",build::BUILD_RUST_CHANNEL);//debug
+  println!("{}", shadow_rs::is_debug());      // check if this is a debug build
+  
+  println!("{}", build::version());           // the version (TODO: clarify difference between ::version() and ::PKG_VERSION)
+  println!("{}", build::BRANCH);              // the branch, e.g. 'master'
+  println!("{}", build::SHORT_COMMIT);        // short commit hash, e.g. '8405e28e'
+  println!("{}", build::COMMIT_HASH);         // full commit hash, e.g. '8405e28e64080a09525a6cf1b07c22fcaf71a5c5'
+  println!("{}", build::COMMIT_DATE);         // commit date, e.g. '2020-08-16T06:22:24+00:00'
+  println!("{}", build::COMMIT_AUTHOR);       // commit author, e.g. 'baoyachi'
+  println!("{}", build::COMMIT_EMAIL);        // commit email, e.g. 'example@gmail.com'
+  
+  println!("{}", build::BUILD_OS);            // the OS that built the binary, e.g. 'macos-x86_64'
+  println!("{}", build::RUST_VERSION);        // rustc version e.g. 'rustc 1.45.0 (5c1f21c3b 2020-07-13)'
+  println!("{}", build::RUST_CHANNEL);        // rust toolchain e.g. 'stable-x86_64-apple-darwin (default)'
+  println!("{}", build::CARGO_VERSION);       // cargo version e.g. 'cargo 1.45.0 (744bd1fbb 2020-06-15)'
+  println!("{}", build::PKG_VERSION);         // e.g. '0.3.13'
+  println!("{}", build::CARGO_TREE);          // e.g. the output of '$ cargo tree'
+  
+  println!("{}", build::PROJECT_NAME);        // your project name, e.g. 'shadow-rs'
+  println!("{}", build::BUILD_TIME);          // time when build occurred (TODO: start? or end?), e.g. '2020-08-16 14:50:25'
+  println!("{}", build::BUILD_RUST_CHANNEL);  // e.g. 'debug'
 }
 ```
 
-## Clap example 
-And you can also use const with [clap](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs).
+## Clap Example 
+And you can also use `shadow-rs` with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs).
 
 ## Support const table
 | const | example |
@@ -117,13 +120,39 @@ And you can also use const with [clap](https://github.com/baoyachi/shadow-rs/blo
 | BUILD_TIME | 2020-08-16 14:50:25 |  
 | BUILD_RUST_CHANNEL | debug/release |  
 
-If you have any question,you can create [issue](https://github.com/baoyachi/shadow-rs/issues/new).
+If you have any questions, please create an [issue](https://github.com/baoyachi/shadow-rs/issues/new) so we may improve the documentation where it may be unclear.
 
-## who use shadow-rs
-If you are using `shadow-rs`,please tell me.Or you can make a notes here,if you like:[collection use](https://github.com/baoyachi/shadow-rs/issues/19).
+## People using Shadow
+If you are using `shadow-rs`, please tell me! Or instead, consider making a note here: [Shadow Users Collection](https://github.com/baoyachi/shadow-rs/issues/19).
 
 <table>
   <tr>
     <td align="center"><a href="https://github.com/nushell/nushell"><img src="https://avatars3.githubusercontent.com/u/50749515?s=200&v=4" width="100px;" alt="nushell"/><br /><sub><b>nushell</b></sub></a><br /></td>
   </tr>
 </table>
+
+# License
+
+## MIT License
+
+```
+Copyright (c) 2020 baoyachi
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
