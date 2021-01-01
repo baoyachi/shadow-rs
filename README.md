@@ -1,6 +1,8 @@
-[shadow-rs][https://docs.rs/shadow-rs]: build-time information stored in your binary
+[shadow-rs][docsrs]:: build-time information stored in your binary
 ========================================
 ![shadow](./shadow-rs.png)
+
+[docsrs]: https://docs.rs/shadow-rs
 
 [![Chrono GitHub Actions](https://github.com/baoyachi/shadow-rs/workflows/build/badge.svg)](https://github.com/baoyachi/shadow-rs/actions?query=workflow%3Abuild)
 [![Crates.io](https://img.shields.io/crates/v/shadow-rs.svg)](https://crates.io/crates/shadow-rs)
@@ -69,11 +71,11 @@ shadow!(build);
 fn main() {
   println!("{}", shadow_rs::is_debug());      // check if this is a debug build
   
-  println!("{}", build::version());           // the version (TODO: clarify difference between ::version() and ::PKG_VERSION)
+  println!("{}", build::version());           // the version (description binary detail information)
   println!("{}", build::BRANCH);              // the branch, e.g. 'master'
   println!("{}", build::SHORT_COMMIT);        // short commit hash, e.g. '8405e28e'
   println!("{}", build::COMMIT_HASH);         // full commit hash, e.g. '8405e28e64080a09525a6cf1b07c22fcaf71a5c5'
-  println!("{}", build::COMMIT_DATE);         // commit date, e.g. '2020-08-16T06:22:24+00:00'
+  println!("{}", build::COMMIT_DATE);         // commit date, e.g. '2020-08-16 11:52:47'
   println!("{}", build::COMMIT_AUTHOR);       // commit author, e.g. 'baoyachi'
   println!("{}", build::COMMIT_EMAIL);        // commit email, e.g. 'example@gmail.com'
   
@@ -85,7 +87,7 @@ fn main() {
   println!("{}", build::CARGO_TREE);          // e.g. the output of '$ cargo tree'
   
   println!("{}", build::PROJECT_NAME);        // your project name, e.g. 'shadow-rs'
-  println!("{}", build::BUILD_TIME);          // time when build occurred (TODO: start? or end?), e.g. '2020-08-16 14:50:25'
+  println!("{}", build::BUILD_TIME);          // time when start build occurred, e.g. '2020-08-16 14:50:25'
   println!("{}", build::BUILD_RUST_CHANNEL);  // e.g. 'debug'
 }
 ```

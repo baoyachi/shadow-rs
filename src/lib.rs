@@ -1,9 +1,18 @@
-//! `shadow-rs` is a build script write by Rust
+//! `shadow-rs` is a build-time information stored in your binary
 //!
-//! It's can record compiled project much information.
-//! Like version info,dependence info.Like shadow,if compiled,never change.forever follow your project.
+//! It's allows you to recall properties of the build process and environment at runtime, including:
 //!
-//! Generated rust const by exec:`cargo build`
+//! `Cargo.toml` project version
+//! * Dependency information
+//! * The Git commit that produced the build artifact (binary)
+//! * What version of the rust toolchain was used in compilation
+//! * The build variant, e.g. `debug` or `release`
+//! * (And more)
+//!
+//! You can use this tool to check in production exactly where a binary came from and how it was built.
+//!
+//! # Full Examples
+//! * Check out the [shadow_example](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow) for a simple demonstration of how `shadow-rs` might be used to provide build-time information at run-time.
 //!
 //! # Example
 //!
@@ -39,10 +48,10 @@
 //! pub const COMMIT_HASH :&str = "386741540d73c194a3028b96b92fdeb53ca2788a";
 //! pub const PKG_VERSION :&str = "0.3.13";
 //! ```
-//! # Quick Start
+//! # Setup Guide
 //!
-//! ## step 1
-//! In your `cargo.toml` `packgae` with package add with below config
+//! ### 1) Modify `Cargo.toml` fields
+//! Modify your `Cargo.toml` like so:
 //!
 //! ```toml
 //! [package]
@@ -55,8 +64,8 @@
 //! shadow-rs = "0.5"
 //! ```
 //!
-//! ## step 2
-//! In your project add file `build.rs`,then add with below config
+//! ### 2) Create `build.rs` file
+//! Now in the root of your project (same directory as `Cargo.toml`) add a file `build.rs`:
 //!
 //! ```ignore
 //! fn main() -> shadow_rs::SdResult<()> {
@@ -64,9 +73,8 @@
 //! }
 //! ```
 //!
-//! ## step 3
-//! In your project find `bin` rust file.It's usually `main.rs`, you can find file with `Cargo.toml`,then add with below config
-//! The `shadow!(build)` with `build` config,add Rust build mod in your project. You can also replace it(build) with other name.
+//! ### 3) Integrate Shadow
+//! In your root rust file (e.g. `main.rs`, or `lib.rs`):
 //!
 //! ```ignore
 //! #[macro_use]
@@ -74,8 +82,9 @@
 //!
 //! shadow!(build);
 //! ```
+//! **Notice that the `shadow!` macro is provided the identifier `build`.  You can now use this identifier to access build-time information.**
 //!
-//! ## step 4
+//! ### 4) Done. Use Shadow.
 //! Then you can use const that's shadow build it(main.rs).
 //!
 //! The `build` mod just we use `shadow!(build)` generated.
@@ -106,7 +115,7 @@
 //!```
 //!
 //! ## Clap example
-//! And you can also use const with [clap](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs).
+//! And you can also use `shadow-rs` with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs).
 //!
 //! For the user guide and futher documentation, please read
 //! [The shadow-rs document](https://github.com/baoyachi/shadow-rs).
@@ -299,10 +308,11 @@ impl Shadow {
         const VERSION_FN: &str = r##"#[allow(dead_code)]
 pub fn version() -> String {
     format!(r#"
+pkg_version:{}
 branch:{}
 commit_hash:{}
 build_time:{}
-build_env:{},{}"#, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST_CHANNEL
+build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST_CHANNEL
     )
 }"##;
         writeln!(&self.f, "{}", desc)?;
