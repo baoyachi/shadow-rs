@@ -7,7 +7,7 @@
 [![Chrono GitHub Actions](https://github.com/baoyachi/shadow-rs/workflows/build/badge.svg)](https://github.com/baoyachi/shadow-rs/actions?query=workflow%3Abuild)
 [![Crates.io](https://img.shields.io/crates/v/shadow-rs.svg)](https://crates.io/crates/shadow-rs)
 [![Docs.rs](https://docs.rs/shadow-rs/badge.svg)](https://docs.rs/shadow-rs)
-[![Download](https://img.shields.io/crates/d/shadow-rs)](https://github.com/baoyachi/shadow-rs)
+[![Download](https://img.shields.io/crates/d/shadow-rs)](https://crates.io/crates/shadow-rs)
 [![DepStatus](https://deps.rs/repo/github/baoyachi/shadow-rs/status.svg)](https://deps.rs/repo/github/baoyachi/shadow-rs)
 [![Gitter](https://badges.gitter.im/shadow-rs/community.svg)](https://gitter.im/shadow-rs/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
