@@ -1,20 +1,13 @@
-[shadow-rs][docsrs]: build-time information stored in your binary
+[shadow-rs][https://docs.rs/shadow-rs]: build-time information stored in your binary
 ========================================
 ![shadow](./shadow-rs.png)
 
-[![Chrono GitHub Actions][gh-image]][gh-checks]
-[![Chrono on crates.io][cratesio-image]][cratesio]
-[![Chrono on docs.rs][docsrs-image]][docsrs]
-[![dependency on depstatus][depstatus-image]][depstatus]
-
-[gh-image]: https://github.com/baoyachi/shadow-rs/workflows/build/badge.svg
-[gh-checks]: https://github.com/baoyachi/shadow-rs/actions?query=workflow%3Abuild
-[cratesio-image]: https://img.shields.io/crates/v/shadow-rs.svg
-[cratesio]: https://crates.io/crates/shadow-rs
-[docsrs-image]: https://docs.rs/shadow-rs/badge.svg
-[docsrs]: https://docs.rs/shadow-rs
-[depstatus-image]: https://deps.rs/repo/github/baoyachi/shadow-rs/status.svg
-[depstatus]:https://deps.rs/repo/github/baoyachi/shadow-rs
+[![Chrono GitHub Actions](https://github.com/baoyachi/shadow-rs/workflows/build/badge.svg)](https://github.com/baoyachi/shadow-rs/actions?query=workflow%3Abuild)
+[![Crates.io](https://img.shields.io/crates/v/shadow-rs.svg)](https://crates.io/crates/shadow-rs)
+[![Docs.rs](https://docs.rs/shadow-rs/badge.svg)](https://docs.rs/shadow-rs)
+[![Download](https://img.shields.io/crates/d/shadow-rs)](https://github.com/baoyachi/shadow-rs)
+[![DepStatus](https://deps.rs/repo/github/baoyachi/shadow-rs/status.svg)](https://deps.rs/repo/github/baoyachi/shadow-rs)
+[![Gitter](https://badges.gitter.im/shadow-rs/community.svg)](https://gitter.im/shadow-rs/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 
 `shadow-rs` allows you to recall properties of the build process and environment at runtime, including:
