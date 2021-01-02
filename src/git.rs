@@ -104,7 +104,7 @@ impl Git {
                 if let Some(v) = std_env.get("CI_COMMIT_TAG") {
                     tag = v.to_string();
                 } else {
-                    branch = gitlab_branch.to_string();
+                    branch = gitlab_branch;
                 }
             }
             CIType::Github => {
