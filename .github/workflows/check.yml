@@ -1,7 +1,10 @@
 name: ci
 on:
   push:
-    branches: [master]
+    branches:
+      - "*"
+    tags:
+      - "*"
 
 jobs:
   build:
