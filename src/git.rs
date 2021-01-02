@@ -100,10 +100,10 @@ impl Git {
                     let ref_branch_prefix: &str = "refs/heads/";
                     let ref_tag_prefix: &str = "refs/tags/";
 
-                    if v.starts_with(ref_branch_prefix) {
-                        branch = v[ref_branch_prefix.len()..].as_ref()
-                    } else if v.starts_with(ref_tag_prefix) {
-                        tag = v[ref_tag_prefix.len()..].as_ref()
+                    if let Some(b) = v.strip_prefix(ref_branch_prefix) {
+                        branch = b
+                    } else if let Some(t) = v.strip_prefix(ref_tag_prefix) {
+                        tag = t
                     }
                 }
             }
