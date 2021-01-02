@@ -352,4 +352,11 @@ mod tests {
         Shadow::build("./".into(), "./".into())?;
         Ok(())
     }
+
+    #[test]
+    fn test_env() {
+        for (k, v) in std::env::vars() {
+            println!("K:{},V:{}", k, v);
+        }
+    }
 }
