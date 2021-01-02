@@ -346,10 +346,13 @@ build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
 
     #[test]
     fn test_build() -> SdResult<()> {
         Shadow::build("./".into(), "./".into())?;
+        let shadow = fs::read_to_string("./shadow.rs")?;
+        println!("{}", shadow);
         Ok(())
     }
 
