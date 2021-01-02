@@ -34,7 +34,7 @@ impl Git {
         let repo = git2::Repository::discover(path)?;
         let reference = repo.head()?;
 
-        let (branch,tag) = self.get_branch_tag(&reference, &std_env);
+        let (branch, tag) = self.get_branch_tag(&reference, &std_env);
         self.update_val(BRANCH, branch);
         self.update_val(TAG, tag);
 
@@ -72,7 +72,11 @@ impl Git {
         Ok(())
     }
 
-    fn get_branch_tag(&self, reference: &Reference<'_>, std_env: &HashMap<String, String>) -> (String, String) {
+    fn get_branch_tag(
+        &self,
+        reference: &Reference<'_>,
+        std_env: &HashMap<String, String>,
+    ) -> (String, String) {
         let mut branch = "";
         let mut tag = "";
         if let Some(v) = reference.shorthand() {
@@ -82,7 +86,9 @@ impl Git {
             CIType::Gitlab => {
                 let gitlab_branch = if let Some(v) = std_env.get("CI_COMMIT_REF_NAME") {
                     v
-                } else { branch };
+                } else {
+                    branch
+                };
                 if let Some(v) = std_env.get("CI_COMMIT_TAG") {
                     tag = v;
                 } else {
@@ -120,8 +126,7 @@ pub fn new_git(
     git.map
         .insert(BRANCH, ConstVal::new("display current branch"));
 
-    git.map
-        .insert(TAG, ConstVal::new("display current tag"));
+    git.map.insert(TAG, ConstVal::new("display current tag"));
 
     git.map
         .insert(COMMIT_HASH, ConstVal::new("display current commit_id"));
