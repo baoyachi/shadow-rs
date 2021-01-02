@@ -73,6 +73,7 @@ fn main() {
   
   println!("{}", build::version());           // the version (description binary detail information)
   println!("{}", build::BRANCH);              // the branch, e.g. 'master'
+  println!("{}", build::TAG);                 // the tag, e.g. 'v1.0.0'
   println!("{}", build::SHORT_COMMIT);        // short commit hash, e.g. '8405e28e'
   println!("{}", build::COMMIT_HASH);         // full commit hash, e.g. '8405e28e64080a09525a6cf1b07c22fcaf71a5c5'
   println!("{}", build::COMMIT_DATE);         // commit date, e.g. '2020-08-16 11:52:47'
@@ -100,6 +101,7 @@ And you can also use `shadow-rs` with [`clap`](https://github.com/baoyachi/shado
 | ------ | ------ |
 | version() | master/develop |
 | BRANCH | master/develop |
+| TAG | v1.0.0 |
 | SHORT_COMMIT | 8405e28e |  
 | COMMIT_HASH | 8405e28e64080a09525a6cf1b07c22fcaf71a5c5 |  
 | COMMIT_DATE | 2020-08-16T06:22:24+00:00 |

@@ -12,6 +12,7 @@ fn main() {
 
     println!("debug:{}", shadow_rs::is_debug()); //get build mode
 
+    println!("tag:{}", build::TAG);
     println!("branch:{}", build::BRANCH);
     println!("commit_id:{}", build::COMMIT_HASH);
     println!("short_commit:{}", build::SHORT_COMMIT);

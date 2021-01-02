@@ -4,6 +4,7 @@ use crate::err::*;
 use chrono::{DateTime, Local, NaiveDateTime, Utc};
 use git2::Reference;
 use std::collections::HashMap;
+use std::process::Command;
 
 pub const BRANCH: ShadowConst = "BRANCH";
 pub(crate) const TAG: ShadowConst = "TAG";
@@ -34,7 +35,7 @@ impl Git {
         let repo = git2::Repository::discover(path)?;
         let reference = repo.head()?;
 
-        let (branch, tag) = self.get_branch_tag(&reference, &std_env);
+        let (branch, tag) = self.get_branch_tag(&reference, &std_env)?;
         self.update_val(BRANCH, branch);
         self.update_val(TAG, tag);
 
@@ -76,23 +77,34 @@ impl Git {
         &self,
         reference: &Reference<'_>,
         std_env: &HashMap<String, String>,
-    ) -> (String, String) {
-        let mut branch = "";
-        let mut tag = "";
+    ) -> SdResult<(String, String)> {
+        let mut branch = String::new();
+        let mut tag = String::new();
+
+        //get branch
         if let Some(v) = reference.shorthand() {
-            branch = v;
+            branch = v.to_string();
         }
+
+        //get HEAD branch
+        if let Ok(out) = Command::new("git")
+            .args(&["tag", "-l", "--contains", "HEAD"])
+            .output()
+        {
+            tag = String::from_utf8(out.stdout)?.trim().to_string();
+        }
+
         match self.ci_type {
             CIType::Gitlab => {
                 let gitlab_branch = if let Some(v) = std_env.get("CI_COMMIT_REF_NAME") {
-                    v
+                    v.to_string()
                 } else {
-                    branch
+                    branch.clone()
                 };
                 if let Some(v) = std_env.get("CI_COMMIT_TAG") {
-                    tag = v;
+                    tag = v.to_string();
                 } else {
-                    branch = gitlab_branch;
+                    branch = gitlab_branch.to_string();
                 }
             }
             CIType::Github => {
@@ -101,16 +113,16 @@ impl Git {
                     let ref_tag_prefix: &str = "refs/tags/";
 
                     if let Some(b) = v.strip_prefix(ref_branch_prefix) {
-                        branch = b
+                        branch = b.to_string()
                     } else if let Some(t) = v.strip_prefix(ref_tag_prefix) {
-                        tag = t
+                        tag = t.to_string()
                     }
                 }
             }
             _ => {}
         }
 
-        (branch.to_string(), tag.to_string())
+        Ok((branch, tag))
     }
 }
 

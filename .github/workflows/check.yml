@@ -38,7 +38,7 @@ jobs:
       - name: Build Release
         run: cargo build --release
       - name: Run tests
-        run: cargo test --all --verbose
+        run: cargo test --all --verbose -- --exact -Z unstable-options --format=json --show-output
 
       # examples
       - name: Check examples format
