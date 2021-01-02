@@ -5,8 +5,8 @@ use chrono::{DateTime, Local, NaiveDateTime, Utc};
 use git2::Reference;
 use std::collections::HashMap;
 
-const BRANCH: ShadowConst = "BRANCH";
-const TAG: ShadowConst = "TAG";
+pub const BRANCH: ShadowConst = "BRANCH";
+pub(crate) const TAG: ShadowConst = "TAG";
 const SHORT_COMMIT: ShadowConst = "SHORT_COMMIT";
 const COMMIT_HASH: ShadowConst = "COMMIT_HASH";
 const COMMIT_DATE: ShadowConst = "COMMIT_DATE";

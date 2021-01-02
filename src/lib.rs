@@ -305,7 +305,7 @@ impl Shadow {
     fn write_version(&mut self) -> SdResult<()> {
         let desc: &str = "/// The common version method. It's so easy to use this method";
 
-        const VERSION_FN: &str = r##"#[allow(dead_code)]
+        const VERSION_BRANCH_FN: &str = r##"#[allow(dead_code)]
 pub fn version() -> String {
     format!(r#"
 pkg_version:{}
@@ -315,8 +315,30 @@ build_time:{}
 build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST_CHANNEL
     )
 }"##;
+
+        const VERSION_TAG_FN: &str = r##"#[allow(dead_code)]
+pub fn version() -> String {
+    format!(r#"
+pkg_version:{}
+tag:{}
+commit_hash:{}
+build_time:{}
+build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST_CHANNEL
+    )
+}"##;
+
+        let version_fn = match self.map.get(TAG) {
+            None => VERSION_BRANCH_FN,
+            Some(tag) => {
+                if !tag.v.is_empty() {
+                    VERSION_TAG_FN
+                } else {
+                    VERSION_BRANCH_FN
+                }
+            }
+        };
         writeln!(&self.f, "{}", desc)?;
-        writeln!(&self.f, "{}\n", VERSION_FN)?;
+        writeln!(&self.f, "{}\n", version_fn)?;
         Ok(())
     }
 }
