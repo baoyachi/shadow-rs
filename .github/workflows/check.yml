@@ -1,7 +1,10 @@
-name: ci
+name: check
 on:
   push:
-    branches: [master]
+    branches:
+      - "*"
+    tags:
+      - "*"
 
 jobs:
   build:
@@ -53,7 +56,7 @@ jobs:
         working-directory: ./example_shadow
 
       - name: Run examples
-        run: cargo run --release
+        run: cargo run --release && target/release/example_shadow -V
         working-directory: ./example_shadow
 
       # build on nightly

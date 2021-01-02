@@ -5,7 +5,8 @@ use chrono::{DateTime, Local, NaiveDateTime, Utc};
 use git2::Reference;
 use std::collections::HashMap;
 
-const BRANCH: ShadowConst = "BRANCH";
+pub const BRANCH: ShadowConst = "BRANCH";
+pub(crate) const TAG: ShadowConst = "TAG";
 const SHORT_COMMIT: ShadowConst = "SHORT_COMMIT";
 const COMMIT_HASH: ShadowConst = "COMMIT_HASH";
 const COMMIT_DATE: ShadowConst = "COMMIT_DATE";
@@ -33,8 +34,9 @@ impl Git {
         let repo = git2::Repository::discover(path)?;
         let reference = repo.head()?;
 
-        let branch = self.get_branch(&reference, &std_env);
+        let (branch, tag) = self.get_branch_tag(&reference, &std_env);
         self.update_val(BRANCH, branch);
+        self.update_val(TAG, tag);
 
         if let Some(v) = reference.target() {
             let commit = v.to_string();
@@ -70,26 +72,45 @@ impl Git {
         Ok(())
     }
 
-    fn get_branch(&self, reference: &Reference<'_>, std_env: &HashMap<String, String>) -> String {
+    fn get_branch_tag(
+        &self,
+        reference: &Reference<'_>,
+        std_env: &HashMap<String, String>,
+    ) -> (String, String) {
         let mut branch = "";
+        let mut tag = "";
         if let Some(v) = reference.shorthand() {
             branch = v;
         }
         match self.ci_type {
             CIType::Gitlab => {
-                if let Some(v) = std_env.get("CI_COMMIT_REF_NAME") {
-                    branch = v;
+                let gitlab_branch = if let Some(v) = std_env.get("CI_COMMIT_REF_NAME") {
+                    v
+                } else {
+                    branch
+                };
+                if let Some(v) = std_env.get("CI_COMMIT_TAG") {
+                    tag = v;
+                } else {
+                    branch = gitlab_branch;
                 }
             }
             CIType::Github => {
-                if let Some(v) = std_env.get("CI_COMMIT_REF_NAME") {
-                    branch = v;
+                if let Some(v) = std_env.get("GITHUB_REF") {
+                    let ref_branch_prefix: &str = "refs/heads/";
+                    let ref_tag_prefix: &str = "refs/tags/";
+
+                    if let Some(b) = v.strip_prefix(ref_branch_prefix) {
+                        branch = b
+                    } else if let Some(t) = v.strip_prefix(ref_tag_prefix) {
+                        tag = t
+                    }
                 }
             }
             _ => {}
         }
 
-        branch.to_string()
+        (branch.to_string(), tag.to_string())
     }
 }
 
@@ -104,6 +125,9 @@ pub fn new_git(
     };
     git.map
         .insert(BRANCH, ConstVal::new("display current branch"));
+
+    git.map.insert(TAG, ConstVal::new("display current tag"));
+
     git.map
         .insert(COMMIT_HASH, ConstVal::new("display current commit_id"));
 
