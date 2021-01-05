@@ -73,6 +73,7 @@ impl Git {
         Ok(())
     }
 
+    #[allow(clippy::manual_strip)]
     fn get_branch_tag(
         &self,
         reference: &Reference<'_>,
@@ -112,10 +113,10 @@ impl Git {
                     let ref_branch_prefix: &str = "refs/heads/";
                     let ref_tag_prefix: &str = "refs/tags/";
 
-                    if let Some(b) = v.strip_prefix(ref_branch_prefix) {
-                        branch = b.to_string()
-                    } else if let Some(t) = v.strip_prefix(ref_tag_prefix) {
-                        tag = t.to_string()
+                    if v.starts_with(ref_branch_prefix) {
+                        branch = v[ref_branch_prefix.len()..].to_string()
+                    } else if v.starts_with(ref_tag_prefix) {
+                        tag = v[ref_tag_prefix.len()..].to_string()
                     }
                 }
             }
