@@ -1,4 +1,4 @@
-//! `shadow-rs` is a build-time information stored in your binary
+//! `shadow-rs` :build-time information stored in your rust project.(binary,lib,cdylib,dylib)
 //!
 //! It's allows you to recall properties of the build process and environment at runtime, including:
 //!
