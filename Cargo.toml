@@ -1,11 +1,12 @@
 [package]
 name = "shadow-rs"
-version = "0.5.8"
+version = "0.5.9"
 authors = ["baoyachi <liaoymxsdl@gmail.com>"]
 edition = "2018"
 description = "A build script write by Rust"
 keywords = ["shadow", "build-script", "build", "script", "compile"]
 readme = "README.md"
+categories = ["development-tools", "development-tools::build-utils"]
 repository = "https://github.com/baoyachi/shadow-rs"
 license = "MIT AND Apache-2.0"
 

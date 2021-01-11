@@ -30,11 +30,7 @@ jobs:
       - name: Check fix
         run: cargo fix && cargo fix
       - name: Check with Windows clippy
-        if: runner.os == 'Windows'
-        run: cargo clippy --all
-      - name: Check with clippy
-        if: runner.os != 'Windows'
-        run: RUSTFLAGS="-D warnings" cargo clippy --all
+        run: cargo clippy --all -- -D warnings
       - name: Build Release
         run: cargo build --release
       - name: Run tests
@@ -46,13 +42,7 @@ jobs:
         working-directory: ./example_shadow
 
       - name: Check examples with Windows clippy
-        if: runner.os == 'Windows'
-        run: cargo clippy --all
-        working-directory: ./example_shadow
-
-      - name: Check examples with clippy
-        if: runner.os != 'Windows'
-        run: RUSTFLAGS="-D warnings" cargo clippy --all
+        run: cargo clippy --all -- -D warnings
         working-directory: ./example_shadow
 
       - name: Run examples
