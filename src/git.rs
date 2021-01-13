@@ -2,11 +2,11 @@ use crate::build::{ConstType, ConstVal, ShadowConst};
 use crate::ci::CIType;
 use crate::err::*;
 use chrono::{DateTime, Local, NaiveDateTime, Utc};
-use git2::{Reference, Repository};
 use git2::Error as git2Error;
+use git2::{Reference, Repository};
 use std::collections::HashMap;
-use std::process::Command;
 use std::path::Path;
+use std::process::Command;
 
 pub const BRANCH: ShadowConst = "BRANCH";
 pub(crate) const TAG: ShadowConst = "TAG";
@@ -167,6 +167,12 @@ pub fn new_git(
     git.map
 }
 
+pub fn git_current_branch<P: AsRef<Path>>(path: P) -> Option<String> {
+    git_repo(path)
+        .map(|x| git2_current_branch(&x))
+        .unwrap_or(command_current_branch())
+}
+
 fn git_repo<P: AsRef<Path>>(path: P) -> Result<Repository, git2Error> {
     git2::Repository::discover(path)
 }
@@ -179,7 +185,7 @@ fn git2_current_branch(repo: &Repository) -> Option<String> {
 
 fn command_current_branch() -> Option<String> {
     Command::new("git")
-        .args(&["symbolic-ref", "--short", "HEAD", ])
+        .args(&["symbolic-ref", "--short", "HEAD"])
         .output()
         .map(|x| String::from_utf8(x.stdout).ok())
         .map(|x| x.map(|x| x.trim().to_string()))
@@ -207,6 +213,8 @@ mod tests {
         let command_branch = command_current_branch();
         assert!(git2_branch.is_some());
         assert!(command_branch.is_some());
-        assert_eq!(command_branch, git2_branch)
+        assert_eq!(command_branch, git2_branch);
+
+        assert_eq!(git_current_branch("."), git2_branch);
     }
 }
