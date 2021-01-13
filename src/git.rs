@@ -165,6 +165,15 @@ pub fn new_git(
     git.map
 }
 
+fn exec_current_branch() -> Option<String> {
+    Command::new("git")
+        .args(&["symbolic-ref", "--short", "HEAD", ])
+        .output()
+        .map(|x| String::from_utf8(x.stdout).ok())
+        .map(|x| x.map(|x| x.trim().to_string()))
+        .unwrap_or(None)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
