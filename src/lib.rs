@@ -17,6 +17,11 @@
 //! # Example
 //!
 //! ```
+//! pub const PKG_VERSION :&str = "1.3.8-beta3";
+//! pub const PKG_VERSION_MAJOR :&str = "1";
+//! pub const PKG_VERSION_MINOR :&str = "3";
+//! pub const PKG_VERSION_PATCH :&str = "8";
+//! pub const PKG_VERSION_PRE :&str = "beta3";
 //! pub const RUST_VERSION :&str = "rustc 1.45.0 (5c1f21c3b 2020-07-13)";
 //! pub const BUILD_RUST_CHANNEL :&str = "debug";
 //! pub const COMMIT_AUTHOR :&str = "baoyachi";
@@ -46,7 +51,6 @@
 //! pub const CARGO_VERSION :&str = "cargo 1.45.0 (744bd1fbb 2020-06-15)";
 //! pub const BUILD_OS :&str = "macos-x86_64";
 //! pub const COMMIT_HASH :&str = "386741540d73c194a3028b96b92fdeb53ca2788a";
-//! pub const PKG_VERSION :&str = "0.3.13";
 //! ```
 //! # Setup Guide
 //!

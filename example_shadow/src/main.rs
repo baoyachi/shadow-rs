@@ -10,8 +10,16 @@ fn main() {
         .version(build::version().as_str())
         .get_matches(); //USAGE: ./example_shadow -V
 
-    println!("debug:{}", shadow_rs::is_debug()); //get build mode
-    println!("current_branch:{}", shadow_rs::branch()); //get current branch
+    // shadow-rs built in method
+    println!("is_debug:{}", shadow_rs::is_debug());
+    println!("branch:{}", shadow_rs::branch());
+    println!("version:{}", build::version());
+
+    println!("pkg_version:{}", build::PKG_VERSION);
+    println!("pkg_version_major:{}", build::PKG_VERSION_MAJOR);
+    println!("pkg_version_minor:{}", build::PKG_VERSION_MINOR);
+    println!("pkg_version_patch:{}", build::PKG_VERSION_PATCH);
+    println!("pkg_version_pre:{}", build::PKG_VERSION_PRE);
 
     println!("tag:{}", build::TAG);
     println!("branch:{}", build::BRANCH);
@@ -25,7 +33,6 @@ fn main() {
     println!("rust_version:{}", build::RUST_VERSION);
     println!("rust_channel:{}", build::RUST_CHANNEL);
     println!("cargo_version:{}", build::CARGO_VERSION);
-    println!("pkg_version:{}", build::PKG_VERSION);
     println!("cargo_tree:{}", build::CARGO_TREE);
 
     println!("project_name:{}", build::PROJECT_NAME);
