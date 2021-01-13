@@ -180,7 +180,7 @@ pub fn new_git(
 pub fn branch() -> String {
     git_repo(".")
         .map(|x| git2_current_branch(&x))
-        .unwrap_or_else(|_|command_current_branch())
+        .unwrap_or_else(|_| command_current_branch())
         .unwrap_or_default()
 }
 
