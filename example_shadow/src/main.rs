@@ -11,6 +11,7 @@ fn main() {
         .get_matches(); //USAGE: ./example_shadow -V
 
     println!("debug:{}", shadow_rs::is_debug()); //get build mode
+    println!("current_branch:{}", shadow_rs::branch()); //get current branch
 
     println!("tag:{}", build::TAG);
     println!("branch:{}", build::BRANCH);

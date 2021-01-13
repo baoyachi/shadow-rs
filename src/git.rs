@@ -171,10 +171,17 @@ pub fn new_git(
     git.map
 }
 
-pub fn git_current_branch<P: AsRef<Path>>(path: P) -> Option<String> {
-    git_repo(path)
+/// get current repository git branch.
+///
+/// When current repository exists git folder.
+///
+/// This method try use `git2` crates get current branch.
+/// If get error,then try use `Command` to get.
+pub fn branch() -> String {
+    git_repo(".")
         .map(|x| git2_current_branch(&x))
         .unwrap_or(command_current_branch())
+        .unwrap_or(Default::default())
 }
 
 fn git_repo<P: AsRef<Path>>(path: P) -> Result<Repository, git2Error> {
@@ -219,6 +226,6 @@ mod tests {
         assert!(command_branch.is_some());
         assert_eq!(command_branch, git2_branch);
 
-        assert_eq!(git_current_branch("."), git2_branch);
+        assert_eq!(Some(branch()), git2_branch);
     }
 }
