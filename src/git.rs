@@ -34,7 +34,7 @@ impl Git {
     }
 
     fn init(&mut self, path: &Path, std_env: &HashMap<String, String>) -> SdResult<()> {
-        let repo = git2::Repository::discover(path)?;
+        let repo = git_repo(path)?;
         let reference = repo.head()?;
 
         let (branch, tag) = self.get_branch_tag(&reference, &std_env)?;
@@ -85,7 +85,10 @@ impl Git {
         let mut tag = String::new();
 
         //get branch
-        if let Some(v) = reference.shorthand() {
+        if let Some(v) = reference
+            .shorthand()
+            .map(|x| x.trim().to_string())
+            .or_else(|| command_current_branch()) {
             branch = v.to_string();
         }
 
