@@ -88,9 +88,9 @@ impl Git {
         if let Some(v) = reference
             .shorthand()
             .map(|x| x.trim().to_string())
-            .or_else(|| command_current_branch())
+            .or_else(command_current_branch)
         {
-            branch = v.to_string();
+            branch = v
         }
 
         //get HEAD branch
@@ -180,8 +180,8 @@ pub fn new_git(
 pub fn branch() -> String {
     git_repo(".")
         .map(|x| git2_current_branch(&x))
-        .unwrap_or(command_current_branch())
-        .unwrap_or(Default::default())
+        .unwrap_or_else(|_|command_current_branch())
+        .unwrap_or_default()
 }
 
 fn git_repo<P: AsRef<Path>>(path: P) -> Result<Repository, git2Error> {
