@@ -88,7 +88,8 @@ impl Git {
         if let Some(v) = reference
             .shorthand()
             .map(|x| x.trim().to_string())
-            .or_else(|| command_current_branch()) {
+            .or_else(|| command_current_branch())
+        {
             branch = v.to_string();
         }
 
