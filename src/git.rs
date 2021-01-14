@@ -32,6 +32,18 @@ impl Git {
 
     fn init(&mut self, path: &Path, std_env: &HashMap<String, String>) -> SdResult<()> {
         self.init_git2(path)?;
+
+        // use command branch
+        if let Some(x) = command_current_branch() {
+            self.update_val(BRANCH, x)
+        };
+
+        // use command tag
+        if let Some(x) = command_current_tag() {
+            self.update_val(TAG, x)
+        }
+
+        // try use ci branch,tag
         self.ci_branch_tag(std_env);
         Ok(())
     }
@@ -42,8 +54,8 @@ impl Git {
             use crate::git::git2_mod::git_repo;
             use chrono::{DateTime, Local, NaiveDateTime, Utc};
 
-            let repo = git_repo(path).map_err(|err| ShadowError::new(err))?;
-            let reference = repo.head().map_err(|err| ShadowError::new(err))?;
+            let repo = git_repo(path).map_err(ShadowError::new)?;
+            let reference = repo.head().map_err(ShadowError::new)?;
 
             //get branch
             let branch = reference
@@ -68,9 +80,7 @@ impl Git {
                 self.update_val(SHORT_COMMIT, short_commit.to_string());
             }
 
-            let commit = reference
-                .peel_to_commit()
-                .map_err(|err| ShadowError::new(err))?;
+            let commit = reference.peel_to_commit().map_err(ShadowError::new)?;
 
             let time_stamp = commit.time().seconds().to_string().parse::<i64>()?;
             let dt = NaiveDateTime::from_timestamp(time_stamp, 0);
@@ -120,8 +130,13 @@ impl Git {
             }
             _ => {}
         }
-        branch.map(|x| self.update_val(BRANCH, x.to_string()));
-        tag.map(|x| self.update_val(TAG, x.to_string()));
+        if let Some(x) = branch {
+            self.update_val(BRANCH, x);
+        }
+
+        if let Some(x) = tag {
+            self.update_val(TAG, x);
+        }
     }
 }
 
