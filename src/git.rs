@@ -259,6 +259,9 @@ mod tests {
 
     #[test]
     fn test_current_branch() {
+        if Shadow::get_env().get("GITHUB_REF").is_some() {
+            return;
+        }
         #[cfg(feature = "git2")]
         {
             use crate::git::git2_mod::{git2_current_branch, git_repo};
