@@ -1,6 +1,6 @@
 [package]
 name = "shadow-rs"
-version = "0.5.11"
+version = "0.5.12-pre"
 authors = ["baoyachi <liaoymxsdl@gmail.com>"]
 edition = "2018"
 description = "A build script write by Rust"
@@ -14,4 +14,7 @@ license = "MIT AND Apache-2.0"
 
 [dependencies]
 chrono = "0.4.13"
-git2 = { version = "0.13.8", default-features = false }
+git2 = { version = "0.13.8", default-features = false, optional = true }
+
+[features]
+default = ["git2"]
