@@ -114,6 +114,7 @@ with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/s
 
 #### shadow-rs built in method.
 * how to use 👉:[examples](https://github.com/baoyachi/shadow-rs/tree/master/examples)
+
 | method | desc |
 | ------ | ------ |
 | is_debug() | check if this is a debug build.e.g.'true/false' |
