@@ -119,6 +119,7 @@ with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/s
 | ------ | ------ |
 | is_debug() | check if this is a debug build.e.g.'true/false' |
 | branch() | get current project branch.e.g.'master/develop' |
+| tag() | get current project tag.e.g.'v1.3.5' |
 
 #### shadow-rs support build const.
 * how to use see 👉 : [shadow_example](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow)

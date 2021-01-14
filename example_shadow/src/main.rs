@@ -13,6 +13,7 @@ fn main() {
     // shadow-rs built in method
     println!("is_debug:{}", shadow_rs::is_debug());
     println!("branch:{}", shadow_rs::branch());
+    println!("tag:{}", shadow_rs::tag());
 
     println!("version:{}", build::version());
     println!("pkg_version:{}", build::PKG_VERSION);
