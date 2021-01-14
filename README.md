@@ -26,6 +26,7 @@ You can use this tool to check in production exactly where a binary came from an
 
 * Check out the [shadow_example](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow) for a simple
   demonstration of how `shadow-rs` might be used to provide build-time information at run-time.
+* built in method:[examples](https://github.com/baoyachi/shadow-rs/tree/master/examples).
 
 # Setup Guide
 
