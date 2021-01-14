@@ -20,6 +20,10 @@ const CARGO_VERSION: ShadowConst = "CARGO_VERSION";
 const CARGO_TREE: ShadowConst = "CARGO_TREE";
 // const CARGO_METADATA: ShadowConst = "CARGO_METADATA";
 const PKG_VERSION: ShadowConst = "PKG_VERSION";
+const PKG_VERSION_MAJOR: ShadowConst = "PKG_VERSION_MAJOR";
+const PKG_VERSION_MINOR: ShadowConst = "PKG_VERSION_MINOR";
+const PKG_VERSION_PATCH: ShadowConst = "PKG_VERSION_PATCH";
+const PKG_VERSION_PRE: ShadowConst = "PKG_VERSION_PRE";
 
 impl SystemEnv {
     fn init(&mut self, std_env: &HashMap<String, String>) -> SdResult<()> {
@@ -72,6 +76,20 @@ impl SystemEnv {
 
         if let Some(v) = std_env.get("CARGO_PKG_VERSION") {
             update_val(PKG_VERSION, v.to_string());
+        }
+
+        if let Some(v) = std_env.get("CARGO_PKG_VERSION_MAJOR") {
+            update_val(PKG_VERSION_MAJOR, v.to_string());
+        }
+
+        if let Some(v) = std_env.get("CARGO_PKG_VERSION_MINOR") {
+            update_val(PKG_VERSION_MINOR, v.to_string());
+        }
+        if let Some(v) = std_env.get("CARGO_PKG_VERSION_PATCH") {
+            update_val(PKG_VERSION_PATCH, v.to_string());
+        }
+        if let Some(v) = std_env.get("CARGO_PKG_VERSION_PRE") {
+            update_val(PKG_VERSION_PRE, v.to_string());
         }
 
         Ok(())
@@ -132,6 +150,23 @@ pub fn new_system_env(std_env: &HashMap<String, String>) -> HashMap<ShadowConst,
     env.map.insert(
         PKG_VERSION,
         ConstVal::new("display build current project version"),
+    );
+
+    env.map.insert(
+        PKG_VERSION_MAJOR,
+        ConstVal::new("display build current project major version"),
+    );
+    env.map.insert(
+        PKG_VERSION_MINOR,
+        ConstVal::new("display build current project minor version"),
+    );
+    env.map.insert(
+        PKG_VERSION_PATCH,
+        ConstVal::new("display build current project patch version"),
+    );
+    env.map.insert(
+        PKG_VERSION_PRE,
+        ConstVal::new("display build current project preview version"),
     );
 
     if let Err(e) = env.init(std_env) {

@@ -2,8 +2,10 @@ use crate::build::{ConstType, ConstVal, ShadowConst};
 use crate::ci::CIType;
 use crate::err::*;
 use chrono::{DateTime, Local, NaiveDateTime, Utc};
-use git2::Reference;
+use git2::Error as git2Error;
+use git2::{Reference, Repository};
 use std::collections::HashMap;
+use std::path::Path;
 use std::process::Command;
 
 pub const BRANCH: ShadowConst = "BRANCH";
@@ -31,8 +33,8 @@ impl Git {
         }
     }
 
-    fn init(&mut self, path: &std::path::Path, std_env: &HashMap<String, String>) -> SdResult<()> {
-        let repo = git2::Repository::discover(path)?;
+    fn init(&mut self, path: &Path, std_env: &HashMap<String, String>) -> SdResult<()> {
+        let repo = git_repo(path)?;
         let reference = repo.head()?;
 
         let (branch, tag) = self.get_branch_tag(&reference, &std_env)?;
@@ -83,8 +85,12 @@ impl Git {
         let mut tag = String::new();
 
         //get branch
-        if let Some(v) = reference.shorthand() {
-            branch = v.to_string();
+        if let Some(v) = reference
+            .shorthand()
+            .map(|x| x.trim().to_string())
+            .or_else(command_current_branch)
+        {
+            branch = v
         }
 
         //get HEAD branch
@@ -165,6 +171,38 @@ pub fn new_git(
     git.map
 }
 
+/// get current repository git branch.
+///
+/// When current repository exists git folder.
+///
+/// This method try use `git2` crates get current branch.
+/// If get error,then try use `Command` to get.
+pub fn branch() -> String {
+    git_repo(".")
+        .map(|x| git2_current_branch(&x))
+        .unwrap_or_else(|_| command_current_branch())
+        .unwrap_or_default()
+}
+
+fn git_repo<P: AsRef<Path>>(path: P) -> Result<Repository, git2Error> {
+    git2::Repository::discover(path)
+}
+
+fn git2_current_branch(repo: &Repository) -> Option<String> {
+    repo.head()
+        .map(|x| x.shorthand().map(|x| x.to_string()))
+        .unwrap_or(None)
+}
+
+fn command_current_branch() -> Option<String> {
+    Command::new("git")
+        .args(&["symbolic-ref", "--short", "HEAD"])
+        .output()
+        .map(|x| String::from_utf8(x.stdout).ok())
+        .map(|x| x.map(|x| x.trim().to_string()))
+        .unwrap_or(None)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -176,5 +214,18 @@ mod tests {
         let map = Shadow::get_env();
         let map = new_git(Path::new("./"), CIType::Github, &map);
         println!("map:{:?}", map);
+    }
+
+    #[test]
+    fn test_current_branch() {
+        let git2_branch = git_repo(".")
+            .map(|x| git2_current_branch(&x))
+            .unwrap_or(None);
+        let command_branch = command_current_branch();
+        assert!(git2_branch.is_some());
+        assert!(command_branch.is_some());
+        assert_eq!(command_branch, git2_branch);
+
+        assert_eq!(Some(branch()), git2_branch);
     }
 }

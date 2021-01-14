@@ -36,6 +36,14 @@ jobs:
       - name: Run tests
         run: cargo test --all --verbose -- --exact -Z unstable-options --format=json --show-output
 
+      # build on nightly
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+      - name: Build on nightly
+        run: cargo build --release
+
       # examples
       - name: Check examples format
         run: cargo fmt --all -- --check
@@ -48,11 +56,3 @@ jobs:
       - name: Run examples
         run: cargo run --release && target/release/example_shadow -V
         working-directory: ./example_shadow
-
-      # build on nightly
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          override: true
-      - name: Build on nightly
-        run: cargo build --release
