@@ -29,12 +29,31 @@ jobs:
         run: cargo fmt --all -- --check
       - name: Check fix
         run: cargo fix && cargo fix
-      - name: Check with Windows clippy
+      - name: Check with clippy
         run: cargo clippy --all -- -D warnings
       - name: Build Release
         run: cargo build --release
       - name: Run tests
         run: cargo test --all --verbose -- --exact -Z unstable-options --format=json --show-output
+
+      # Run examples
+      - name: Check examples format
+        run: cargo run --example builtin_method
+
+      # example_shadow cargo fmt
+      - name: Check examples format
+        run: cargo fmt --all -- --check
+        working-directory: ./example_shadow
+
+      # example_shadow cargo clippy
+      - name: Check examples with clippy
+        run: cargo clippy --all -- -D warnings
+        working-directory: ./example_shadow
+
+      # example_shadow cargo run
+      - name: Run examples
+        run: cargo run --release && target/release/example_shadow -V
+        working-directory: ./example_shadow
 
       # build on nightly
       - uses: actions-rs/toolchain@v1
@@ -43,16 +62,3 @@ jobs:
           override: true
       - name: Build on nightly
         run: cargo build --release
-
-      # examples
-      - name: Check examples format
-        run: cargo fmt --all -- --check
-        working-directory: ./example_shadow
-
-      - name: Check examples with Windows clippy
-        run: cargo clippy --all -- -D warnings
-        working-directory: ./example_shadow
-
-      - name: Run examples
-        run: cargo run --release && target/release/example_shadow -V
-        working-directory: ./example_shadow
