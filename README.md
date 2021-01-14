@@ -113,7 +113,7 @@ with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/s
 ## Support const,method in table
 
 #### shadow-rs built in method.
-* how to use 👉:[examples](https://github.com/baoyachi/shadow-rs/tree/master/examples)
+* how to use 👉 : [examples](https://github.com/baoyachi/shadow-rs/tree/master/examples)
 
 | method | desc |
 | ------ | ------ |
@@ -121,7 +121,7 @@ with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/s
 | branch() | get current project branch.e.g.'master/develop' |
 
 #### shadow-rs support build const.
-* how to use see 👉:[shadow_example](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow)
+* how to use see 👉 : [shadow_example](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow)
 
 | const | example |
 | ------ | ------ |
