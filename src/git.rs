@@ -199,8 +199,8 @@ pub mod git2_mod {
 ///
 /// When current repository exists git folder.
 ///
-/// This method try use `git2` crates get current branch.
-/// If get error,then try use `Command` to get.
+/// It's use default feature.This method try use [git2] crates get current branch.
+/// If not use git2 feature,then try use [Command] to get.
 pub fn branch() -> String {
     #[cfg(feature = "git2")]
     {
@@ -216,8 +216,15 @@ pub fn branch() -> String {
     }
 }
 
+/// get current repository git tag.
+///
+/// When current repository exists git folder.
+/// I's use [Command] to get.
+pub fn tag() -> String {
+    command_current_tag().unwrap_or_default()
+}
+
 /// Command exec git current tag
-#[allow(dead_code)]
 fn command_current_tag() -> Option<String> {
     Command::new("git")
         .args(&["tag", "-l", "--contains", "HEAD"])

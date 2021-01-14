@@ -150,7 +150,7 @@ use std::path::Path;
 pub use channel::BuildRustChannel;
 use chrono::Local;
 pub use err::SdResult;
-pub use git::branch;
+pub use git::{branch, tag};
 
 const SHADOW_RS: &str = "shadow.rs";
 
