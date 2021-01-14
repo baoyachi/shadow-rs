@@ -14,4 +14,7 @@ license = "MIT AND Apache-2.0"
 
 [dependencies]
 chrono = "0.4.13"
-git2 = { version = "0.13.8", default-features = false }
+git2 = { version = "0.13.8", default-features = false,optional = true }
+
+[features]
+default = ["git2"]

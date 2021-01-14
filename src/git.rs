@@ -1,9 +1,6 @@
 use crate::build::{ConstType, ConstVal, ShadowConst};
 use crate::ci::CIType;
 use crate::err::*;
-use chrono::{DateTime, Local, NaiveDateTime, Utc};
-use git2::Error as git2Error;
-use git2::{Reference, Repository};
 use std::collections::HashMap;
 use std::path::Path;
 use std::process::Command;
@@ -34,84 +31,79 @@ impl Git {
     }
 
     fn init(&mut self, path: &Path, std_env: &HashMap<String, String>) -> SdResult<()> {
-        let repo = git_repo(path)?;
-        let reference = repo.head()?;
+        self.init_git2(path)?;
+        self.ci_branch_tag(std_env);
+        Ok(())
+    }
 
-        let (branch, tag) = self.get_branch_tag(&reference, &std_env)?;
-        self.update_val(BRANCH, branch);
-        self.update_val(TAG, tag);
+    fn init_git2(&mut self, path: &Path) -> SdResult<()> {
+        #[cfg(feature = "git2")]
+        {
+            use crate::git::git2_mod::git_repo;
+            use chrono::{DateTime, Local, NaiveDateTime, Utc};
 
-        if let Some(v) = reference.target() {
-            let commit = v.to_string();
-            self.update_val(COMMIT_HASH, commit.clone());
-            let mut short_commit = commit.as_str();
+            let repo = git_repo(path).map_err(|err| ShadowError::new(err))?;
+            let reference = repo.head().map_err(|err| ShadowError::new(err))?;
 
-            if commit.len() > 8 {
-                short_commit = &short_commit[0..8];
+            //get branch
+            let branch = reference
+                .shorthand()
+                .map(|x| x.trim().to_string())
+                .or_else(command_current_branch)
+                .unwrap_or_default();
+
+            //get HEAD branch
+            let tag = command_current_tag().unwrap_or_default();
+
+            self.update_val(BRANCH, branch);
+            self.update_val(TAG, tag);
+            if let Some(v) = reference.target() {
+                let commit = v.to_string();
+                self.update_val(COMMIT_HASH, commit.clone());
+                let mut short_commit = commit.as_str();
+
+                if commit.len() > 8 {
+                    short_commit = &short_commit[0..8];
+                }
+                self.update_val(SHORT_COMMIT, short_commit.to_string());
             }
-            self.update_val(SHORT_COMMIT, short_commit.to_string());
+
+            let commit = reference
+                .peel_to_commit()
+                .map_err(|err| ShadowError::new(err))?;
+
+            let time_stamp = commit.time().seconds().to_string().parse::<i64>()?;
+            let dt = NaiveDateTime::from_timestamp(time_stamp, 0);
+            let date_time = DateTime::<Utc>::from_utc(dt, Utc);
+            let date_time: DateTime<Local> = DateTime::from(date_time);
+            self.update_val(
+                COMMIT_DATE,
+                date_time.format("%Y-%m-%d %H:%M:%S").to_string(),
+            );
+
+            let author = commit.author();
+            if let Some(v) = author.email() {
+                self.update_val(COMMIT_EMAIL, v.to_string());
+            }
+
+            if let Some(v) = author.name() {
+                self.update_val(COMMIT_AUTHOR, v.to_string());
+            }
         }
-
-        let commit = reference.peel_to_commit()?;
-
-        let time_stamp = commit.time().seconds().to_string().parse::<i64>()?;
-        let dt = NaiveDateTime::from_timestamp(time_stamp, 0);
-        let date_time = DateTime::<Utc>::from_utc(dt, Utc);
-        let date_time: DateTime<Local> = DateTime::from(date_time);
-        self.update_val(
-            COMMIT_DATE,
-            date_time.format("%Y-%m-%d %H:%M:%S").to_string(),
-        );
-
-        let author = commit.author();
-        if let Some(v) = author.email() {
-            self.update_val(COMMIT_EMAIL, v.to_string());
-        }
-
-        if let Some(v) = author.name() {
-            self.update_val(COMMIT_AUTHOR, v.to_string());
-        }
-
+        println!("{:?}", path);
         Ok(())
     }
 
     #[allow(clippy::manual_strip)]
-    fn get_branch_tag(
-        &self,
-        reference: &Reference<'_>,
-        std_env: &HashMap<String, String>,
-    ) -> SdResult<(String, String)> {
-        let mut branch = String::new();
-        let mut tag = String::new();
-
-        //get branch
-        if let Some(v) = reference
-            .shorthand()
-            .map(|x| x.trim().to_string())
-            .or_else(command_current_branch)
-        {
-            branch = v
-        }
-
-        //get HEAD branch
-        if let Ok(out) = Command::new("git")
-            .args(&["tag", "-l", "--contains", "HEAD"])
-            .output()
-        {
-            tag = String::from_utf8(out.stdout)?.trim().to_string();
-        }
-
+    fn ci_branch_tag(&mut self, std_env: &HashMap<String, String>) {
+        let mut branch: Option<String> = None;
+        let mut tag: Option<String> = None;
         match self.ci_type {
             CIType::Gitlab => {
-                let gitlab_branch = if let Some(v) = std_env.get("CI_COMMIT_REF_NAME") {
-                    v.to_string()
-                } else {
-                    branch.clone()
-                };
                 if let Some(v) = std_env.get("CI_COMMIT_TAG") {
-                    tag = v.to_string();
-                } else {
-                    branch = gitlab_branch;
+                    tag = Some(v.to_string());
+                } else if let Some(v) = std_env.get("CI_COMMIT_REF_NAME") {
+                    branch = Some(v.to_string());
                 }
             }
             CIType::Github => {
@@ -120,16 +112,16 @@ impl Git {
                     let ref_tag_prefix: &str = "refs/tags/";
 
                     if v.starts_with(ref_branch_prefix) {
-                        branch = v[ref_branch_prefix.len()..].to_string()
+                        branch = Some(v[ref_branch_prefix.len()..].to_string())
                     } else if v.starts_with(ref_tag_prefix) {
-                        tag = v[ref_tag_prefix.len()..].to_string()
+                        tag = Some(v[ref_tag_prefix.len()..].to_string())
                     }
                 }
             }
             _ => {}
         }
-
-        Ok((branch, tag))
+        branch.map(|x| self.update_val(BRANCH, x.to_string()));
+        tag.map(|x| self.update_val(TAG, x.to_string()));
     }
 }
 
@@ -171,6 +163,23 @@ pub fn new_git(
     git.map
 }
 
+#[cfg(feature = "git2")]
+pub mod git2_mod {
+    use git2::Error as git2Error;
+    use git2::Repository;
+    use std::path::Path;
+
+    pub fn git_repo<P: AsRef<Path>>(path: P) -> Result<Repository, git2Error> {
+        git2::Repository::discover(path)
+    }
+
+    pub fn git2_current_branch(repo: &Repository) -> Option<String> {
+        repo.head()
+            .map(|x| x.shorthand().map(|x| x.to_string()))
+            .unwrap_or(None)
+    }
+}
+
 /// get current repository git branch.
 ///
 /// When current repository exists git folder.
@@ -178,22 +187,32 @@ pub fn new_git(
 /// This method try use `git2` crates get current branch.
 /// If get error,then try use `Command` to get.
 pub fn branch() -> String {
-    git_repo(".")
-        .map(|x| git2_current_branch(&x))
-        .unwrap_or_else(|_| command_current_branch())
-        .unwrap_or_default()
+    #[cfg(feature = "git2")]
+    {
+        use crate::git::git2_mod::{git2_current_branch, git_repo};
+        git_repo(".")
+            .map(|x| git2_current_branch(&x))
+            .unwrap_or_else(|_| command_current_branch())
+            .unwrap_or_default()
+    }
+    #[cfg(not(feature = "git2"))]
+    {
+        command_current_branch().unwrap_or_default()
+    }
 }
 
-fn git_repo<P: AsRef<Path>>(path: P) -> Result<Repository, git2Error> {
-    git2::Repository::discover(path)
-}
-
-fn git2_current_branch(repo: &Repository) -> Option<String> {
-    repo.head()
-        .map(|x| x.shorthand().map(|x| x.to_string()))
+/// Command exec git current tag
+#[allow(dead_code)]
+fn command_current_tag() -> Option<String> {
+    Command::new("git")
+        .args(&["tag", "-l", "--contains", "HEAD"])
+        .output()
+        .map(|x| String::from_utf8(x.stdout).ok())
+        .map(|x| x.map(|x| x.trim().to_string()))
         .unwrap_or(None)
 }
 
+/// Command exec git current branch
 fn command_current_branch() -> Option<String> {
     Command::new("git")
         .args(&["symbolic-ref", "--short", "HEAD"])
@@ -218,14 +237,18 @@ mod tests {
 
     #[test]
     fn test_current_branch() {
-        let git2_branch = git_repo(".")
-            .map(|x| git2_current_branch(&x))
-            .unwrap_or(None);
-        let command_branch = command_current_branch();
-        assert!(git2_branch.is_some());
-        assert!(command_branch.is_some());
-        assert_eq!(command_branch, git2_branch);
+        #[cfg(feature = "git2")]
+        {
+            use crate::git::git2_mod::{git2_current_branch, git_repo};
+            let git2_branch = git_repo(".")
+                .map(|x| git2_current_branch(&x))
+                .unwrap_or(None);
+            let command_branch = command_current_branch();
+            assert!(git2_branch.is_some());
+            assert!(command_branch.is_some());
+            assert_eq!(command_branch, git2_branch);
+        }
 
-        assert_eq!(Some(branch()), git2_branch);
+        assert_eq!(Some(branch()), command_current_branch());
     }
 }
