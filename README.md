@@ -11,7 +11,6 @@
 [![DepStatus](https://deps.rs/repo/github/baoyachi/shadow-rs/status.svg)](https://deps.rs/repo/github/baoyachi/shadow-rs)
 [![Gitter](https://badges.gitter.im/shadow-rs/community.svg)](https://gitter.im/shadow-rs/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-
 `shadow-rs` allows you to recall properties of the build process and environment at runtime, including:
 
 * `Cargo.toml` project version
@@ -24,11 +23,14 @@
 You can use this tool to check in production exactly where a binary came from and how it was built.
 
 # Full Examples
-* Check out the [shadow_example](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow) for a simple demonstration of how `shadow-rs` might be used to provide build-time information at run-time.
+
+* Check out the [shadow_example](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow) for a simple
+  demonstration of how `shadow-rs` might be used to provide build-time information at run-time.
 
 # Setup Guide
 
 ### 1) Modify `Cargo.toml` fields
+
 Modify your `Cargo.toml` like so:
 
 ```TOML
@@ -63,56 +65,65 @@ extern crate shadow_rs;
 shadow!(build);
 ```
 
-**Notice that the `shadow!` macro is provided the identifier `build`.  You can now use this identifier to access build-time information.**
+**Notice that the `shadow!` macro is provided the identifier `build`. You can now use this identifier to access
+build-time information.**
 
 ### 4) Done. Use Shadow.
 
 ```rust
 fn main() {
-  println!("{}", shadow_rs::is_debug());      // check if this is a debug build
-  println!("{}", shadow_rs::branch());        // get current project git branch. e.g.'master'
-  println!("{}", build::version());           // the version (description binary detail information)
 
-  println!("{}", build::PKG_VERSION);         // current package version. e.g. '1.3.15-beta2'  
-  println!("{}", build::PKG_VERSION_MAJOR);   //current package major version. e.g. '1'  
-  println!("{}", build::PKG_VERSION_MINOR);   //current package minor version. e.g. '3'  
-  println!("{}", build::PKG_VERSION_PATCH);   //current package minor version. e.g. '15'  
-  println!("{}", build::PKG_VERSION_PRE);   //current package minor version. e.g. 'beta2'  
-  println!("{}", build::BRANCH);              // the branch, e.g. 'master'
-  println!("{}", build::TAG);                 // the tag, e.g. 'v1.0.0'
-  println!("{}", build::SHORT_COMMIT);        // short commit hash, e.g. '8405e28e'
-  println!("{}", build::COMMIT_HASH);         // full commit hash, e.g. '8405e28e64080a09525a6cf1b07c22fcaf71a5c5'
-  println!("{}", build::COMMIT_DATE);         // commit date, e.g. '2020-08-16 11:52:47'
-  println!("{}", build::COMMIT_AUTHOR);       // commit author, e.g. 'baoyachi'
-  println!("{}", build::COMMIT_EMAIL);        // commit email, e.g. 'example@gmail.com'
-  
-  println!("{}", build::BUILD_OS);            // the OS that built the binary, e.g. 'macos-x86_64'
-  println!("{}", build::RUST_VERSION);        // rustc version e.g. 'rustc 1.45.0 (5c1f21c3b 2020-07-13)'
-  println!("{}", build::RUST_CHANNEL);        // rust toolchain e.g. 'stable-x86_64-apple-darwin (default)'
-  println!("{}", build::CARGO_VERSION);       // cargo version e.g. 'cargo 1.45.0 (744bd1fbb 2020-06-15)'
-  println!("{}", build::CARGO_TREE);          // e.g. the output of '$ cargo tree'
-  
-  println!("{}", build::PROJECT_NAME);        // your project name, e.g. 'shadow-rs'
-  println!("{}", build::BUILD_TIME);          // time when start build occurred, e.g. '2020-08-16 14:50:25'
-  println!("{}", build::BUILD_RUST_CHANNEL);  // e.g. 'debug'
+    //shadow-rs built in method  
+    println!("{}", shadow_rs::is_debug());      // check if this is a debug build
+    println!("{}", shadow_rs::branch());        // get current project git branch. e.g.'master'
+
+    //shadow-rs built in const   
+    println!("{}", build::version());           // the version (description binary detail information)
+    println!("{}", build::PKG_VERSION);         // current package version. e.g. '1.3.15-beta2'  
+    println!("{}", build::PKG_VERSION_MAJOR);   //current package major version. e.g. '1'  
+    println!("{}", build::PKG_VERSION_MINOR);   //current package minor version. e.g. '3'  
+    println!("{}", build::PKG_VERSION_PATCH);   //current package minor version. e.g. '15'  
+    println!("{}", build::PKG_VERSION_PRE);   //current package minor version. e.g. 'beta2'  
+    println!("{}", build::BRANCH);              // the branch, e.g. 'master'
+    println!("{}", build::TAG);                 // the tag, e.g. 'v1.0.0'
+    println!("{}", build::SHORT_COMMIT);        // short commit hash, e.g. '8405e28e'
+    println!("{}", build::COMMIT_HASH);         // full commit hash, e.g. '8405e28e64080a09525a6cf1b07c22fcaf71a5c5'
+    println!("{}", build::COMMIT_DATE);         // commit date, e.g. '2020-08-16 11:52:47'
+    println!("{}", build::COMMIT_AUTHOR);       // commit author, e.g. 'baoyachi'
+    println!("{}", build::COMMIT_EMAIL);        // commit email, e.g. 'example@gmail.com'
+
+    println!("{}", build::BUILD_OS);            // the OS that built the binary, e.g. 'macos-x86_64'
+    println!("{}", build::RUST_VERSION);        // rustc version e.g. 'rustc 1.45.0 (5c1f21c3b 2020-07-13)'
+    println!("{}", build::RUST_CHANNEL);        // rust toolchain e.g. 'stable-x86_64-apple-darwin (default)'
+    println!("{}", build::CARGO_VERSION);       // cargo version e.g. 'cargo 1.45.0 (744bd1fbb 2020-06-15)'
+    println!("{}", build::CARGO_TREE);          // e.g. the output of '$ cargo tree'
+
+    println!("{}", build::PROJECT_NAME);        // your project name, e.g. 'shadow-rs'
+    println!("{}", build::BUILD_TIME);          // time when start build occurred, e.g. '2020-08-16 14:50:25'
+    println!("{}", build::BUILD_RUST_CHANNEL);  // e.g. 'debug'
 }
 ```
 
-## Clap Example 
-And you can also use `shadow-rs` with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs).
+## Clap Example
+
+And you can also use `shadow-rs`
+with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs).
 
 ## Support const,method in table
 
-#### shadow-rs support method.
+#### shadow-rs built in method.
+* how to use 👉:[examples](https://github.com/baoyachi/shadow-rs/tree/master/examples)
 | method | desc |
 | ------ | ------ |
 | is_debug() | check if this is a debug build.e.g.'true/false' |
-| version() | support mini version information.It's use easy. |
 | branch() | get current project branch.e.g.'master/develop' |
 
 #### shadow-rs support build const.
+* how to use see 👉:[shadow_example](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow)
+
 | const | example |
 | ------ | ------ |
+| version() | support mini version information.It's use easy. |
 | BRANCH | master/develop |
 | TAG | v1.0.0 |
 | SHORT_COMMIT | 8405e28e |  
@@ -130,10 +141,13 @@ And you can also use `shadow-rs` with [`clap`](https://github.com/baoyachi/shado
 | BUILD_TIME | 2020-08-16 14:50:25 |  
 | BUILD_RUST_CHANNEL | debug/release |  
 
-If you have any questions, please create an [issue](https://github.com/baoyachi/shadow-rs/issues/new) so we may improve the documentation where it may be unclear.
+If you have any questions, please create an [issue](https://github.com/baoyachi/shadow-rs/issues/new) so we may improve
+the documentation where it may be unclear.
 
 ## People using Shadow
-If you are using `shadow-rs`, please tell me! Or instead, consider making a note here: [Shadow Users Collection](https://github.com/baoyachi/shadow-rs/issues/19).
+
+If you are using `shadow-rs`, please tell me! Or instead, consider making a note
+here: [Shadow Users Collection](https://github.com/baoyachi/shadow-rs/issues/19).
 
 <table>
   <tr>
