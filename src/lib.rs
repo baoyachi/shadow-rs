@@ -197,9 +197,8 @@ pub fn new() -> SdResult<()> {
 /// }
 ///
 /// fn append_write_const(mut file: &File) -> SdResult<()> {
-///     const CONST_FOO: &str = r#"pub const TEST_CONST: &str = "CONST_FOO";"#;
-///
-///    writeln!(file, "{}", CONST_FOO)?;
+///    let foo: &str = r#"pub const foo: &str = "foo";"#;
+///    writeln!(file, "{}", foo)?;
 ///    Ok(())
 /// }
 ///
