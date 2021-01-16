@@ -1,7 +1,6 @@
-use std::fs::File;
 use shadow_rs::SdResult;
+use std::fs::File;
 use std::io::Write;
-use std::error::Error;
 
 fn main() -> shadow_rs::SdResult<()> {
     shadow_rs::new_hook(append_write_const)
@@ -13,5 +12,3 @@ fn append_write_const(mut file: &File) -> SdResult<()> {
     writeln!(file, "{}", CONST_FOO)?;
     Ok(())
 }
-
-
