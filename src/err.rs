@@ -1,3 +1,4 @@
+use std::convert::From;
 use std::error::Error;
 use std::string::FromUtf8Error;
 
@@ -28,19 +29,25 @@ impl From<std::string::FromUtf8Error> for ShadowError {
     }
 }
 
-impl std::convert::From<std::io::Error> for ShadowError {
+impl From<std::io::Error> for ShadowError {
     fn from(e: std::io::Error) -> Self {
         ShadowError::String(e.to_string())
     }
 }
 
-impl std::convert::From<std::env::VarError> for ShadowError {
+impl From<String> for ShadowError {
+    fn from(e: String) -> Self {
+        ShadowError::String(e)
+    }
+}
+
+impl From<std::env::VarError> for ShadowError {
     fn from(e: std::env::VarError) -> Self {
         ShadowError::String(e.to_string())
     }
 }
 
-impl std::convert::From<std::num::ParseIntError> for ShadowError {
+impl From<std::num::ParseIntError> for ShadowError {
     fn from(e: std::num::ParseIntError) -> Self {
         ShadowError::String(e.to_string())
     }

@@ -24,8 +24,11 @@ You can use this tool to check in production exactly where a binary came from an
 
 # Full Examples
 
-* Check out the [shadow_example](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow) for a simple
+* Check out the [example_shadow](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow) for a simple
   demonstration of how `shadow-rs` might be used to provide build-time information at run-time.
+* Check out the [example_shadow_hook](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow_hook) for a
+  simple demonstration of how `shadow-rs` might be used to provide build-time information at run-time,and add custom
+  hook.
 * built in method:[examples](https://github.com/baoyachi/shadow-rs/tree/master/examples).
 
 # Setup Guide
@@ -113,6 +116,7 @@ with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/s
 ## Support const,method in table
 
 #### shadow-rs built in method.
+
 * how to use 👉 : [examples](https://github.com/baoyachi/shadow-rs/tree/master/examples)
 
 | method | desc |
@@ -122,6 +126,7 @@ with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/s
 | tag() | get current project tag.e.g.'v1.3.5' |
 
 #### shadow-rs support build const.
+
 * how to use see 👉 : [shadow_example](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow)
 
 | const | example |
