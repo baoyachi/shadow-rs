@@ -136,7 +136,7 @@ with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/s
 | TAG | v1.0.0 |
 | SHORT_COMMIT | 8405e28e |  
 | COMMIT_HASH | 8405e28e64080a09525a6cf1b07c22fcaf71a5c5 |  
-| COMMIT_DATE | 2020-08-16T06:22:24+00:00 |
+| COMMIT_DATE | 2020-08-16 13:12:52 |
 | COMMIT_AUTHOR | baoyachi |
 | COMMIT_EMAIL | xxx@gmail.com |  
 | BUILD_OS | macos-x86_64 |  
