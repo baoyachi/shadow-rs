@@ -58,7 +58,7 @@ fn main() -> shadow_rs::SdResult<()> {
 }
 ```
 
-### 3) Integrate Shadow
+### 3) Integrate shadow
 
 In your root rust file (e.g. `main.rs`, or `lib.rs`):
 
@@ -72,7 +72,7 @@ shadow!(build);
 **Notice that the `shadow!` macro is provided the identifier `build`. You can now use this identifier to access
 build-time information.**
 
-### 4) Done. Use Shadow.
+### 4) Done. Use shadow.
 
 ```rust
 fn main() {
@@ -80,6 +80,7 @@ fn main() {
     //shadow-rs built in method  
     println!("{}", shadow_rs::is_debug());      // check if this is a debug build
     println!("{}", shadow_rs::branch());        // get current project git branch. e.g.'master'
+    println!("{}", shadow_rs::tag());        // get current project git head tag. e.g.'v1.5.3'
 
     //shadow-rs built in const   
     println!("{}", build::version());           // the version (description binary detail information)
@@ -152,7 +153,7 @@ with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/s
 If you have any questions, please create an [issue](https://github.com/baoyachi/shadow-rs/issues/new) so we may improve
 the documentation where it may be unclear.
 
-## People using Shadow
+## People using shadow-rs
 
 If you are using `shadow-rs`, please tell me! Or instead, consider making a note
 here: [Shadow Users Collection](https://github.com/baoyachi/shadow-rs/issues/19).
