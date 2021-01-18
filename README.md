@@ -51,6 +51,7 @@ shadow-rs = "0.5"
 ### 2) Create `build.rs` file
 
 Now in the root of your project (same directory as `Cargo.toml`) add a file `build.rs`:
+  * with add custom `const` or `fn` see:[example_shadow_hook](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow_hook/build.rs)
 
 ```rust
 fn main() -> shadow_rs::SdResult<()> {
