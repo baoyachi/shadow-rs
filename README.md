@@ -129,7 +129,7 @@ with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/s
 
 #### shadow-rs support build const.
 
-* how to use see 👉 : [shadow_example](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow)
+* how to use 👉 : [shadow_example](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow)
 
 | const | example |
 | ------ | ------ |
