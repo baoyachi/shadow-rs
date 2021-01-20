@@ -48,29 +48,9 @@ build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST
     )
 }"##;
 
-const VERSION_FN_DESC: &str = r#"
-/// The common version function. It's so easy to use this function.
-///
-/// # Examples
-///
-/// ```ignore
-///   fn main(){
-///       println!("{}",shadow::version()); //print version() function
-///   }
-/// ```
-"#;
+const VERSION_FN_DESC: &str = r#"/// The common version function. It's so easy to use this function."#;
 
-const CLAP_VERSION_FN_DESC: &str = r#"
-/// The common version function. It's so easy to use this function with clap verion().
-///
-/// # Examples
-///
-/// ```ignore
-///   App::new("example_shadow")
-///        .version(shadow::clap_version().as_str())
-///        .get_matches()
-/// ```
-"#;
+const CLAP_VERSION_FN_DESC: &str = r#"/// The common version function. It's so easy to use this function with clap verion()."#;
 
 concat_fn!(version_branch_fn, VERSION_FN_DESC, VERSION_BRANCH_FN);
 
