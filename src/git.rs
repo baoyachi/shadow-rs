@@ -199,7 +199,7 @@ pub mod git2_mod {
 ///
 /// When current repository exists git folder.
 ///
-/// It's use default feature.This method try use [git2] crates get current branch.
+/// It's use default feature.This function try use [git2] crates get current branch.
 /// If not use git2 feature,then try use [Command] to get.
 pub fn branch() -> String {
     #[cfg(feature = "git2")]

@@ -15,8 +15,8 @@
 //! * Check out the [example_shadow](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow) for a simple demonstration of how `shadow-rs` might be used to provide build-time information at run-time.
 //! * Check out the [example_shadow_hook](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow_hook) for a simple demonstration of how `shadow-rs` might be used to provide build-time information at run-time,and add custom hook.
 //!
-//! ## Built in method
-//! * Check out the [examples](https://github.com/baoyachi/shadow-rs/tree/master/examples) for a simple demonstration of how `shadow-rs` might be used to provide build in method.
+//! ## Built in function
+//! * Check out the [examples](https://github.com/baoyachi/shadow-rs/tree/master/examples) for a simple demonstration of how `shadow-rs` might be used to provide build in function.
 //!
 //! # Example
 //!
@@ -101,7 +101,7 @@
 //! fn main(){
 //!    println!("{}",shadow_rs::is_debug());//get build mode. cargo build --release return false.normally return true.
 //!
-//!    println!("{}",build::version()); //print version() method
+//!    println!("{}",build::version()); //print version() function
 //!    println!("{}",build::BRANCH); //master
 //!    println!("{}",build::SHORT_COMMIT);//8405e28e
 //!    println!("{}",build::COMMIT_HASH);//8405e28e64080a09525a6cf1b07c22fcaf71a5c5
@@ -176,7 +176,7 @@ macro_rules! shadow {
 
 /// It's shadow-rs Initialization entry.
 ///
-/// In build.rs `main()` method call for this method.
+/// In build.rs `main()` function call for this function.
 ///
 /// # Examples
 ///
@@ -192,7 +192,7 @@ pub fn new() -> SdResult<()> {
 
 /// It's shadow-rs Initialization entry with add custom hook.
 ///
-/// In build.rs `main()` method call for this method.
+/// In build.rs `main()` function call for this function.
 ///
 /// # Examples
 ///
@@ -310,7 +310,7 @@ impl Shadow {
 
         shadow.gen_const()?;
 
-        //write version method
+        //write version function
         shadow.write_version()?;
 
         Ok(shadow)

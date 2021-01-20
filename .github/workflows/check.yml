@@ -38,11 +38,11 @@ jobs:
 
       # Run examples with debug
       - name: Run examples with debug
-        run: cargo run --example builtin_method
+        run: cargo run --example builtin_fn
 
       # Run examples with debug
       - name: Run examples with release
-        run: cargo run --example builtin_method
+        run: cargo run --example builtin_fn
 
       # example_shadow cargo fmt
       - name: Check examples format

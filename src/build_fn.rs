@@ -1,6 +1,5 @@
 macro_rules! concat_fn {
     ($fn_name:ident,$fn_desc:expr,$fn_body:expr) => {
-        #[allow(dead_code)]
         pub fn $fn_name() -> String {
             format!("{}{}", $fn_desc, $fn_body)
         }
@@ -8,7 +7,7 @@ macro_rules! concat_fn {
 }
 
 const VERSION_BRANCH_FN: &str = r##"#[allow(dead_code)]
-fn version() -> String {
+pub fn version() -> String {
     format!(r#"
 pkg_version:{}
 branch:{}
@@ -19,7 +18,7 @@ build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, R
 }"##;
 
 const VERSION_TAG_FN: &str = r##"#[allow(dead_code)]
-fn version() -> String {
+pub fn version() -> String {
     format!(r#"
 pkg_version:{}
 tag:{}
@@ -30,8 +29,8 @@ build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST
 }"##;
 
 const CLAP_VERSION_BRANCH_FN: &str = r##"#[allow(dead_code)]
-fn clap_version() -> String {
-    format!(r#" {}
+pub fn clap_version() -> String {
+    format!(r#"{}
 branch:{}
 commit_hash:{}
 build_time:{}
@@ -40,8 +39,8 @@ build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, R
 }"##;
 
 const CLAP_VERSION_TAG_FN: &str = r##"#[allow(dead_code)]
-fn clap_version() -> String {
-    format!(r#" {}
+pub fn clap_version() -> String {
+    format!(r#"{}
 tag:{}
 commit_hash:{}
 build_time:{}
@@ -50,19 +49,19 @@ build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST
 }"##;
 
 const VERSION_FN_DESC: &str = r#"
-/// The common version method. It's so easy to use this method.
+/// The common version function. It's so easy to use this function.
 ///
 /// # Examples
 ///
 /// ```ignore
 ///   fn main(){
-///       println!("{}",shadow::version()); //print version() method
+///       println!("{}",shadow::version()); //print version() function
 ///   }
 /// ```
 "#;
 
 const CLAP_VERSION_FN_DESC: &str = r#"
-/// The common version method. It's so easy to use this method with clap verion().
+/// The common version function. It's so easy to use this function with clap verion().
 ///
 /// # Examples
 ///
@@ -94,6 +93,9 @@ mod tests {
 
     #[test]
     fn test_version_fn() {
-        println!("{}", version_branch_fn())
+        println!("{}", version_branch_fn());
+        println!("{}", version_tag_fn());
+        println!("{}", clap_version_branch_fn());
+        println!("{}", clap_version_tag_fn());
     }
 }
