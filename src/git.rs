@@ -254,6 +254,7 @@ mod tests {
         let env_map = Shadow::get_env();
         let map = new_git(Path::new("./"), CIType::Github, &env_map);
         for (k, v) in map {
+            println!("k:{},v:{:?}", k, v);
             assert!(!v.desc.is_empty());
             if !k.eq(TAG) {
                 assert!(!v.v.is_empty());
