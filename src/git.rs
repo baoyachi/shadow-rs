@@ -100,7 +100,6 @@ impl Git {
                 self.update_val(COMMIT_AUTHOR, v.to_string());
             }
         }
-        println!("{:?}", path);
         Ok(())
     }
 
@@ -254,7 +253,12 @@ mod tests {
     fn test_git() {
         let map = Shadow::get_env();
         let map = new_git(Path::new("./"), CIType::Github, &map);
-        println!("map:{:?}", map);
+        for (k, v) in map {
+            assert!(!v.desc.is_empty());
+            if !k.eq(TAG) {
+                assert!(!v.v.is_empty());
+            }
+        }
     }
 
     #[test]

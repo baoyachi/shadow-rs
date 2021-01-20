@@ -93,9 +93,9 @@ mod tests {
 
     #[test]
     fn test_version_fn() {
-        println!("{}", version_branch_fn());
-        println!("{}", version_tag_fn());
-        println!("{}", clap_version_branch_fn());
-        println!("{}", clap_version_tag_fn());
+        assert!(version_branch_fn().contains(VERSION_FN_DESC));
+        assert!(version_tag_fn().contains(VERSION_TAG_FN));
+        assert!(clap_version_branch_fn().contains(CLAP_VERSION_BRANCH_FN));
+        assert!(clap_version_tag_fn().contains(CLAP_VERSION_FN_DESC));
     }
 }

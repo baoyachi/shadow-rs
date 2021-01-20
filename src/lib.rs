@@ -382,7 +382,9 @@ mod tests {
     fn test_build() -> SdResult<()> {
         Shadow::build_inner("./".into(), "./".into())?;
         let shadow = fs::read_to_string("./shadow.rs")?;
-        println!("{}", shadow);
+        assert!(shadow.contains(&version_branch_fn()));
+        assert!(shadow.contains(&clap_version_branch_fn()));
+        // println!("{}", shadow);
         Ok(())
     }
 
