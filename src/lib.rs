@@ -149,11 +149,13 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
+use crate::build_fn::{
+    clap_version_branch_fn, clap_version_tag_fn, version_branch_fn, version_tag_fn,
+};
 pub use channel::BuildRustChannel;
 use chrono::Local;
 pub use err::{SdResult, ShadowError};
 pub use git::{branch, tag};
-use crate::build_fn::{clap_version_branch_fn, version_branch_fn, version_tag_fn, clap_version_tag_fn};
 
 const SHADOW_RS: &str = "shadow.rs";
 
@@ -355,13 +357,13 @@ impl Shadow {
     }
 
     fn write_version(&mut self) -> SdResult<()> {
-        let (ver_fn,clap_ver_fn) = match self.map.get(TAG) {
-            None => (version_branch_fn(),clap_version_branch_fn()),
+        let (ver_fn, clap_ver_fn) = match self.map.get(TAG) {
+            None => (version_branch_fn(), clap_version_branch_fn()),
             Some(tag) => {
                 if !tag.v.is_empty() {
-                    (version_tag_fn(),clap_version_tag_fn())
+                    (version_tag_fn(), clap_version_tag_fn())
                 } else {
-                    (version_branch_fn(),clap_version_branch_fn())
+                    (version_branch_fn(), clap_version_branch_fn())
                 }
             }
         };

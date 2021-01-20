@@ -66,7 +66,7 @@ const CLAP_VERSION_FN_DESC: &str = r#"
 ///
 /// # Examples
 ///
-///```no_run
+///```ignore
 ///   App::new("example_shadow")
 ///        .version(shadow::clap_version().as_str())
 ///        .get_matches()
