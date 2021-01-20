@@ -256,7 +256,7 @@ mod tests {
         for (k, v) in map {
             println!("k:{},v:{:?}", k, v);
             assert!(!v.desc.is_empty());
-            if !k.eq(TAG) || k.eq(BRANCH) {
+            if !k.eq(TAG) || !k.eq(BRANCH) {
                 assert!(!v.v.is_empty());
                 continue;
             }
