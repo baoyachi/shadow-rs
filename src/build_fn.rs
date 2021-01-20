@@ -65,11 +65,11 @@ const CLAP_VERSION_FN_DESC: &str = r#"
 ///
 /// # Examples
 ///
-///```ignore
+/// ```ignore
 ///   App::new("example_shadow")
 ///        .version(shadow::clap_version().as_str())
 ///        .get_matches()
-///```
+/// ```
 "#;
 
 concat_fn!(version_branch_fn, VERSION_FN_DESC, VERSION_BRANCH_FN);
