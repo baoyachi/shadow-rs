@@ -29,7 +29,7 @@ You can use this tool to check in production exactly where a binary came from an
 * Check out the [example_shadow_hook](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow_hook) for a
   simple demonstration of how `shadow-rs` might be used to provide build-time information at run-time,and add custom
   hook.
-* built in method:[examples](https://github.com/baoyachi/shadow-rs/tree/master/examples).
+* built in function:[examples](https://github.com/baoyachi/shadow-rs/tree/master/examples).
 
 # Setup Guide
 
@@ -78,7 +78,7 @@ build-time information.**
 ```rust
 fn main() {
 
-    //shadow-rs built in method  
+    //shadow-rs built in function  
     println!("{}", shadow_rs::is_debug());      // check if this is a debug build
     println!("{}", shadow_rs::branch());        // get current project git branch. e.g.'master'
     println!("{}", shadow_rs::tag());        // get current project git head tag. e.g.'v1.5.3'
@@ -115,25 +115,26 @@ fn main() {
 And you can also use `shadow-rs`
 with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs).
 
-## Support const,method in table
+## Support const,function in table
 
-#### shadow-rs built in method.
+#### shadow-rs built in function.
 
 * how to use 👉 : [examples](https://github.com/baoyachi/shadow-rs/tree/master/examples)
 
-| method | desc |
+| function | desc |
 | ------ | ------ |
 | is_debug() | check if this is a debug build.e.g.'true/false' |
 | branch() | get current project branch.e.g.'master/develop' |
 | tag() | get current project tag.e.g.'v1.3.5' |
 
-#### shadow-rs support build const.
+#### shadow-rs support build const,function.
 
 * how to use 👉 : [shadow_example](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow)
 
-| const | example |
+| const/fn | example |
 | ------ | ------ |
 | version() | support mini version information.It's use easy. |
+| clap_version() | support mini version information for clap.It's use easy. |
 | BRANCH | master/develop |
 | TAG | v1.0.0 |
 | SHORT_COMMIT | 8405e28e |  

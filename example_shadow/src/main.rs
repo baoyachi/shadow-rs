@@ -7,14 +7,15 @@ shadow!(build);
 
 fn main() {
     App::new("example_shadow")
-        .version(build::version().as_str())
+        .version(build::clap_version().as_str())
         .get_matches(); //USAGE: ./example_shadow -V
 
-    // shadow-rs built in method
+    // shadow-rs built in function
     println!("is_debug:{}", shadow_rs::is_debug());
     println!("branch:{}", shadow_rs::branch());
     println!("tag:{}", shadow_rs::tag());
 
+    println!("clap_version:{}", build::clap_version());
     println!("version:{}", build::version());
     println!("pkg_version:{}", build::PKG_VERSION);
     println!("pkg_version_major:{}", build::PKG_VERSION_MAJOR);

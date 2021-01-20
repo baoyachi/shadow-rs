@@ -15,8 +15,8 @@
 //! * Check out the [example_shadow](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow) for a simple demonstration of how `shadow-rs` might be used to provide build-time information at run-time.
 //! * Check out the [example_shadow_hook](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow_hook) for a simple demonstration of how `shadow-rs` might be used to provide build-time information at run-time,and add custom hook.
 //!
-//! ## Built in method
-//! * Check out the [examples](https://github.com/baoyachi/shadow-rs/tree/master/examples) for a simple demonstration of how `shadow-rs` might be used to provide build in method.
+//! ## Built in function
+//! * Check out the [examples](https://github.com/baoyachi/shadow-rs/tree/master/examples) for a simple demonstration of how `shadow-rs` might be used to provide build in function.
 //!
 //! # Example
 //!
@@ -101,7 +101,7 @@
 //! fn main(){
 //!    println!("{}",shadow_rs::is_debug());//get build mode. cargo build --release return false.normally return true.
 //!
-//!    println!("{}",build::version()); //print version() method
+//!    println!("{}",build::version()); //print version() function
 //!    println!("{}",build::BRANCH); //master
 //!    println!("{}",build::SHORT_COMMIT);//8405e28e
 //!    println!("{}",build::COMMIT_HASH);//8405e28e64080a09525a6cf1b07c22fcaf71a5c5
@@ -130,6 +130,7 @@
 //!
 
 mod build;
+mod build_fn;
 mod channel;
 mod ci;
 mod env;
@@ -148,6 +149,9 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
+use crate::build_fn::{
+    clap_version_branch_fn, clap_version_tag_fn, version_branch_fn, version_tag_fn,
+};
 pub use channel::BuildRustChannel;
 use chrono::Local;
 pub use err::{SdResult, ShadowError};
@@ -172,7 +176,7 @@ macro_rules! shadow {
 
 /// It's shadow-rs Initialization entry.
 ///
-/// In build.rs `main()` method call for this method.
+/// In build.rs `main()` function call for this function.
 ///
 /// # Examples
 ///
@@ -188,7 +192,7 @@ pub fn new() -> SdResult<()> {
 
 /// It's shadow-rs Initialization entry with add custom hook.
 ///
-/// In build.rs `main()` method call for this method.
+/// In build.rs `main()` function call for this function.
 ///
 /// # Examples
 ///
@@ -306,7 +310,7 @@ impl Shadow {
 
         shadow.gen_const()?;
 
-        //write version method
+        //write version function
         shadow.write_version()?;
 
         Ok(shadow)
@@ -353,42 +357,18 @@ impl Shadow {
     }
 
     fn write_version(&mut self) -> SdResult<()> {
-        let desc: &str = "/// The common version method. It's so easy to use this method";
-
-        const VERSION_BRANCH_FN: &str = r##"#[allow(dead_code)]
-pub fn version() -> String {
-    format!(r#"
-pkg_version:{}
-branch:{}
-commit_hash:{}
-build_time:{}
-build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST_CHANNEL
-    )
-}"##;
-
-        const VERSION_TAG_FN: &str = r##"#[allow(dead_code)]
-pub fn version() -> String {
-    format!(r#"
-pkg_version:{}
-tag:{}
-commit_hash:{}
-build_time:{}
-build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST_CHANNEL
-    )
-}"##;
-
-        let version_fn = match self.map.get(TAG) {
-            None => VERSION_BRANCH_FN,
+        let (ver_fn, clap_ver_fn) = match self.map.get(TAG) {
+            None => (version_branch_fn(), clap_version_branch_fn()),
             Some(tag) => {
                 if !tag.v.is_empty() {
-                    VERSION_TAG_FN
+                    (version_tag_fn(), clap_version_tag_fn())
                 } else {
-                    VERSION_BRANCH_FN
+                    (version_branch_fn(), clap_version_branch_fn())
                 }
             }
         };
-        writeln!(&self.f, "{}", desc)?;
-        writeln!(&self.f, "{}\n", version_fn)?;
+        writeln!(&self.f, "{}\n", ver_fn)?;
+        writeln!(&self.f, "{}\n", clap_ver_fn)?;
         Ok(())
     }
 }
@@ -402,7 +382,9 @@ mod tests {
     fn test_build() -> SdResult<()> {
         Shadow::build_inner("./".into(), "./".into())?;
         let shadow = fs::read_to_string("./shadow.rs")?;
-        println!("{}", shadow);
+        assert!(shadow.contains(&version_branch_fn()));
+        assert!(shadow.contains(&clap_version_branch_fn()));
+        // println!("{}", shadow);
         Ok(())
     }
 
