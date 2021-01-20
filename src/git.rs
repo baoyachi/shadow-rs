@@ -256,7 +256,7 @@ mod tests {
         for (k, v) in map {
             println!("k:{},v:{:?}", k, v);
             assert!(!v.desc.is_empty());
-            if !k.eq(TAG) {
+            if !k.eq(TAG) || k.eq(BRANCH) {
                 assert!(!v.v.is_empty());
                 continue;
             }
@@ -264,6 +264,8 @@ mod tests {
             //assert github tag always exist value
             if let Some(github_ref) = env_map.get("GITHUB_REF") {
                 if github_ref.starts_with("refs/tags/") {
+                    assert!(!v.v.is_empty());
+                } else if github_ref.starts_with("refs/heads/") {
                     assert!(!v.v.is_empty());
                 }
             }
