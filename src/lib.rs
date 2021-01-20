@@ -130,6 +130,7 @@
 //!
 
 mod build;
+mod build_fn;
 mod channel;
 mod ci;
 mod env;
@@ -152,6 +153,7 @@ pub use channel::BuildRustChannel;
 use chrono::Local;
 pub use err::{SdResult, ShadowError};
 pub use git::{branch, tag};
+use crate::build_fn::{clap_version_branch_fn, version_branch_fn, version_tag_fn, clap_version_tag_fn};
 
 const SHADOW_RS: &str = "shadow.rs";
 
@@ -353,42 +355,18 @@ impl Shadow {
     }
 
     fn write_version(&mut self) -> SdResult<()> {
-        let desc: &str = "/// The common version method. It's so easy to use this method";
-
-        const VERSION_BRANCH_FN: &str = r##"#[allow(dead_code)]
-pub fn version() -> String {
-    format!(r#"
-pkg_version:{}
-branch:{}
-commit_hash:{}
-build_time:{}
-build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST_CHANNEL
-    )
-}"##;
-
-        const VERSION_TAG_FN: &str = r##"#[allow(dead_code)]
-pub fn version() -> String {
-    format!(r#"
-pkg_version:{}
-tag:{}
-commit_hash:{}
-build_time:{}
-build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST_CHANNEL
-    )
-}"##;
-
-        let version_fn = match self.map.get(TAG) {
-            None => VERSION_BRANCH_FN,
+        let (ver_fn,clap_ver_fn) = match self.map.get(TAG) {
+            None => (version_branch_fn(),clap_version_branch_fn()),
             Some(tag) => {
                 if !tag.v.is_empty() {
-                    VERSION_TAG_FN
+                    (version_tag_fn(),clap_version_tag_fn())
                 } else {
-                    VERSION_BRANCH_FN
+                    (version_branch_fn(),clap_version_branch_fn())
                 }
             }
         };
-        writeln!(&self.f, "{}", desc)?;
-        writeln!(&self.f, "{}\n", version_fn)?;
+        writeln!(&self.f, "{}\n", ver_fn)?;
+        writeln!(&self.f, "{}\n", clap_ver_fn)?;
         Ok(())
     }
 }
