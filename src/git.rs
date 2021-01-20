@@ -251,12 +251,20 @@ mod tests {
 
     #[test]
     fn test_git() {
-        let map = Shadow::get_env();
-        let map = new_git(Path::new("./"), CIType::Github, &map);
+        let env_map = Shadow::get_env();
+        let map = new_git(Path::new("./"), CIType::Github, &env_map);
         for (k, v) in map {
             assert!(!v.desc.is_empty());
             if !k.eq(TAG) {
                 assert!(!v.v.is_empty());
+                continue;
+            }
+
+            //assert github tag always exist value
+            if let Some(github_ref) = env_map.get("GITHUB_REF") {
+                if github_ref.starts_with("refs/tags/") {
+                    assert!(!v.v.is_empty());
+                }
             }
         }
     }
