@@ -1,7 +1,7 @@
 macro_rules! concat_fn {
     ($fn_name:ident,$fn_desc:expr,$fn_body:expr) => {
         pub fn $fn_name() -> String {
-            format!("{}{}", $fn_desc, $fn_body)
+            format!("{}\n{}", $fn_desc, $fn_body)
         }
     };
 }
