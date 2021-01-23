@@ -96,6 +96,39 @@ impl SystemEnv {
     }
 }
 
+/// filter cargo tree dependencies by git url
+///
+/// for examples: shadow-rs = { path="/Users/baoyachi/shadow-rs" }
+///
+/// exec: cargo tree output:
+///           └── shadow-rs v0.5.23 (/Users/baoyachi/shadow-rs)
+/// filter by:└── shadow-rs v0.5.23 (path)
+fn filter_dep_path(lines: Vec<&str>) -> String {
+    "".to_string()
+}
+
+/// filter cargo tree dependencies by git url
+///
+/// for examples: shadow-rs = { version="0.5.23",registry="private-crates" }
+///
+/// exec: cargo tree output:
+///           └── shadow-rs v0.5.23 (registry ssh://git@git.baoyachi.com/baoyachi/private-crates.git)
+/// filter by:└── shadow-rs v0.5.23 (registry)
+fn filter_dep_private_registry(lines: Vec<&str>) -> String {
+    "".to_string()
+}
+
+/// filter cargo tree dependencies by git url
+///
+/// for examples: shadow-rs = { git="https://github.com/baoyachi/shadow-rs",branch="master" }
+///
+/// exec: cargo tree output:
+///           └── shadow-rs v0.5.23 (https://github.com/baoyachi/shadow-rs?branch=master#eb712990)
+/// filter by:└── shadow-rs v0.5.23 (git)
+fn filter_dep_git_url(lines: Vec<&str>) -> String {
+    "".to_string()
+}
+
 fn filter_private_registry(lines: Vec<&str>) -> String {
     let mut tree = "\n".to_string();
     for line in lines {
