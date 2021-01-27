@@ -2,7 +2,7 @@
 ========================================
 <p align="center">
   <img
-    width="400"
+    width="200"
     src="https://raw.githubusercontent.com/baoyachi/shadow-rs/master/shadow-rs.png"
     alt="shadow-rs build tool"
   />
