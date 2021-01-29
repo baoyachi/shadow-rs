@@ -69,6 +69,9 @@ concat_fn!(
     CLAP_VERSION_TAG_FN
 );
 
+pub(crate) const BUILD_FN_VERSION: &str = "version";
+pub(crate) const BUILD_FN_CLAP_VERSION: &str = "clap_version";
+
 #[cfg(test)]
 mod tests {
     use super::*;

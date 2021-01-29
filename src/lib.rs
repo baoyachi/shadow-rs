@@ -151,6 +151,7 @@ use std::path::Path;
 
 use crate::build_fn::{
     clap_version_branch_fn, clap_version_tag_fn, version_branch_fn, version_tag_fn,
+    BUILD_FN_CLAP_VERSION, BUILD_FN_VERSION,
 };
 pub use channel::BuildRustChannel;
 use chrono::Local;
@@ -308,7 +309,7 @@ impl Shadow {
         }
         shadow.map = map;
 
-        shadow.write_all();
+        shadow.write_all()?;
 
         Ok(shadow)
     }
@@ -319,9 +320,9 @@ impl Shadow {
         self.gen_const()?;
 
         //write version function
-        self.gen_version()?;
+        let build_fn = self.gen_version()?;
 
-        self.gen_everything()?;
+        self.gen_everything(build_fn)?;
 
         Ok(())
     }
@@ -365,7 +366,7 @@ impl Shadow {
         Ok(())
     }
 
-    fn gen_version(&mut self) -> SdResult<()> {
+    fn gen_version(&mut self) -> SdResult<Vec<&'static str>> {
         let (ver_fn, clap_ver_fn) = match self.map.get(TAG) {
             None => (version_branch_fn(), clap_version_branch_fn()),
             Some(tag) => {
@@ -378,21 +379,31 @@ impl Shadow {
         };
         writeln!(&self.f, "{}\n", ver_fn)?;
         writeln!(&self.f, "{}\n", clap_ver_fn)?;
-        Ok(())
+
+        Ok(vec![BUILD_FN_VERSION, BUILD_FN_CLAP_VERSION])
     }
 
-    fn gen_everything(&self) -> SdResult<()> {
+    fn gen_everything(&self, build_fn: Vec<&'static str>) -> SdResult<()> {
         let mut print_val = String::from("\n");
+
+        // append gen const
         for (k, _) in &self.map {
-            let tmp = format!(r#"{}println!("{}:{{}}",{});{}"#, "\t", k, k, "\n");
+            let tmp = format!(r#"{}println!("{}:{{}}", {});{}"#, "\t", k, k, "\n");
+            print_val.push_str(tmp.as_str());
+        }
+
+        // append gen fn
+        for k in build_fn {
+            let tmp = format!(r#"{}println!("{}:{{}}\n", {}());{}"#, "\t", k, k, "\n");
             print_val.push_str(tmp.as_str());
         }
 
         let everything_define = format!(
             "/// write everything method\n\
             #[allow(dead_code)]\n\
-            pub fn print_everything(){\
-            {{}}}",
+            pub fn print_everything() {\
+            {{}}\
+}\n",
             print_val,
         );
         writeln!(&self.f, "{}", everything_define)?;

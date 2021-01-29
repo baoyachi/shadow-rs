@@ -15,6 +15,13 @@ fn main() {
     println!("branch:{}", shadow_rs::branch());
     println!("tag:{}", shadow_rs::tag());
 
+    // print_build()
+
+    build::print_everything();
+
+}
+
+pub fn print_build() {
     println!("clap_version:{}", build::clap_version());
     println!("version:{}", build::version());
     println!("pkg_version:{}", build::PKG_VERSION);
