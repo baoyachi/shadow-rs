@@ -387,7 +387,7 @@ impl Shadow {
         let mut print_val = String::from("\n");
 
         // append gen const
-        for (k, _) in &self.map {
+        for k in self.map.keys() {
             let tmp = format!(r#"{}println!("{}:{{}}", {});{}"#, "\t", k, k, "\n");
             print_val.push_str(tmp.as_str());
         }
@@ -421,6 +421,7 @@ mod tests {
     fn test_build() -> SdResult<()> {
         Shadow::build_inner("./".into(), "./".into())?;
         let shadow = fs::read_to_string("./shadow.rs")?;
+        //TODO fix unit test
         println!("{}", shadow);
         Ok(())
     }
