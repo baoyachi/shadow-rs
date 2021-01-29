@@ -322,7 +322,7 @@ impl Shadow {
         //write version function
         let build_fn = self.gen_version()?;
 
-        self.gen_everything(build_fn)?;
+        self.gen_build_in(build_fn)?;
 
         Ok(())
     }
@@ -383,7 +383,7 @@ impl Shadow {
         Ok(vec![BUILD_FN_VERSION, BUILD_FN_CLAP_VERSION])
     }
 
-    fn gen_everything(&self, build_fn: Vec<&'static str>) -> SdResult<()> {
+    fn gen_build_in(&self, build_fn: Vec<&'static str>) -> SdResult<()> {
         let mut print_val = String::from("\n");
 
         // append gen const
@@ -399,9 +399,9 @@ impl Shadow {
         }
 
         let everything_define = format!(
-            "/// write everything method\n\
+            "/// print build in method\n\
             #[allow(dead_code)]\n\
-            pub fn print_everything() {\
+            pub fn print_build_in() {\
             {{}}\
 }\n",
             print_val,

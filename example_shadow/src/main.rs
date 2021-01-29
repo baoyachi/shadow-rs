@@ -17,7 +17,7 @@ fn main() {
 
     // print_build()
 
-    build::print_everything();
+    build::print_build_in();
 
 }
 
