@@ -21,6 +21,7 @@ fn main() {
 
 }
 
+#[allow(dead_code)]
 pub fn print_build() {
     println!("clap_version:{}", build::clap_version());
     println!("version:{}", build::version());

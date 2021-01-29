@@ -103,7 +103,8 @@ impl SystemEnv {
 /// exec: cargo tree output:
 ///           └── shadow-rs v0.5.23 (/Users/baoyachi/shadow-rs)
 /// filter by:└── shadow-rs v0.5.23 (path)
-fn filter_dep_path(lines: Vec<&str>) -> String {
+#[allow(dead_code)]
+fn filter_dep_path(_lines: Vec<&str>) -> String {
     "".to_string()
 }
 
@@ -114,7 +115,8 @@ fn filter_dep_path(lines: Vec<&str>) -> String {
 /// exec: cargo tree output:
 ///           └── shadow-rs v0.5.23 (registry ssh://git@git.baoyachi.com/baoyachi/private-crates.git)
 /// filter by:└── shadow-rs v0.5.23 (registry)
-fn filter_dep_private_registry(lines: Vec<&str>) -> String {
+#[allow(dead_code)]
+fn filter_dep_private_registry(_lines: Vec<&str>) -> String {
     "".to_string()
 }
 
@@ -125,7 +127,8 @@ fn filter_dep_private_registry(lines: Vec<&str>) -> String {
 /// exec: cargo tree output:
 ///           └── shadow-rs v0.5.23 (https://github.com/baoyachi/shadow-rs?branch=master#eb712990)
 /// filter by:└── shadow-rs v0.5.23 (git)
-fn filter_dep_git_url(lines: Vec<&str>) -> String {
+#[allow(dead_code)]
+fn filter_dep_git_url(_lines: Vec<&str>) -> String {
     "".to_string()
 }
 
