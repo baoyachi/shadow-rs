@@ -282,7 +282,7 @@ pub fn new_project(std_env: &HashMap<String, String>) -> HashMap<ShadowConst, Co
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+
     use crate::env::dep_source_replace::filter_dep_source;
 
     #[test]
