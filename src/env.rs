@@ -126,7 +126,6 @@ impl SystemEnv {
 /// - path: └── shadow-rs v0.5.23 (* path)
 ///
 fn filter_dep_source(input: &str) -> String {
-
     let (val, index) = if let Some(index) = input.find(" (/") {
         (" (* path)", index)
     } else if let Some(index) = input.find(" (registry ") {
