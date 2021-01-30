@@ -134,7 +134,7 @@ fn filter_dep_source(input: &str) -> String {
         (" (* git)", index)
     } else if let Some(index) = input.find(" (https") {
         (" (* git)", index)
-    } else if let Some(index) = input.find(" (git") {
+    } else if let Some(index) = input.find(" (ssh") {
         (" (* git)", index)
     } else {
         ("", input.len())
