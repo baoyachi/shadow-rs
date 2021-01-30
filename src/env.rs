@@ -6,6 +6,7 @@ use chrono::Local;
 use std::env;
 use std::process::Command;
 
+use crate::env::dep_source_replace::filter_cargo_tree;
 use std::collections::HashMap;
 
 #[derive(Default, Debug)]
@@ -96,63 +97,83 @@ impl SystemEnv {
     }
 }
 
-/// filter cargo tree dependencies source
-///
-/// Why do this?
-///
-/// Sometimes, the private registry or private git url that our cargo relies on will carry this information
-/// with the cargo tree command output we use. In order to protect the privacy of dependence, we need to shield it.
-///
-/// This can protect us from the security issues we rely on environmental information.
-///
-/// I think it is very necessary.So we need to do fuzzy replacement of dependent output.
-///
-/// for examples:
-///
-/// - dep by git: shadow-rs = { git = "https://github.com/baoyachi/shadow-rs", branch="master" }
-/// - dep by registry: shadow-rs = { version = "0.5.23",registry="private-crates" }
-/// - dep by path: shadow-rs = { path = "/Users/baoyachi/shadow-rs" }
-///
-///  before exec: cargo tree output by difference dependencies source:
-///
-/// - git: └── shadow-rs v0.5.23 (https://github.com/baoyachi/shadow-rs?branch=master#eb712990)
-/// - registry: └── shadow-rs v0.5.23 (registry ssh://git@github.com/baoyachi/shadow-rs.git)
-/// - path: └── shadow-rs v0.5.23 ((/Users/baoyachi/shadow-rs))
-///
-/// after filter dependencies source
-///
-/// - git: └── shadow-rs v0.5.23 (* git)
-/// - registry: └── shadow-rs v0.5.23 (* registry)
-/// - path: └── shadow-rs v0.5.23 (* path)
-///
-fn filter_dep_source(input: &str) -> String {
-    let (val, index) = if let Some(index) = input.find(" (/") {
-        (" (* path)", index)
-    } else if let Some(index) = input.find(" (registry ") {
-        (" (* registry)", index)
-    } else if let Some(index) = input.find(" (http") {
-        (" (* git)", index)
-    } else if let Some(index) = input.find(" (https") {
-        (" (* git)", index)
-    } else if let Some(index) = input.find(" (ssh") {
-        (" (* git)", index)
-    } else {
-        ("", input.len())
-    };
-    format!("{}{}", input[..index].to_string(), val)
-}
+mod dep_source_replace {
+    use std::fs;
 
-fn filter_cargo_tree(lines: Vec<&str>) -> String {
-    let mut tree = "\n".to_string();
-    for line in lines {
-        let val = filter_dep_source(line);
-        if tree.trim().is_empty() {
-            tree.push_str(&val);
-        } else {
-            tree = format!("{}\n{}", tree, val);
-        }
+    fn path_exists(path: &str) -> bool {
+        fs::metadata(path).is_ok()
     }
-    tree
+
+    const DEP_REPLACE_NONE: &str = "";
+    const DEP_REPLACE_PATH: &str = " (* path)";
+    const DEP_REPLACE_GIT: &str = " (* git)";
+    const DEP_REPLACE_REGISTRY: &str = " (* registry)";
+
+    /// filter cargo tree dependencies source
+    ///
+    /// Why do this?
+    ///
+    /// Sometimes, the private registry or private git url that our cargo relies on will carry this information
+    /// with the cargo tree command output we use. In order to protect the privacy of dependence, we need to shield it.
+    ///
+    /// This can protect us from the security issues we rely on environmental information.
+    ///
+    /// I think it is very necessary.So we need to do fuzzy replacement of dependent output.
+    ///
+    /// for examples:
+    ///
+    /// - dep by git: shadow-rs = { git = "https://github.com/baoyachi/shadow-rs", branch="master" }
+    /// - dep by registry: shadow-rs = { version = "0.5.23",registry="private-crates" }
+    /// - dep by path: shadow-rs = { path = "/Users/baoyachi/shadow-rs" }
+    ///
+    ///  before exec: cargo tree output by difference dependencies source:
+    ///
+    /// - git: └── shadow-rs v0.5.23 (https://github.com/baoyachi/shadow-rs?branch=master#eb712990)
+    /// - registry: └── shadow-rs v0.5.23 (registry ssh://git@github.com/baoyachi/shadow-rs.git)
+    /// - path: └── shadow-rs v0.5.23 ((/Users/baoyachi/shadow-rs))
+    ///
+    /// after filter dependencies source
+    ///
+    /// - git: └── shadow-rs v0.5.23 (* git)
+    /// - registry: └── shadow-rs v0.5.23 (* registry)
+    /// - path: └── shadow-rs v0.5.23 (* path)
+    ///
+    pub fn filter_dep_source(input: &str) -> String {
+        let (val, index) = if let Some(index) = input.find(" (/") {
+            (DEP_REPLACE_PATH, index)
+        } else if let Some(index) = input.find(" (registry ") {
+            (DEP_REPLACE_REGISTRY, index)
+        } else if let Some(index) = input.find(" (http") {
+            (DEP_REPLACE_GIT, index)
+        } else if let Some(index) = input.find(" (https") {
+            (DEP_REPLACE_GIT, index)
+        } else if let Some(index) = input.find(" (ssh") {
+            (DEP_REPLACE_GIT, index)
+        } else if let (Some(start), Some(end)) = (input.find(" ("), input.find(')')) {
+            let path = input[start + 2..end].trim();
+            if path_exists(path) {
+                (DEP_REPLACE_PATH, start)
+            } else {
+                (DEP_REPLACE_NONE, input.len())
+            }
+        } else {
+            (DEP_REPLACE_NONE, input.len())
+        };
+        format!("{}{}", input[..index].to_string(), val)
+    }
+
+    pub fn filter_cargo_tree(lines: Vec<&str>) -> String {
+        let mut tree = "\n".to_string();
+        for line in lines {
+            let val = filter_dep_source(line);
+            if tree.trim().is_empty() {
+                tree.push_str(&val);
+            } else {
+                tree = format!("{}\n{}", tree, val);
+            }
+        }
+        tree
+    }
 }
 
 pub fn new_system_env(std_env: &HashMap<String, String>) -> HashMap<ShadowConst, ConstVal> {
@@ -262,6 +283,7 @@ pub fn new_project(std_env: &HashMap<String, String>) -> HashMap<ShadowConst, Co
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::env::dep_source_replace::filter_dep_source;
 
     #[test]
     fn test_filter_dep_source_none() {
@@ -310,5 +332,12 @@ mod tests {
         let input = "shadow-rs v0.5.23 (ssh://git@github.com/baoyachi/shadow-rs)";
         let ret = filter_dep_source(input);
         assert_eq!("shadow-rs v0.5.23 (* git)", ret)
+    }
+
+    #[test]
+    fn test_filter_dep_windows_path() {
+        let input = r#"shadow-rs v0.5.23 (FD:\a\shadow-rs\shadow-rs)"#;
+        let ret = filter_dep_source(input);
+        assert_eq!(input, ret)
     }
 }
