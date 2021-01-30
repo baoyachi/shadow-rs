@@ -10,10 +10,10 @@ build = "build.rs"
 [dependencies]
 clap = "2.33.3"
 #shadow-rs = "0.5"
-#shadow-rs = { git="https://github.com/baoyachi/shadow-rs" }
+#shadow-rs = { git="ssh://git@github.com/baoyachi/shadow-rs",branch="issue_49" }
+#shadow-rs = { git="https://github.com/baoyachi/shadow-rs",branch="issue_49" }
 shadow-rs = { path = "../" }
 
 [build-dependencies]
 #shadow-rs = "0.5"
-#shadow-rs = { git="https://github.com/baoyachi/shadow-rs" }
 shadow-rs = { path = "../" }

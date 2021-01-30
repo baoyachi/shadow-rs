@@ -136,7 +136,6 @@ mod ci;
 mod env;
 mod err;
 mod git;
-mod util;
 
 use build::*;
 use env::*;

@@ -57,7 +57,7 @@ impl SystemEnv {
         if let Ok(out) = Command::new("cargo").arg("tree").output() {
             let input = String::from_utf8(out.stdout)?;
             if let Some(index) = input.find('\n') {
-                let lines = filter_private_registry(input[index..].split('\n').collect());
+                let lines = filter_cargo_tree(input[index..].split('\n').collect());
                 update_val(CARGO_TREE, lines);
             }
         }
@@ -96,50 +96,56 @@ impl SystemEnv {
     }
 }
 
-/// filter cargo tree dependencies by git url
+/// filter cargo tree dependencies source
 ///
-/// for examples: shadow-rs = { path="/Users/baoyachi/shadow-rs" }
+/// Why do this?
 ///
-/// exec: cargo tree output:
-///           └── shadow-rs v0.5.23 (/Users/baoyachi/shadow-rs)
-/// filter by:└── shadow-rs v0.5.23 (path)
-#[allow(dead_code)]
-fn filter_dep_path(_lines: Vec<&str>) -> String {
-    "".to_string()
+/// Sometimes, the private registry or private git url that our cargo relies on will carry this information
+/// with the cargo tree command output we use. In order to protect the privacy of dependence, we need to shield it.
+///
+/// This can protect us from the security issues we rely on environmental information.
+///
+/// I think it is very necessary.So we need to do fuzzy replacement of dependent output.
+///
+/// for examples:
+///
+/// - dep by git: shadow-rs = { git = "https://github.com/baoyachi/shadow-rs", branch="master" }
+/// - dep by registry: shadow-rs = { version = "0.5.23",registry="private-crates" }
+/// - dep by path: shadow-rs = { path = "/Users/baoyachi/shadow-rs" }
+///
+///  before exec: cargo tree output by difference dependencies source:
+///
+/// - git: └── shadow-rs v0.5.23 (https://github.com/baoyachi/shadow-rs?branch=master#eb712990)
+/// - registry: └── shadow-rs v0.5.23 (registry ssh://git@github.com/baoyachi/shadow-rs.git)
+/// - path: └── shadow-rs v0.5.23 ((/Users/baoyachi/shadow-rs))
+///
+/// after filter dependencies source
+///
+/// - git: └── shadow-rs v0.5.23 (* git)
+/// - registry: └── shadow-rs v0.5.23 (* registry)
+/// - path: └── shadow-rs v0.5.23 (* path)
+///
+fn filter_dep_source(input: &str) -> String {
+    if input.find(" (/").is_none() || input.find(" (*)").is_some() {
+        return input.to_string();
+    }
+
+    let (val, index) = if let Some(index) = input.find(" (/") {
+        (" (* path)", index)
+    } else if let Some(index) = input.find(" (registry ") {
+        (" (* registry)", index)
+    } else if let Some(index) = input.find(" (") {
+        (" (* git)", index)
+    } else {
+        ("", input.len())
+    };
+    format!("{}{}", input[..index].to_string(), val)
 }
 
-/// filter cargo tree dependencies by git url
-///
-/// for examples: shadow-rs = { version="0.5.23",registry="private-crates" }
-///
-/// exec: cargo tree output:
-///           └── shadow-rs v0.5.23 (registry ssh://git@git.baoyachi.com/baoyachi/private-crates.git)
-/// filter by:└── shadow-rs v0.5.23 (registry)
-#[allow(dead_code)]
-fn filter_dep_private_registry(_lines: Vec<&str>) -> String {
-    "".to_string()
-}
-
-/// filter cargo tree dependencies by git url
-///
-/// for examples: shadow-rs = { git="https://github.com/baoyachi/shadow-rs",branch="master" }
-///
-/// exec: cargo tree output:
-///           └── shadow-rs v0.5.23 (https://github.com/baoyachi/shadow-rs?branch=master#eb712990)
-/// filter by:└── shadow-rs v0.5.23 (git)
-#[allow(dead_code)]
-fn filter_dep_git_url(_lines: Vec<&str>) -> String {
-    "".to_string()
-}
-
-fn filter_private_registry(lines: Vec<&str>) -> String {
+fn filter_cargo_tree(lines: Vec<&str>) -> String {
     let mut tree = "\n".to_string();
     for line in lines {
-        let val = if let Some(index) = line.find("(registry `") {
-            format!("{}(private)", line[..index].to_string())
-        } else {
-            line.to_string()
-        };
+        let val = filter_dep_source(line);
         if tree.trim().is_empty() {
             tree.push_str(&val);
         } else {
