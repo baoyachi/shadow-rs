@@ -416,14 +416,14 @@ impl Shadow {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::fs;
 
     #[test]
     fn test_build() -> SdResult<()> {
         Shadow::build_inner("./".into(), "./".into())?;
-        let shadow = fs::read_to_string("./shadow.rs")?;
-        //TODO fix unit test
-        println!("{}", shadow);
+        mod build{
+            include!("../shadow.rs");
+        }
+        build::print_build_in();
         Ok(())
     }
 
