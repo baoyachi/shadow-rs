@@ -126,15 +126,16 @@ impl SystemEnv {
 /// - path: └── shadow-rs v0.5.23 (* path)
 ///
 fn filter_dep_source(input: &str) -> String {
-    if input.find(" (").is_none() || input.find(" (*)").is_some() {
-        return input.to_string();
-    }
 
     let (val, index) = if let Some(index) = input.find(" (/") {
         (" (* path)", index)
     } else if let Some(index) = input.find(" (registry ") {
         (" (* registry)", index)
-    } else if let Some(index) = input.find(" (") {
+    } else if let Some(index) = input.find(" (http") {
+        (" (* git)", index)
+    } else if let Some(index) = input.find(" (https") {
+        (" (* git)", index)
+    } else if let Some(index) = input.find(" (git") {
         (" (* git)", index)
     } else {
         ("", input.len())
