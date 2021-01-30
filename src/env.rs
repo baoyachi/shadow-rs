@@ -126,7 +126,7 @@ impl SystemEnv {
 /// - path: └── shadow-rs v0.5.23 (* path)
 ///
 fn filter_dep_source(input: &str) -> String {
-    if input.find(" (/").is_none() || input.find(" (*)").is_some() {
+    if input.find(" (").is_none() || input.find(" (*)").is_some() {
         return input.to_string();
     }
 
@@ -257,4 +257,58 @@ pub fn new_project(std_env: &HashMap<String, String>) -> HashMap<ShadowConst, Co
     }
 
     project.map
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_filter_dep_source_none() {
+        let input = "shadow-rs v0.5.23";
+        let ret = filter_dep_source(input);
+        assert_eq!(input, ret)
+    }
+
+    #[test]
+    fn test_filter_dep_source_multi() {
+        let input = "shadow-rs v0.5.23 (*)";
+        let ret = filter_dep_source(input);
+        assert_eq!(input, ret)
+    }
+
+    #[test]
+    fn test_filter_dep_source_path() {
+        let input = "shadow-rs v0.5.23 (/Users/baoyachi/shadow-rs)";
+        let ret = filter_dep_source(input);
+        assert_eq!("shadow-rs v0.5.23 (* path)", ret)
+    }
+
+    #[test]
+    fn test_filter_dep_source_registry() {
+        let input = "shadow-rs v0.5.23 (registry `ssh://git@github.com/baoyachi/shadow-rs.git`)";
+        let ret = filter_dep_source(input);
+        assert_eq!("shadow-rs v0.5.23 (* registry)", ret)
+    }
+
+    #[test]
+    fn test_filter_dep_source_git_https() {
+        let input = "shadow-rs v0.5.23 (https://github.com/baoyachi/shadow-rs#13572c90)";
+        let ret = filter_dep_source(input);
+        assert_eq!("shadow-rs v0.5.23 (* git)", ret)
+    }
+
+    #[test]
+    fn test_filter_dep_source_git_http() {
+        let input = "shadow-rs v0.5.23 (http://github.com/baoyachi/shadow-rs#13572c90)";
+        let ret = filter_dep_source(input);
+        assert_eq!("shadow-rs v0.5.23 (* git)", ret)
+    }
+
+    #[test]
+    fn test_filter_dep_source_git() {
+        let input = "shadow-rs v0.5.23 (ssh://git@github.com/baoyachi/shadow-rs)";
+        let ret = filter_dep_source(input);
+        assert_eq!("shadow-rs v0.5.23 (* git)", ret)
+    }
 }
