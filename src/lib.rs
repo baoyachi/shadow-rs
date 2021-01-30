@@ -420,7 +420,7 @@ mod tests {
     #[test]
     fn test_build() -> SdResult<()> {
         Shadow::build_inner("./".into(), "./".into())?;
-        mod build{
+        mod build {
             include!("../shadow.rs");
         }
         build::print_build_in();
