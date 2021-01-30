@@ -57,7 +57,7 @@ impl SystemEnv {
         if let Ok(out) = Command::new("cargo").arg("tree").output() {
             let input = String::from_utf8(out.stdout)?;
             if let Some(index) = input.find('\n') {
-                let lines = filter_private_registry(input[index..].split('\n').collect());
+                let lines = filter_cargo_tree(input[index..].split('\n').collect());
                 update_val(CARGO_TREE, lines);
             }
         }
@@ -96,14 +96,56 @@ impl SystemEnv {
     }
 }
 
-fn filter_private_registry(lines: Vec<&str>) -> String {
+/// filter cargo tree dependencies source
+///
+/// Why do this?
+///
+/// Sometimes, the private registry or private git url that our cargo relies on will carry this information
+/// with the cargo tree command output we use. In order to protect the privacy of dependence, we need to shield it.
+///
+/// This can protect us from the security issues we rely on environmental information.
+///
+/// I think it is very necessary.So we need to do fuzzy replacement of dependent output.
+///
+/// for examples:
+///
+/// - dep by git: shadow-rs = { git = "https://github.com/baoyachi/shadow-rs", branch="master" }
+/// - dep by registry: shadow-rs = { version = "0.5.23",registry="private-crates" }
+/// - dep by path: shadow-rs = { path = "/Users/baoyachi/shadow-rs" }
+///
+///  before exec: cargo tree output by difference dependencies source:
+///
+/// - git: └── shadow-rs v0.5.23 (https://github.com/baoyachi/shadow-rs?branch=master#eb712990)
+/// - registry: └── shadow-rs v0.5.23 (registry ssh://git@github.com/baoyachi/shadow-rs.git)
+/// - path: └── shadow-rs v0.5.23 ((/Users/baoyachi/shadow-rs))
+///
+/// after filter dependencies source
+///
+/// - git: └── shadow-rs v0.5.23 (* git)
+/// - registry: └── shadow-rs v0.5.23 (* registry)
+/// - path: └── shadow-rs v0.5.23 (* path)
+///
+fn filter_dep_source(input: &str) -> String {
+    let (val, index) = if let Some(index) = input.find(" (/") {
+        (" (* path)", index)
+    } else if let Some(index) = input.find(" (registry ") {
+        (" (* registry)", index)
+    } else if let Some(index) = input.find(" (http") {
+        (" (* git)", index)
+    } else if let Some(index) = input.find(" (https") {
+        (" (* git)", index)
+    } else if let Some(index) = input.find(" (ssh") {
+        (" (* git)", index)
+    } else {
+        ("", input.len())
+    };
+    format!("{}{}", input[..index].to_string(), val)
+}
+
+fn filter_cargo_tree(lines: Vec<&str>) -> String {
     let mut tree = "\n".to_string();
     for line in lines {
-        let val = if let Some(index) = line.find("(registry `") {
-            format!("{}(private)", line[..index].to_string())
-        } else {
-            line.to_string()
-        };
+        let val = filter_dep_source(line);
         if tree.trim().is_empty() {
             tree.push_str(&val);
         } else {
@@ -215,4 +257,58 @@ pub fn new_project(std_env: &HashMap<String, String>) -> HashMap<ShadowConst, Co
     }
 
     project.map
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_filter_dep_source_none() {
+        let input = "shadow-rs v0.5.23";
+        let ret = filter_dep_source(input);
+        assert_eq!(input, ret)
+    }
+
+    #[test]
+    fn test_filter_dep_source_multi() {
+        let input = "shadow-rs v0.5.23 (*)";
+        let ret = filter_dep_source(input);
+        assert_eq!(input, ret)
+    }
+
+    #[test]
+    fn test_filter_dep_source_path() {
+        let input = "shadow-rs v0.5.23 (/Users/baoyachi/shadow-rs)";
+        let ret = filter_dep_source(input);
+        assert_eq!("shadow-rs v0.5.23 (* path)", ret)
+    }
+
+    #[test]
+    fn test_filter_dep_source_registry() {
+        let input = "shadow-rs v0.5.23 (registry `ssh://git@github.com/baoyachi/shadow-rs.git`)";
+        let ret = filter_dep_source(input);
+        assert_eq!("shadow-rs v0.5.23 (* registry)", ret)
+    }
+
+    #[test]
+    fn test_filter_dep_source_git_https() {
+        let input = "shadow-rs v0.5.23 (https://github.com/baoyachi/shadow-rs#13572c90)";
+        let ret = filter_dep_source(input);
+        assert_eq!("shadow-rs v0.5.23 (* git)", ret)
+    }
+
+    #[test]
+    fn test_filter_dep_source_git_http() {
+        let input = "shadow-rs v0.5.23 (http://github.com/baoyachi/shadow-rs#13572c90)";
+        let ret = filter_dep_source(input);
+        assert_eq!("shadow-rs v0.5.23 (* git)", ret)
+    }
+
+    #[test]
+    fn test_filter_dep_source_git() {
+        let input = "shadow-rs v0.5.23 (ssh://git@github.com/baoyachi/shadow-rs)";
+        let ret = filter_dep_source(input);
+        assert_eq!("shadow-rs v0.5.23 (* git)", ret)
+    }
 }

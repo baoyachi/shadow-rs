@@ -91,6 +91,7 @@ fn main() {
 
     //shadow-rs built in const   
     println!("{}", build::version());           // the version (description binary detail information)
+    println!("{}", build::clap_version());      // usually used by clap crates version() (description binary detail information)
     println!("{}", build::PKG_VERSION);         // current package version. e.g. '1.3.15-beta2'  
     println!("{}", build::PKG_VERSION_MAJOR);   //current package major version. e.g. '1'  
     println!("{}", build::PKG_VERSION_MINOR);   //current package minor version. e.g. '3'  
