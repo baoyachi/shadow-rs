@@ -424,7 +424,6 @@ mod tests {
         let shadow = fs::read_to_string("./shadow.rs")?;
         assert!(shadow.len() > 0);
         let lines: Vec<_> = shadow.lines().map(|_| true).collect();
-        assert_ne!(lines.len(), 0);
         assert!(lines.len() > 0);
         println!("{}", shadow);
         Ok(())
