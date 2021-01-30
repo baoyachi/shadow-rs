@@ -1,6 +1,12 @@
 [shadow-rs][docsrs]:: build-time information stored in your rust project.(binary,lib,cdylib,dylib)
 ========================================
-![shadow](./shadow-rs.png)
+<p align="center">
+  <img
+    width="200"
+    src="https://raw.githubusercontent.com/baoyachi/shadow-rs/master/shadow-rs.png"
+    alt="shadow-rs build tool"
+  />
+</p>
 
 [docsrs]: https://docs.rs/shadow-rs
 
