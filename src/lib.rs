@@ -1,3 +1,4 @@
+#![doc(html_logo_url = "https://raw.githubusercontent.com/baoyachi/shadow-rs/master/shadow-rs.png")]
 //! `shadow-rs` :build-time information stored in your rust project.(binary,lib,cdylib,dylib)
 //!
 //! It's allows you to recall properties of the build process and environment at runtime, including:
