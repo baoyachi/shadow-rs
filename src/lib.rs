@@ -143,7 +143,7 @@ use env::*;
 
 use git::*;
 
-use crate::ci::CIType;
+use crate::ci::CiType;
 use std::collections::HashMap;
 use std::env as std_env;
 use std::fs::File;
@@ -257,22 +257,22 @@ impl Shadow {
     }
 
     /// try get current ci env
-    fn try_ci(&self) -> CIType {
+    fn try_ci(&self) -> CiType {
         if let Some(c) = self.std_env.get("GITLAB_CI") {
             if c == "true" {
-                return CIType::Gitlab;
+                return CiType::Gitlab;
             }
         }
 
         if let Some(c) = self.std_env.get("GITHUB_ACTIONS") {
             if c == "true" {
-                return CIType::Github;
+                return CiType::Github;
             }
         }
 
         //TODO completed [travis,jenkins] env
 
-        CIType::None
+        CiType::None
     }
 
     fn build() -> SdResult<Shadow> {

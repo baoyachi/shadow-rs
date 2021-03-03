@@ -1,5 +1,5 @@
 use crate::build::{ConstType, ConstVal, ShadowConst};
-use crate::ci::CIType;
+use crate::ci::CiType;
 use crate::err::*;
 use std::collections::HashMap;
 use std::path::Path;
@@ -16,7 +16,7 @@ const COMMIT_EMAIL: ShadowConst = "COMMIT_EMAIL";
 #[derive(Default, Debug)]
 pub struct Git {
     map: HashMap<ShadowConst, ConstVal>,
-    ci_type: CIType,
+    ci_type: CiType,
 }
 
 impl Git {
@@ -108,14 +108,14 @@ impl Git {
         let mut branch: Option<String> = None;
         let mut tag: Option<String> = None;
         match self.ci_type {
-            CIType::Gitlab => {
+            CiType::Gitlab => {
                 if let Some(v) = std_env.get("CI_COMMIT_TAG") {
                     tag = Some(v.to_string());
                 } else if let Some(v) = std_env.get("CI_COMMIT_REF_NAME") {
                     branch = Some(v.to_string());
                 }
             }
-            CIType::Github => {
+            CiType::Github => {
                 if let Some(v) = std_env.get("GITHUB_REF") {
                     let ref_branch_prefix: &str = "refs/heads/";
                     let ref_tag_prefix: &str = "refs/tags/";
@@ -141,7 +141,7 @@ impl Git {
 
 pub fn new_git(
     path: &std::path::Path,
-    ci: CIType,
+    ci: CiType,
     std_env: &HashMap<String, String>,
 ) -> HashMap<ShadowConst, ConstVal> {
     let mut git = Git {
@@ -252,7 +252,7 @@ mod tests {
     #[test]
     fn test_git() {
         let env_map = Shadow::get_env();
-        let map = new_git(Path::new("./"), CIType::Github, &env_map);
+        let map = new_git(Path::new("./"), CiType::Github, &env_map);
         for (k, v) in map {
             println!("k:{},v:{:?}", k, v);
             assert!(!v.desc.is_empty());

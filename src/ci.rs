@@ -1,5 +1,5 @@
 #[derive(Debug)]
-pub enum CIType {
+pub enum CiType {
     Github,
     Gitlab,
     // Jenkins,
@@ -7,17 +7,17 @@ pub enum CIType {
     None,
 }
 
-impl Default for CIType {
+impl Default for CiType {
     fn default() -> Self {
         Self::None
     }
 }
 
-impl ToString for CIType {
+impl ToString for CiType {
     fn to_string(&self) -> String {
         match self {
-            CIType::Github => "github".into(),
-            CIType::Gitlab => "gitlab".into(),
+            CiType::Github => "github".into(),
+            CiType::Gitlab => "gitlab".into(),
             // CIType::Jenkins => "jenkins".into(),
             // CIType::Travis => "travis".into(),
             _ => "none".into(),
