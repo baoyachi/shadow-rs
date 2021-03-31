@@ -83,11 +83,10 @@
 //! ```
 //!
 //! ### 3) Integrate Shadow
-//! In your root rust file (e.g. `main.rs`, or `lib.rs`):
+//! In your rust file (e.g. `*.rs`):
 //!
 //! ```ignore
-//! #[macro_use]
-//! extern crate shadow_rs;
+//! use shadow_rs::shadow;
 //!
 //! shadow!(build);
 //! ```

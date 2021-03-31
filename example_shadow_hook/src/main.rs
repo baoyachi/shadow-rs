@@ -1,5 +1,4 @@
-#[macro_use]
-extern crate shadow_rs;
+use shadow_rs::shadow;
 
 shadow!(build);
 
