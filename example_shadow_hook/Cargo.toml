@@ -1,5 +1,5 @@
 [package]
-name = "example_shadow"
+name = "example_shadow_hook"
 version = "0.1.8-beta3"
 authors = ["baoyachi <liaoymxsdl@gmail.com>"]
 edition = "2018"

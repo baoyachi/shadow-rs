@@ -9,7 +9,7 @@ readme = "README.md"
 categories = ["development-tools", "development-tools::build-utils"]
 repository = "https://github.com/baoyachi/shadow-rs"
 license = "MIT AND Apache-2.0"
-
+exclude = ["shadow-rs.png"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -18,3 +18,6 @@ git2 = { version = "0.13.8", default-features = false, optional = true }
 
 [features]
 default = ["git2"]
+
+[workspace]
+members = ["example_shadow", "example_shadow_hook"]
