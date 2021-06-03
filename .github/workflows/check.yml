@@ -46,7 +46,7 @@ jobs:
 
       # example_shadow cargo fmt
       - name: Check examples format
-        run: cargo update -p shadow-rs;cargo fmt --all -- --check
+        run: cargo fmt --all -- --check
         working-directory: ./example_shadow
 
       # example_shadow cargo clippy
