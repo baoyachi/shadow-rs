@@ -155,7 +155,9 @@ with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/s
 | PKG_VERSION | 0.3.13 |
 | CARGO_TREE | cargo tree |  
 | PROJECT_NAME | shadow-rs |  
-| BUILD_TIME | 2020-08-16 14:50:25 |  
+| BUILD_TIME | 2021-06-24 21:33:59 |  
+| BUILD_TIME_2822 | Thu, 24 Jun 2021 21:33:59 +0800 |  
+| BUILD_TIME_3339 | 2021-06-24T21:33:59.972494+08:00 |  
 | BUILD_RUST_CHANNEL | debug/release |  
 
 If you have any questions, please create an [issue](https://github.com/baoyachi/shadow-rs/issues/new) so we may improve
