@@ -10,6 +10,8 @@ pub(crate) const TAG: ShadowConst = "TAG";
 const SHORT_COMMIT: ShadowConst = "SHORT_COMMIT";
 const COMMIT_HASH: ShadowConst = "COMMIT_HASH";
 const COMMIT_DATE: ShadowConst = "COMMIT_DATE";
+const COMMIT_DATE_2822: ShadowConst = "COMMIT_DATE_2822";
+const COMMIT_DATE_3339: ShadowConst = "COMMIT_DATE_3339";
 const COMMIT_AUTHOR: ShadowConst = "COMMIT_AUTHOR";
 const COMMIT_EMAIL: ShadowConst = "COMMIT_EMAIL";
 
@@ -91,6 +93,16 @@ impl Git {
                 date_time.format("%Y-%m-%d %H:%M:%S").to_string(),
             );
 
+            self.update_val(
+                COMMIT_DATE_2822,
+                date_time.to_rfc2822(),
+            );
+
+            self.update_val(
+                COMMIT_DATE_3339,
+                date_time.to_rfc3339(),
+            );
+
             let author = commit.author();
             if let Some(v) = author.email() {
                 self.update_val(COMMIT_EMAIL, v.to_string());
@@ -169,6 +181,12 @@ pub fn new_git(
         .insert(COMMIT_EMAIL, ConstVal::new("display current commit email"));
     git.map
         .insert(COMMIT_DATE, ConstVal::new("display current commit date"));
+
+    git.map
+        .insert(COMMIT_DATE_2822, ConstVal::new("display current commit date by rfc2822"));
+
+    git.map
+        .insert(COMMIT_DATE_3339, ConstVal::new("display current commit date by rfc3339"));
 
     if let Err(e) = git.init(path, std_env) {
         println!("{}", e.to_string());

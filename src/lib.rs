@@ -31,7 +31,11 @@
 //! pub const BUILD_RUST_CHANNEL :&str = "debug";
 //! pub const COMMIT_AUTHOR :&str = "baoyachi";
 //! pub const BUILD_TIME :&str = "2020-08-16 13:48:52";
+//! pub const BUILD_TIME_2822 :&str = "Thu, 24 Jun 2021 21:44:14 +0800";
+//! pub const BUILD_TIME_3339 :&str = "2021-06-24T21:44:14.473058+08:00";
 //! pub const COMMIT_DATE :&str = "2020-08-16 13:12:52";
+//! pub const COMMIT_DATE_2822 :&str = "Thu, 24 Jun 2021 21:44:14 +0800";
+//! pub const COMMIT_DATE_3339 :&str = "2021-06-24T21:44:14.473058+08:00";
 //! pub const COMMIT_EMAIL :&str = "xxx@gmail.com";
 //! pub const PROJECT_NAME :&str = "shadow-rs";
 //! pub const RUST_CHANNEL :&str = "stable-x86_64-apple-darwin (default)";

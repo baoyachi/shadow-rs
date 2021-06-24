@@ -34,6 +34,8 @@ pub fn print_build() {
     println!("commit_id:{}", build::COMMIT_HASH);
     println!("short_commit:{}", build::SHORT_COMMIT);
     println!("commit_date:{}", build::COMMIT_DATE);
+    println!("commit_date_2822:{}", build::COMMIT_DATE_2822);
+    println!("commit_date_3339:{}", build::COMMIT_DATE_3339);
     println!("commit_author:{}", build::COMMIT_AUTHOR);
     println!("commit_email:{}", build::COMMIT_EMAIL);
 

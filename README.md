@@ -101,6 +101,8 @@ fn main() {
     println!("{}", build::SHORT_COMMIT);        // short commit hash, e.g. '8405e28e'
     println!("{}", build::COMMIT_HASH);         // full commit hash, e.g. '8405e28e64080a09525a6cf1b07c22fcaf71a5c5'
     println!("{}", build::COMMIT_DATE);         // commit date, e.g. '2020-08-16 11:52:47'
+    println!("{}", build::COMMIT_DATE_2822);    // commit date, e.g. 'Thu, 24 Jun 2021 21:33:59 +0800'
+    println!("{}", build::COMMIT_DATE_3339);    // commit date, e.g. '2021-06-24T21:33:59.972494+08:00'
     println!("{}", build::COMMIT_AUTHOR);       // commit author, e.g. 'baoyachi'
     println!("{}", build::COMMIT_EMAIL);        // commit email, e.g. 'example@gmail.com'
 
@@ -112,6 +114,8 @@ fn main() {
 
     println!("{}", build::PROJECT_NAME);        // your project name, e.g. 'shadow-rs'
     println!("{}", build::BUILD_TIME);          // time when start build occurred, e.g. '2020-08-16 14:50:25'
+    println!("build_time_2822:{}", build::BUILD_TIME_2822); // time when start build occurred by rfc2822, e.g. 'Thu, 24 Jun 2021 21:33:59 +0800'
+    println!("build_time_3339:{}", build::BUILD_TIME_3339); // time when start build occurred by rfc3339, e.g. '2021-06-24T21:33:59.972494+08:00'
     println!("{}", build::BUILD_RUST_CHANNEL);  // e.g. 'debug'
 }
 ```
@@ -146,6 +150,8 @@ with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/s
 | SHORT_COMMIT | 8405e28e |  
 | COMMIT_HASH | 8405e28e64080a09525a6cf1b07c22fcaf71a5c5 |  
 | COMMIT_DATE | 2020-08-16 13:12:52 |
+| COMMIT_DATE_2822 | Thu, 24 Jun 2021 21:33:59 +0800 |  
+| COMMIT_DATE_3339 | 2021-06-24T21:33:59.972494+08:00 |
 | COMMIT_AUTHOR | baoyachi |
 | COMMIT_EMAIL | xxx@gmail.com |  
 | BUILD_OS | macos-x86_64 |  
