@@ -93,15 +93,9 @@ impl Git {
                 date_time.format("%Y-%m-%d %H:%M:%S").to_string(),
             );
 
-            self.update_val(
-                COMMIT_DATE_2822,
-                date_time.to_rfc2822(),
-            );
+            self.update_val(COMMIT_DATE_2822, date_time.to_rfc2822());
 
-            self.update_val(
-                COMMIT_DATE_3339,
-                date_time.to_rfc3339(),
-            );
+            self.update_val(COMMIT_DATE_3339, date_time.to_rfc3339());
 
             let author = commit.author();
             if let Some(v) = author.email() {
@@ -182,11 +176,15 @@ pub fn new_git(
     git.map
         .insert(COMMIT_DATE, ConstVal::new("display current commit date"));
 
-    git.map
-        .insert(COMMIT_DATE_2822, ConstVal::new("display current commit date by rfc2822"));
+    git.map.insert(
+        COMMIT_DATE_2822,
+        ConstVal::new("display current commit date by rfc2822"),
+    );
 
-    git.map
-        .insert(COMMIT_DATE_3339, ConstVal::new("display current commit date by rfc3339"));
+    git.map.insert(
+        COMMIT_DATE_3339,
+        ConstVal::new("display current commit date by rfc3339"),
+    );
 
     if let Err(e) = git.init(path, std_env) {
         println!("{}", e.to_string());
