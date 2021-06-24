@@ -34,6 +34,8 @@ pub fn print_build() {
     println!("commit_id:{}", build::COMMIT_HASH);
     println!("short_commit:{}", build::SHORT_COMMIT);
     println!("commit_date:{}", build::COMMIT_DATE);
+    println!("commit_date_2822:{}", build::COMMIT_DATE_2822);
+    println!("commit_date_3339:{}", build::COMMIT_DATE_3339);
     println!("commit_author:{}", build::COMMIT_AUTHOR);
     println!("commit_email:{}", build::COMMIT_EMAIL);
 
@@ -45,5 +47,7 @@ pub fn print_build() {
 
     println!("project_name:{}", build::PROJECT_NAME);
     println!("build_time:{}", build::BUILD_TIME);
+    println!("build_time_2822:{}", build::BUILD_TIME_2822);
+    println!("build_time_3339:{}", build::BUILD_TIME_3339);
     println!("build_rust_channel:{}", build::BUILD_RUST_CHANNEL);
 }

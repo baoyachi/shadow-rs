@@ -245,18 +245,42 @@ pub struct Project {
 
 const PROJECT_NAME: ShadowConst = "PROJECT_NAME";
 const BUILD_TIME: ShadowConst = "BUILD_TIME";
+const BUILD_TIME_2822: ShadowConst = "BUILD_TIME_2822";
+const BUILD_TIME_3339: ShadowConst = "BUILD_TIME_3339";
 const BUILD_RUST_CHANNEL: ShadowConst = "BUILD_RUST_CHANNEL";
 
-pub fn new_project(std_env: &HashMap<String, String>) -> HashMap<ShadowConst, ConstVal> {
-    let mut project = Project::default();
+pub fn build_time(project: &mut Project) {
+    let time = Local::now();
     project.map.insert(
         BUILD_TIME,
         ConstVal {
             desc: "display project build time".to_string(),
-            v: Local::now().format("%Y-%m-%d %H:%M:%S").to_string(),
+            v: time.format("%Y-%m-%d %H:%M:%S").to_string(),
             t: ConstType::Str,
         },
     );
+    project.map.insert(
+        BUILD_TIME_2822,
+        ConstVal {
+            desc: "display project build time by rfc2822".to_string(),
+            v: time.to_rfc2822(),
+            t: ConstType::Str,
+        },
+    );
+
+    project.map.insert(
+        BUILD_TIME_3339,
+        ConstVal {
+            desc: "display project build time by rfc3399".to_string(),
+            v: time.to_rfc3339(),
+            t: ConstType::Str,
+        },
+    );
+}
+
+pub fn new_project(std_env: &HashMap<String, String>) -> HashMap<ShadowConst, ConstVal> {
+    let mut project = Project::default();
+    build_time(&mut project);
     project.map.insert(
         BUILD_RUST_CHANNEL,
         ConstVal {
