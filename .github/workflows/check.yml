@@ -56,7 +56,7 @@ jobs:
 
       # example_shadow cargo run
       - name: Run example_shadow
-        run: cargo run && tree && target/debug/example_shadow -V
+        run: cargo run ; tree ; target/debug/example_shadow -V
         working-directory: ./example_shadow
 
       # build on nightly
