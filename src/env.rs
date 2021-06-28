@@ -2,7 +2,7 @@ use crate::build::*;
 use crate::channel::*;
 use crate::err::SdResult;
 
-use chrono::Local;
+use chrono::{Local, SecondsFormat};
 use std::env;
 use std::process::Command;
 
@@ -272,7 +272,7 @@ pub fn build_time(project: &mut Project) {
         BUILD_TIME_3339,
         ConstVal {
             desc: "display project build time by rfc3399".to_string(),
-            v: time.to_rfc3339(),
+            v: time.to_rfc3339_opts(SecondsFormat::Secs, true),
             t: ConstType::Str,
         },
     );

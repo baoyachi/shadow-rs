@@ -1,6 +1,7 @@
 use crate::build::{ConstType, ConstVal, ShadowConst};
 use crate::ci::CiType;
 use crate::err::*;
+use chrono::SecondsFormat;
 use std::collections::HashMap;
 use std::path::Path;
 use std::process::Command;
@@ -95,7 +96,10 @@ impl Git {
 
             self.update_val(COMMIT_DATE_2822, date_time.to_rfc2822());
 
-            self.update_val(COMMIT_DATE_3339, date_time.to_rfc3339());
+            self.update_val(
+                COMMIT_DATE_3339,
+                date_time.to_rfc3339_opts(SecondsFormat::Secs, true),
+            );
 
             let author = commit.author();
             if let Some(v) = author.email() {
