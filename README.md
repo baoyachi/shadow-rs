@@ -48,10 +48,10 @@ Modify your `Cargo.toml` like so:
 build = "build.rs"
 
 [dependencies]
-shadow-rs = "0.5"
+shadow-rs = "0.6"
 
 [build-dependencies]
-shadow-rs = "0.5"
+shadow-rs = "0.6"
 ```
 
 ### 2) Create `build.rs` file
@@ -86,7 +86,7 @@ fn main() {
     //shadow-rs built in function  
     println!("{}", shadow_rs::is_debug());      // check if this is a debug build
     println!("{}", shadow_rs::branch());        // get current project git branch. e.g.'master'
-    println!("{}", shadow_rs::tag());        // get current project git head tag. e.g.'v1.5.3'
+    println!("{}", shadow_rs::tag());           // get current project git head tag. e.g.'v1.5.3'
 
     //shadow-rs built in const   
     println!("{}", build::version());           // the version (description binary detail information)
@@ -95,7 +95,7 @@ fn main() {
     println!("{}", build::PKG_VERSION_MAJOR);   //current package major version. e.g. '1'  
     println!("{}", build::PKG_VERSION_MINOR);   //current package minor version. e.g. '3'  
     println!("{}", build::PKG_VERSION_PATCH);   //current package minor version. e.g. '15'  
-    println!("{}", build::PKG_VERSION_PRE);   //current package minor version. e.g. 'beta2'  
+    println!("{}", build::PKG_VERSION_PRE);     //current package minor version. e.g. 'beta2'  
     println!("{}", build::BRANCH);              // the branch, e.g. 'master'
     println!("{}", build::TAG);                 // the tag, e.g. 'v1.0.0'
     println!("{}", build::SHORT_COMMIT);        // short commit hash, e.g. '8405e28e'
@@ -114,8 +114,8 @@ fn main() {
 
     println!("{}", build::PROJECT_NAME);        // your project name, e.g. 'shadow-rs'
     println!("{}", build::BUILD_TIME);          // time when start build occurred, e.g. '2020-08-16 14:50:25'
-    println!("build_time_2822:{}", build::BUILD_TIME_2822); // time when start build occurred by rfc2822, e.g. 'Thu, 24 Jun 2021 21:33:59 +0800'
-    println!("build_time_3339:{}", build::BUILD_TIME_3339); // time when start build occurred by rfc3339, e.g. '2021-06-24T21:33:59.972494+08:00'
+    println!("{}", build::BUILD_TIME_2822);     // time when start build occurred by rfc2822, e.g. 'Thu, 24 Jun 2021 21:33:59 +0800'
+    println!("{}", build::BUILD_TIME_3339);     // time when start build occurred by rfc3339, e.g. '2021-06-24T21:33:59.972494+08:00'
     println!("{}", build::BUILD_RUST_CHANNEL);  // e.g. 'debug'
 }
 ```
