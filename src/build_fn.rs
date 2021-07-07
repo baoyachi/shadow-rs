@@ -52,7 +52,7 @@ const VERSION_FN_DESC: &str =
     r#"/// The common version function. It's so easy to use this function."#;
 
 const CLAP_VERSION_FN_DESC: &str =
-    r#"/// The common version function. It's so easy to use this function with clap verion()."#;
+    r#"/// The common version function. It's so easy to use this function with clap_version()."#;
 
 concat_fn!(version_branch_fn, VERSION_FN_DESC, VERSION_BRANCH_FN);
 
