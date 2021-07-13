@@ -15,6 +15,7 @@ const COMMIT_DATE_2822: ShadowConst = "COMMIT_DATE_2822";
 const COMMIT_DATE_3339: ShadowConst = "COMMIT_DATE_3339";
 const COMMIT_AUTHOR: ShadowConst = "COMMIT_AUTHOR";
 const COMMIT_EMAIL: ShadowConst = "COMMIT_EMAIL";
+const GIT_CLEAN: ShadowConst = "GIT_CLEAN";
 
 #[derive(Default, Debug)]
 pub struct Git {
@@ -253,6 +254,20 @@ fn command_current_tag() -> Option<String> {
         .unwrap_or(None)
 }
 
+// git clean:git status --porcelain
+// git dirty:git status  --porcelain | grep '^\sM.' |awk '{print $2}'
+// git stage:git status --porcelain --untracked-files=all | grep '^[A|M|D|R]'|awk '{print $2}'
+// Command::new("rustup").arg("default").output()
+
+fn command_git_clean() -> bool {
+    let result = Command::new("git")
+        .args(&["status", "--porcelain"])
+        .output()
+        .map(|x| String::from_utf8(x.stdout).ok())
+        .map(|x| x.is_none() || x.map(|y| y.is_empty()).unwrap_or_default());
+    result.unwrap_or_default()
+}
+
 /// Command exec git current branch
 fn command_current_branch() -> Option<String> {
     Command::new("git")
@@ -291,6 +306,43 @@ mod tests {
                 }
             }
         }
+    }
+
+    #[test]
+    fn get_resp() {
+        let mut dirty_files = Vec::new();
+        let mut staged_files = Vec::new();
+        if let Ok(repo) = git2::Repository::discover("./") {
+            let mut repo_opts = git2::StatusOptions::new();
+            repo_opts.include_ignored(false);
+            for status in repo.statuses(Some(&mut repo_opts)).unwrap().iter() {
+                if let Some(path) = status.path() {
+                    match status.status() {
+                        git2::Status::CURRENT => (),
+                        git2::Status::INDEX_NEW
+                        | git2::Status::INDEX_MODIFIED
+                        | git2::Status::INDEX_DELETED
+                        | git2::Status::INDEX_RENAMED
+                        | git2::Status::INDEX_TYPECHANGE => staged_files.push(path.to_string()),
+                        _ => dirty_files.push(path.to_string()),
+                    };
+                }
+            }
+        }
+
+        let mut files_list = String::new();
+        for file in dirty_files {
+            files_list.push_str("  * ");
+            files_list.push_str(&file);
+            files_list.push_str(" (dirty1)\n");
+        }
+        for file in staged_files {
+            files_list.push_str("  * ");
+            files_list.push_str(&file);
+            files_list.push_str(" (staged)\n");
+        }
+
+        print!("{}", files_list);
     }
 
     #[test]
