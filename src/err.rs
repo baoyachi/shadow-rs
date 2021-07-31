@@ -41,6 +41,12 @@ impl From<String> for ShadowError {
     }
 }
 
+impl From<&str> for ShadowError {
+    fn from(e: &str) -> Self {
+        ShadowError::String(e.to_string())
+    }
+}
+
 impl From<std::env::VarError> for ShadowError {
     fn from(e: std::env::VarError) -> Self {
         ShadowError::String(e.to_string())

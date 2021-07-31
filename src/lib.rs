@@ -71,10 +71,10 @@
 //! build = "build.rs"
 //!
 //! [dependencies]
-//! shadow-rs = "0.5"
+//! shadow-rs = "0.6"
 //!
 //! [build-dependencies]
-//! shadow-rs = "0.5"
+//! shadow-rs = "0.6"
 //! ```
 //!
 //! ### 2) Create `build.rs` file
@@ -333,6 +333,7 @@ impl Shadow {
 
     fn gen_const(&mut self) -> SdResult<()> {
         for (k, v) in self.map.clone() {
+            println!("k:{},v:{:?}", k, v);
             self.write_const(k, v)?;
         }
         Ok(())
@@ -353,18 +354,30 @@ impl Shadow {
     fn write_const(&mut self, shadow_const: ShadowConst, val: ConstVal) -> SdResult<()> {
         let desc = format!("/// {}", val.desc);
 
-        let (t, v) = match val.t {
-            ConstType::OptStr => (ConstType::Str.to_string(), "".into()),
-            ConstType::Str => (ConstType::Str.to_string(), val.v),
+        let define = match val.t {
+            ConstType::OptStr => format!(
+                "#[allow(dead_code)]\n\
+            pub const {} :{} = r#\"{}\"#;",
+                shadow_const.to_ascii_uppercase(),
+                ConstType::Str.to_string(),
+                ""
+            ),
+            ConstType::Str => format!(
+                "#[allow(dead_code)]\n\
+            pub const {} :{} = r#\"{}\"#;",
+                shadow_const.to_ascii_uppercase(),
+                ConstType::Str.to_string(),
+                val.v
+            ),
+            ConstType::Bool => format!(
+                "#[allow(dead_code)]\n\
+            pub const {} :{} = {};",
+                shadow_const.to_ascii_uppercase(),
+                ConstType::Bool.to_string(),
+                val.v.parse::<bool>().unwrap()
+            ),
         };
 
-        let define = format!(
-            "#[allow(dead_code)]\n\
-            pub const {} :{} = r#\"{}\"#;",
-            shadow_const.to_ascii_uppercase(),
-            t,
-            v
-        );
         writeln!(&self.f, "{}", desc)?;
         writeln!(&self.f, "{}\n", define)?;
         Ok(())
