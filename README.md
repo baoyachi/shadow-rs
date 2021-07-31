@@ -117,6 +117,8 @@ fn main() {
     println!("{}", build::BUILD_TIME_2822);     // time when start build occurred by rfc2822, e.g. 'Thu, 24 Jun 2021 21:33:59 +0800'
     println!("{}", build::BUILD_TIME_3339);     // time when start build occurred by rfc3339, e.g. '2021-06-24T21:33:59.972494+08:00'
     println!("{}", build::BUILD_RUST_CHANNEL);  // e.g. 'debug'
+    println!("{}", build::GIT_CLEAN);           // e.g. 'true'
+    println!("{}", build::GIT_STATUS_FILE);     // e.g. '* src/lib.rs (dirty)'
 }
 ```
 
@@ -165,6 +167,8 @@ with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/s
 | BUILD_TIME_2822 | Thu, 24 Jun 2021 21:33:59 +0800 |  
 | BUILD_TIME_3339 | 2021-06-24T15:53:55+08:00 |  
 | BUILD_RUST_CHANNEL | debug/release |  
+| GIT_CLEAN | true/false |  
+| GIT_STATUS_FILE | * src/lib.rs (dirty) |  
 
 If you have any questions, please create an [issue](https://github.com/baoyachi/shadow-rs/issues/new) so we may improve
 the documentation where it may be unclear.

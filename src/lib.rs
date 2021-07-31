@@ -60,6 +60,8 @@
 //! pub const CARGO_VERSION :&str = "cargo 1.45.0 (744bd1fbb 2020-06-15)";
 //! pub const BUILD_OS :&str = "macos-x86_64";
 //! pub const COMMIT_HASH :&str = "386741540d73c194a3028b96b92fdeb53ca2788a";
+//! pub const GIT_CLEAN :bool = true;
+//! pub const GIT_STATUS_FILE :&str = "* src/lib.rs (dirty)";
 //! ```
 //! # Setup Guide
 //!
@@ -123,6 +125,8 @@
 //!    println!("{}",build::PROJECT_NAME);//shadow-rs
 //!    println!("{}",build::BUILD_TIME);//2020-08-16 14:50:25
 //!    println!("{}",build::BUILD_RUST_CHANNEL);//debug
+//!    println!("{}",build::GIT_CLEAN);//false
+//!    println!("{}",build::GIT_STATUS_FILE);//* src/lib.rs (dirty)
 //! }
 //!```
 //!
