@@ -21,12 +21,21 @@ impl ConstVal {
             t: ConstType::OptStr,
         }
     }
+
+    pub fn new_bool<S: Into<String>>(desc: S) -> ConstVal {
+        ConstVal {
+            desc: desc.into(),
+            v: "true".to_string(),
+            t: ConstType::Bool,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
 pub enum ConstType {
     OptStr,
     Str,
+    Bool,
 }
 
 impl ToString for ConstType {
@@ -34,6 +43,7 @@ impl ToString for ConstType {
         match self {
             ConstType::OptStr => "Option<&str>".to_string(),
             ConstType::Str => "&str".to_string(),
+            ConstType::Bool => "bool".to_string(),
         }
     }
 }
