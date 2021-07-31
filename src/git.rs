@@ -335,18 +335,14 @@ fn command_git_status_file() -> String {
                 .stdin(Stdio::piped())
                 .stdout(Stdio::piped())
                 .spawn()?;
-            let git_out = git_shell
-                .stdout
-                .ok_or("Failed to exec git stdout")?;
+            let git_out = git_shell.stdout.ok_or("Failed to exec git stdout")?;
 
             let grep_shell = Command::new("grep")
                 .args(grep)
                 .stdin(Stdio::from(git_out))
                 .stdout(Stdio::piped())
                 .spawn()?;
-            let grep_out = grep_shell
-                .stdout
-                .ok_or("Failed to exec grep stdout")?;
+            let grep_out = grep_shell.stdout.ok_or("Failed to exec grep stdout")?;
 
             let mut awk_shell = Command::new("awk")
                 .args(awk)
