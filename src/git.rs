@@ -52,7 +52,7 @@ impl Git {
         self.update_bool(GIT_CLEAN, x);
 
         let x = command_git_status_file();
-        self.update_str(GIT_STATUS_FILE, x.to_string());
+        self.update_str(GIT_STATUS_FILE, x);
 
         self.init_git2(path)?;
 
@@ -337,7 +337,7 @@ fn command_git_status_file() -> String {
                 .spawn()?;
             let git_out = git_shell
                 .stdout
-                .ok_or_else(|| "Failed to exec git stdout")?;
+                .ok_or("Failed to exec git stdout")?;
 
             let grep_shell = Command::new("grep")
                 .args(grep)
@@ -346,7 +346,7 @@ fn command_git_status_file() -> String {
                 .spawn()?;
             let grep_out = grep_shell
                 .stdout
-                .ok_or_else(|| "Failed to exec grep stdout")?;
+                .ok_or("Failed to exec grep stdout")?;
 
             let mut awk_shell = Command::new("awk")
                 .args(awk)
@@ -357,7 +357,7 @@ fn command_git_status_file() -> String {
                 awk_shell
                     .stdout
                     .as_mut()
-                    .ok_or_else(|| "Failed to exec awk stdout")?,
+                    .ok_or("Failed to exec awk stdout")?,
             );
             let mut line = String::new();
             awk_out.read_to_string(&mut line)?;
