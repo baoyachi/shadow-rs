@@ -304,7 +304,7 @@ impl Shadow {
         let ci_type = shadow.try_ci();
         let src_path = Path::new(src_path.as_str());
 
-        let mut map = new_git(&src_path, ci_type, &shadow.std_env);
+        let mut map = new_git(src_path, ci_type, &shadow.std_env);
         for (k, v) in new_project(&shadow.std_env) {
             map.insert(k, v);
         }
