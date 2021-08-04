@@ -1,6 +1,6 @@
 [package]
 name = "shadow-rs"
-version = "0.6.3"
+version = "0.6.4"
 authors = ["baoyachi <liaoymxsdl@gmail.com>"]
 edition = "2018"
 description = "A build-time information stored in your rust project"
@@ -14,7 +14,7 @@ exclude = ["shadow-rs.png"]
 
 [dependencies]
 chrono = "0.4.13"
-git2 = { version = "0.13.8", default-features = false, optional = true }
+git2 = { version = "0.13.20", default-features = false, optional = true }
 
 [features]
 default = ["git2"]
