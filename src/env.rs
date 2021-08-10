@@ -2,7 +2,7 @@ use crate::build::*;
 use crate::channel::*;
 use crate::err::SdResult;
 
-use chrono::{Local, SecondsFormat, TimeZone};
+use chrono::{DateTime, Local, SecondsFormat, TimeZone};
 use std::env;
 use std::process::Command;
 
@@ -249,9 +249,8 @@ const BUILD_TIME_2822: ShadowConst = "BUILD_TIME_2822";
 const BUILD_TIME_3339: ShadowConst = "BUILD_TIME_3339";
 const BUILD_RUST_CHANNEL: ShadowConst = "BUILD_RUST_CHANNEL";
 
-pub fn build_time(project: &mut Project) {
-    // Enable reproducible builds: https://reproducible-builds.org/docs/source-date-epoch/
-    let time = match env::var_os("SOURCE_DATE_EPOCH") {
+fn now_data_time() -> DateTime<Local> {
+    match env::var_os("SOURCE_DATE_EPOCH") {
         None => Local::now(),
         Some(timestamp) => {
             let epoch = timestamp
@@ -261,7 +260,12 @@ pub fn build_time(project: &mut Project) {
                 .expect("Input SOURCE_DATE_EPOCH could not be cast to a number");
             Local.timestamp(epoch, 0)
         }
-    };
+    }
+}
+
+pub fn build_time(project: &mut Project) {
+    // Enable reproducible builds: https://reproducible-builds.org/docs/source-date-epoch/
+    let time = now_data_time();
     project.map.insert(
         BUILD_TIME,
         ConstVal {
@@ -317,8 +321,9 @@ pub fn new_project(std_env: &HashMap<String, String>) -> HashMap<ShadowConst, Co
 
 #[cfg(test)]
 mod tests {
-
     use crate::env::dep_source_replace::filter_dep_source;
+    use crate::env::now_data_time;
+    use chrono::Local;
 
     #[test]
     fn test_filter_dep_source_none() {
@@ -374,5 +379,13 @@ mod tests {
         let input = r#"shadow-rs v0.5.23 (FD:\a\shadow-rs\shadow-rs)"#;
         let ret = filter_dep_source(input);
         assert_eq!(input, ret)
+    }
+
+    #[test]
+    fn test_now_data_time() {
+        std::env::set_var("SOURCE_DATE_EPOCH", "1628080443");
+        let time = now_data_time();
+        let now = Local::now();
+        assert!(time < now);
     }
 }
