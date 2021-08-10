@@ -2,7 +2,7 @@ use crate::build::*;
 use crate::channel::*;
 use crate::err::SdResult;
 
-use chrono::{Local, SecondsFormat};
+use chrono::{Local, SecondsFormat, TimeZone};
 use std::env;
 use std::process::Command;
 
@@ -250,7 +250,18 @@ const BUILD_TIME_3339: ShadowConst = "BUILD_TIME_3339";
 const BUILD_RUST_CHANNEL: ShadowConst = "BUILD_RUST_CHANNEL";
 
 pub fn build_time(project: &mut Project) {
-    let time = Local::now();
+    // Enable reproducible builds: https://reproducible-builds.org/docs/source-date-epoch/
+    let time = match env::var_os("SOURCE_DATE_EPOCH") {
+        None => Local::now(),
+        Some(timestamp) => {
+            let epoch = timestamp
+                .into_string()
+                .expect("Input SOURCE_DATE_EPOCH could not be parsed")
+                .parse::<i64>()
+                .expect("Input SOURCE_DATE_EPOCH could not be cast to a number");
+            Local.timestamp(epoch, 0)
+        }
+    };
     project.map.insert(
         BUILD_TIME,
         ConstVal {
