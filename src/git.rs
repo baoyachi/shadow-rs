@@ -1,6 +1,7 @@
 use crate::build::{ConstType, ConstVal, ShadowConst};
 use crate::ci::CiType;
 use crate::err::*;
+use crate::Format;
 use chrono::SecondsFormat;
 use std::collections::HashMap;
 use std::io::{BufReader, Read};
@@ -109,10 +110,7 @@ impl Git {
             let dt = NaiveDateTime::from_timestamp(time_stamp, 0);
             let date_time = DateTime::<Utc>::from_utc(dt, Utc);
             let date_time: DateTime<Local> = DateTime::from(date_time);
-            self.update_str(
-                COMMIT_DATE,
-                date_time.format("%Y-%m-%d %H:%M:%S").to_string(),
-            );
+            self.update_str(COMMIT_DATE, date_time.human_format());
 
             self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
 
