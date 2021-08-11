@@ -152,6 +152,7 @@ use env::*;
 use git::*;
 
 use crate::ci::CiType;
+use crate::time::BuildTime;
 use std::collections::HashMap;
 use std::env as std_env;
 use std::fs::File;
@@ -354,7 +355,7 @@ impl Shadow {
 /// Author by:https://www.github.com/baoyachi
 /// The build script repository:https://github.com/baoyachi/shadow-rs
 /// Create time by:{}"#,
-            Local::now().human_format()
+            BuildTime::Local(Local::now()).human_format()
         );
         writeln!(&self.f, "{}\n\n", desc)?;
         Ok(())
