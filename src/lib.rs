@@ -144,6 +144,7 @@ mod ci;
 mod env;
 mod err;
 mod git;
+mod time;
 
 use build::*;
 use env::*;
@@ -165,6 +166,10 @@ pub use channel::BuildRustChannel;
 use chrono::Local;
 pub use err::{SdResult, ShadowError};
 pub use git::{branch, tag};
+
+trait Format {
+    fn human_format(&self) -> String;
+}
 
 const SHADOW_RS: &str = "shadow.rs";
 
@@ -349,7 +354,7 @@ impl Shadow {
 /// Author by:https://www.github.com/baoyachi
 /// The build script repository:https://github.com/baoyachi/shadow-rs
 /// Create time by:{}"#,
-            Local::now().format("%Y-%m-%d %H:%M:%S").to_string()
+            Local::now().human_format()
         );
         writeln!(&self.f, "{}\n\n", desc)?;
         Ok(())
