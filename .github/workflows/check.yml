@@ -37,7 +37,7 @@ jobs:
       - name: Build Release
         run: cargo build --release
       - name: Run tests
-        run: date +"%Z %z" && cargo test --all
+        run: cargo test --all
 
       # Run examples with debug
       - name: Run examples with debug

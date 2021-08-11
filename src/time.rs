@@ -45,14 +45,4 @@ mod tests {
         let utc = Utc.timestamp(1628080443, 0);
         assert_eq!(time.human_format(), utc.human_format())
     }
-
-    #[test]
-    fn test_timezone_shanghai() {
-        std::env::set_var("SOURCE_DATE_EPOCH", "1628080443");
-        std::env::set_var("TZ", "Asia/Shanghai");
-        let time = now_data_time();
-        let utc = Utc.timestamp(1628080443, 0);
-        assert_eq!(time.human_format(), "2021-08-04 20:34:03 +08:00");
-        assert_eq!(utc.human_format(), "2021-08-04 12:34:03 +00:00");
-    }
 }
