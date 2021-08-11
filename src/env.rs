@@ -2,7 +2,7 @@ use crate::build::*;
 use crate::channel::*;
 use crate::err::SdResult;
 
-use chrono::{DateTime, Local, SecondsFormat, TimeZone};
+use chrono::SecondsFormat;
 use std::env;
 use std::process::Command;
 
