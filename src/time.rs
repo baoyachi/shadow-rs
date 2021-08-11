@@ -1,6 +1,6 @@
 use crate::Format;
-use chrono::{DateTime, Local, TimeZone, Utc};
-use std::fmt::Display;
+use chrono::{DateTime, Local, TimeZone};
+
 
 pub fn now_data_time() -> DateTime<Local> {
     match std::env::var_os("SOURCE_DATE_EPOCH") {
