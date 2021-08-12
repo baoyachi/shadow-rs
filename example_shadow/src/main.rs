@@ -13,6 +13,8 @@ fn main() {
     println!("is_debug:{}", shadow_rs::is_debug());
     println!("branch:{}", shadow_rs::branch());
     println!("tag:{}", shadow_rs::tag());
+    println!("git_clean:{}", shadow_rs::git_clean());
+    println!("git_status_file:{}", shadow_rs::git_status_file());
 
     // print_build()
 

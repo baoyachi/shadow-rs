@@ -307,6 +307,9 @@ pub fn tag() -> String {
     command_current_tag().unwrap_or_default()
 }
 
+/// Check current git Repository status without nothing(dirty or stage)
+///
+/// if nothing,It means clean:true. On the contrary, it is 'dirty':false
 pub fn git_clean() -> bool {
     #[cfg(feature = "git2")]
     {
@@ -322,6 +325,9 @@ pub fn git_clean() -> bool {
     }
 }
 
+/// List current git Repository statue(dirty or stage) contain file changed
+///
+/// e.g:`   * examples/builtin_fn.rs (dirty)`
 pub fn git_status_file() -> String {
     #[cfg(feature = "git2")]
     {
