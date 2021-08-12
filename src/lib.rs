@@ -33,7 +33,7 @@
 //! pub const BUILD_TIME :&str = "2020-08-16 13:48:52";
 //! pub const BUILD_TIME_2822 :&str = "Thu, 24 Jun 2021 21:44:14 +0800";
 //! pub const BUILD_TIME_3339 :&str = "2021-06-24T15:53:55+08:00";
-//! pub const COMMIT_DATE :&str = "2020-08-16 13:12:52";
+//! pub const COMMIT_DATE :&str = "2021-08-04 12:34:03 +00:00";
 //! pub const COMMIT_DATE_2822 :&str = "Thu, 24 Jun 2021 21:44:14 +0800";
 //! pub const COMMIT_DATE_3339 :&str = "2021-06-24T21:44:14.473058+08:00";
 //! pub const COMMIT_EMAIL :&str = "xxx@gmail.com";
@@ -111,7 +111,7 @@
 //!    println!("{}",build::BRANCH); //master
 //!    println!("{}",build::SHORT_COMMIT);//8405e28e
 //!    println!("{}",build::COMMIT_HASH);//8405e28e64080a09525a6cf1b07c22fcaf71a5c5
-//!    println!("{}",build::COMMIT_DATE);//2020-08-16T06:22:24+00:00
+//!    println!("{}",build::COMMIT_DATE);//2021-08-04 12:34:03 +00:00
 //!    println!("{}",build::COMMIT_AUTHOR);//baoyachi
 //!    println!("{}",build::COMMIT_EMAIL);//xxx@gmail.com
 //!

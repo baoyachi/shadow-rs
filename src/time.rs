@@ -1,5 +1,5 @@
 use crate::Format;
-use chrono::{DateTime, SecondsFormat, Local, TimeZone, Utc};
+use chrono::{DateTime, Local, SecondsFormat, TimeZone, Utc};
 
 pub enum BuildTime {
     Local(DateTime<Local>),
