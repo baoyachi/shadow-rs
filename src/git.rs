@@ -4,6 +4,7 @@ use crate::err::*;
 use crate::time::BuildTime;
 use crate::Format;
 use chrono::SecondsFormat;
+use git2::Repository;
 use std::collections::HashMap;
 use std::io::{BufReader, Read};
 use std::path::Path;
@@ -127,37 +128,43 @@ impl Git {
             if let Some(v) = author.name() {
                 self.update_str(COMMIT_AUTHOR, v.to_string());
             }
-
-            //use git2 crates git repository 'dirty or stage' status files.
-            let mut repo_opts = git2::StatusOptions::new();
-            repo_opts.include_ignored(false);
-            if let Ok(statue) = repo.statuses(Some(&mut repo_opts)) {
-                let mut dirty_files = Vec::new();
-                let mut staged_files = Vec::new();
-
-                for status in statue.iter() {
-                    if let Some(path) = status.path() {
-                        match status.status() {
-                            git2::Status::CURRENT => (),
-                            git2::Status::INDEX_NEW
-                            | git2::Status::INDEX_MODIFIED
-                            | git2::Status::INDEX_DELETED
-                            | git2::Status::INDEX_RENAMED
-                            | git2::Status::INDEX_TYPECHANGE => staged_files.push(path.to_string()),
-                            _ => dirty_files.push(path.to_string()),
-                        };
-                    }
-                }
-                let status_file = filter_git_dirty_stage(dirty_files, staged_files);
-                if status_file.trim().is_empty() {
-                    self.update_bool(GIT_CLEAN, true);
-                } else {
-                    self.update_bool(GIT_CLEAN, false);
-                }
-                self.update_str(GIT_STATUS_FILE, status_file);
-            };
+            let status_file = Self::git2_dirty_stage(&repo);
+            if status_file.trim().is_empty() {
+                self.update_bool(GIT_CLEAN, true);
+            } else {
+                self.update_bool(GIT_CLEAN, false);
+            }
+            self.update_str(GIT_STATUS_FILE, status_file);
         }
         Ok(())
+    }
+
+    //use git2 crates git repository 'dirty or stage' status files.
+    #[cfg(feature = "git2")]
+    pub fn git2_dirty_stage(repo: &Repository) -> String {
+        let mut repo_opts = git2::StatusOptions::new();
+        repo_opts.include_ignored(false);
+        if let Ok(statue) = repo.statuses(Some(&mut repo_opts)) {
+            let mut dirty_files = Vec::new();
+            let mut staged_files = Vec::new();
+
+            for status in statue.iter() {
+                if let Some(path) = status.path() {
+                    match status.status() {
+                        git2::Status::CURRENT => (),
+                        git2::Status::INDEX_NEW
+                        | git2::Status::INDEX_MODIFIED
+                        | git2::Status::INDEX_DELETED
+                        | git2::Status::INDEX_RENAMED
+                        | git2::Status::INDEX_TYPECHANGE => staged_files.push(path.to_string()),
+                        _ => dirty_files.push(path.to_string()),
+                    };
+                }
+            }
+            filter_git_dirty_stage(dirty_files, staged_files)
+        } else {
+            "".into()
+        }
     }
 
     #[allow(clippy::manual_strip)]
@@ -298,6 +305,35 @@ pub fn branch() -> String {
 /// I's use [Command] to get.
 pub fn tag() -> String {
     command_current_tag().unwrap_or_default()
+}
+
+pub fn git_clean() -> bool {
+    #[cfg(feature = "git2")]
+    {
+        use crate::git::git2_mod::git_repo;
+        git_repo(".")
+            .map(|x| Git::git2_dirty_stage(&x))
+            .map(|x| x.trim().is_empty())
+            .unwrap_or(true)
+    }
+    #[cfg(not(feature = "git2"))]
+    {
+        command_git_clean()
+    }
+}
+
+pub fn git_status_file() -> String {
+    #[cfg(feature = "git2")]
+    {
+        use crate::git::git2_mod::git_repo;
+        git_repo(".")
+            .map(|x| Git::git2_dirty_stage(&x))
+            .unwrap_or_default()
+    }
+    #[cfg(not(feature = "git2"))]
+    {
+        command_git_status_file()
+    }
 }
 
 /// Command exec git current tag

@@ -166,7 +166,7 @@ use crate::build_fn::{
 pub use channel::BuildRustChannel;
 use chrono::Local;
 pub use err::{SdResult, ShadowError};
-pub use git::{branch, tag};
+pub use git::{branch, git_clean, git_status_file, tag};
 
 trait Format {
     fn human_format(&self) -> String;
