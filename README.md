@@ -140,6 +140,8 @@ with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/s
 | is_debug() | check if this is a debug build.e.g.'true/false' |
 | branch() | get current project branch.e.g.'master/develop' |
 | tag() | get current project tag.e.g.'v1.3.5' |
+| git_clean() | get current project clean. e.g 'true/false' |
+| git_status_file() | get current project statue file. e.g '  * examples/builtin_fn.rs (dirty)' |
 
 #### shadow-rs support build const,function.
 
