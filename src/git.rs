@@ -1,6 +1,7 @@
 use crate::build::{ConstType, ConstVal, ShadowConst};
 use crate::ci::CiType;
 use crate::err::*;
+use crate::time::BuildTime;
 use crate::Format;
 use chrono::SecondsFormat;
 use std::collections::HashMap;
@@ -76,7 +77,7 @@ impl Git {
         #[cfg(feature = "git2")]
         {
             use crate::git::git2_mod::git_repo;
-            use chrono::{DateTime, Local, NaiveDateTime, Utc};
+            use chrono::{DateTime, NaiveDateTime, Utc};
 
             let repo = git_repo(path).map_err(ShadowError::new)?;
             let reference = repo.head().map_err(ShadowError::new)?;
@@ -108,8 +109,7 @@ impl Git {
 
             let time_stamp = commit.time().seconds().to_string().parse::<i64>()?;
             let dt = NaiveDateTime::from_timestamp(time_stamp, 0);
-            let date_time = DateTime::<Utc>::from_utc(dt, Utc);
-            let date_time: DateTime<Local> = DateTime::from(date_time);
+            let date_time = BuildTime::Utc(DateTime::<Utc>::from_utc(dt, Utc));
             self.update_str(COMMIT_DATE, date_time.human_format());
 
             self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
