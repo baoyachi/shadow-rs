@@ -327,7 +327,9 @@ pub fn git_clean() -> bool {
 
 /// List current git Repository statue(dirty or stage) contain file changed
 ///
-/// e.g:`   * examples/builtin_fn.rs (dirty)`
+/// Refer to the 'cargo fix' result output when git statue(dirty or stage) changed.
+///
+/// Example output:`   * examples/builtin_fn.rs (dirty)`
 pub fn git_status_file() -> String {
     #[cfg(feature = "git2")]
     {
