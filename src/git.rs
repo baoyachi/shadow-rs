@@ -4,7 +4,6 @@ use crate::err::*;
 use crate::time::BuildTime;
 use crate::Format;
 use chrono::SecondsFormat;
-use git2::Repository;
 use std::collections::HashMap;
 use std::io::{BufReader, Read};
 use std::path::Path;
@@ -141,7 +140,7 @@ impl Git {
 
     //use git2 crates git repository 'dirty or stage' status files.
     #[cfg(feature = "git2")]
-    pub fn git2_dirty_stage(repo: &Repository) -> String {
+    pub fn git2_dirty_stage(repo: &git2::Repository) -> String {
         let mut repo_opts = git2::StatusOptions::new();
         repo_opts.include_ignored(false);
         if let Ok(statue) = repo.statuses(Some(&mut repo_opts)) {
