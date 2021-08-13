@@ -7,6 +7,11 @@ pub enum BuildTime {
 }
 
 pub fn now_data_time() -> BuildTime {
+    // Enable reproducibility for uses of `now_data_time` by respecting the
+    // `SOURCE_DATE_EPOCH` env variable.
+    //
+    // https://reproducible-builds.org/docs/source-date-epoch/
+    println!("cargo:rerun-if-env-changed=SOURCE_DATE_EPOCH");
     match std::env::var_os("SOURCE_DATE_EPOCH") {
         None => BuildTime::Local(Local::now()),
         Some(timestamp) => {
