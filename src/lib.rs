@@ -347,7 +347,7 @@ impl Shadow {
 
     fn gen_const(&mut self) -> SdResult<()> {
         for (k, v) in self.map.clone() {
-            println!("k:{},v:{:?}", k, v);
+            println!("cargo:rerun-if-env-changed={}", k);
             self.write_const(k, v)?;
         }
         Ok(())

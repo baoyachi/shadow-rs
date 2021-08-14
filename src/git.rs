@@ -449,7 +449,6 @@ mod tests {
         let env_map = Shadow::get_env();
         let map = new_git(Path::new("./"), CiType::Github, &env_map);
         for (k, v) in map {
-            println!("k:{},v:{:?}", k, v);
             assert!(!v.desc.is_empty());
             if !k.eq(TAG) && !k.eq(BRANCH) && !k.eq(GIT_STATUS_FILE) {
                 assert!(!v.v.is_empty());
@@ -458,7 +457,6 @@ mod tests {
 
             //assert github tag always exist value
             if let Some(github_ref) = env_map.get("GITHUB_REF") {
-                println!("github_ref:{}", github_ref);
                 if github_ref.starts_with("refs/tags/") && k.eq(TAG) {
                     assert!(!v.v.is_empty());
                 } else if github_ref.starts_with("refs/heads/") && k.eq(BRANCH) {
