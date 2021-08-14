@@ -109,6 +109,8 @@ fn main() {
     println!("{}", build::COMMIT_EMAIL);        // commit email, e.g. 'example@gmail.com'
 
     println!("{}", build::BUILD_OS);            // the OS that built the binary, e.g. 'macos-x86_64'
+    println!("{}", build::BUILD_TARGET);        // the OS target that built the binary, e.g. 'x86_64-apple-darwin'
+    println!("{}", build::BUILD_TARGET_ARCH);   // the OS target arch that built the binary, e.g. 'x86_64'
     println!("{}", build::RUST_VERSION);        // rustc version e.g. 'rustc 1.45.0 (5c1f21c3b 2020-07-13)'
     println!("{}", build::RUST_CHANNEL);        // rust toolchain e.g. 'stable-x86_64-apple-darwin (default)'
     println!("{}", build::CARGO_VERSION);       // cargo version e.g. 'cargo 1.45.0 (744bd1fbb 2020-06-15)'
@@ -161,6 +163,8 @@ with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/s
 | COMMIT_AUTHOR | baoyachi |
 | COMMIT_EMAIL | xxx@gmail.com |  
 | BUILD_OS | macos-x86_64 |  
+| BUILD_TARGET | x86_64-apple-darwin |  
+| BUILD_TARGET_ARCH | x86_64 |  
 | RUST_VERSION | rustc 1.45.0 (5c1f21c3b 2020-07-13) |  
 | RUST_CHANNEL | stable-x86_64-apple-darwin (default) |  
 | CARGO_VERSION | cargo 1.45.0 (744bd1fbb 2020-06-15) |  
