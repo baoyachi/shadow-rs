@@ -21,8 +21,14 @@ const RUST_VERSION: ShadowConst = "RUST_VERSION";
 const RUST_CHANNEL: ShadowConst = "RUST_CHANNEL";
 const CARGO_VERSION: ShadowConst = "CARGO_VERSION";
 const CARGO_TREE: ShadowConst = "CARGO_TREE";
+
+const BUILD_TARGET: ShadowConst = "BUILD_TARGET";
+const BUILD_TARGET_ARCH: ShadowConst = "BUILD_TARGET_ARCH";
+
 // const CARGO_METADATA: ShadowConst = "CARGO_METADATA";
+
 const PKG_VERSION: ShadowConst = "PKG_VERSION";
+const PKG_DESCRIPTION: ShadowConst = "PKG_DESCRIPTION";
 const PKG_VERSION_MAJOR: ShadowConst = "PKG_VERSION_MAJOR";
 const PKG_VERSION_MINOR: ShadowConst = "PKG_VERSION_MINOR";
 const PKG_VERSION_PATCH: ShadowConst = "PKG_VERSION_PATCH";
@@ -77,8 +83,20 @@ impl SystemEnv {
             // );
         }
 
+        if let Some(v) = std_env.get("TARGET") {
+            update_val(BUILD_TARGET, v.to_string());
+        }
+
+        if let Some(v) = std_env.get("CARGO_CFG_TARGET_ARCH") {
+            update_val(BUILD_TARGET_ARCH, v.to_string());
+        }
+
         if let Some(v) = std_env.get("CARGO_PKG_VERSION") {
             update_val(PKG_VERSION, v.to_string());
+        }
+
+        if let Some(v) = std_env.get("CARGO_PKG_DESCRIPTION") {
+            update_val(PKG_DESCRIPTION, v.to_string());
         }
 
         if let Some(v) = std_env.get("CARGO_PKG_VERSION_MAJOR") {
@@ -213,8 +231,23 @@ pub fn new_system_env(std_env: &HashMap<String, String>) -> HashMap<ShadowConst,
     // );
 
     env.map.insert(
+        BUILD_TARGET,
+        ConstVal::new("display build current project target"),
+    );
+
+    env.map.insert(
+        BUILD_TARGET_ARCH,
+        ConstVal::new("display build current project version arch"),
+    );
+
+    env.map.insert(
         PKG_VERSION,
         ConstVal::new("display build current project version"),
+    );
+
+    env.map.insert(
+        PKG_DESCRIPTION,
+        ConstVal::new("display build current project description"),
     );
 
     env.map.insert(
