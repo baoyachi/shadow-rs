@@ -441,7 +441,7 @@ fn filter_git_dirty_stage(dirty_files: Vec<String>, staged_files: Vec<String>) -
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{get_std_env, Shadow};
+    use crate::get_std_env;
     use std::path::Path;
 
     #[test]
