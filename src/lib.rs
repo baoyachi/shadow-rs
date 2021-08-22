@@ -335,6 +335,9 @@ impl Shadow {
     fn write_all(&mut self) -> SdResult<()> {
         self.gen_header()?;
 
+        //std env rerun
+        self.cargo_rerun_if_env_changed();
+
         self.gen_const()?;
 
         //write version function
@@ -343,6 +346,12 @@ impl Shadow {
         self.gen_build_in(build_fn)?;
 
         Ok(())
+    }
+
+    fn cargo_rerun_if_env_changed(&self) {
+        for k in self.std_env.keys() {
+            println!("cargo:rerun-if-env-changed={}", k);
+        }
     }
 
     fn gen_const(&mut self) -> SdResult<()> {
