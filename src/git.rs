@@ -441,12 +441,12 @@ fn filter_git_dirty_stage(dirty_files: Vec<String>, staged_files: Vec<String>) -
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::Shadow;
+    use crate::{get_std_env, Shadow};
     use std::path::Path;
 
     #[test]
     fn test_git() {
-        let env_map = Shadow::get_env();
+        let env_map = get_std_env();
         let map = new_git(Path::new("./"), CiType::Github, &env_map);
         for (k, v) in map {
             assert!(!v.desc.is_empty());
@@ -468,7 +468,7 @@ mod tests {
 
     #[test]
     fn test_current_branch() {
-        if Shadow::get_env().get("GITHUB_REF").is_some() {
+        if get_std_env().get("GITHUB_REF").is_some() {
             return;
         }
         #[cfg(feature = "git2")]

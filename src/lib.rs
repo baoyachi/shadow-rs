@@ -73,10 +73,10 @@
 //! build = "build.rs"
 //!
 //! [dependencies]
-//! shadow-rs = "0.6"
+//! shadow-rs = "0.7"
 //!
 //! [build-dependencies]
-//! shadow-rs = "0.6"
+//! shadow-rs = "0.7"
 //! ```
 //!
 //! ### 2) Create `build.rs` file
@@ -247,11 +247,20 @@ pub fn is_debug() -> bool {
     channel::build_channel() == BuildRustChannel::Debug
 }
 
+/// get std::env:vars
+pub fn get_std_env() -> HashMap<String, String> {
+    let mut env_map = HashMap::new();
+    for (k, v) in std_env::vars() {
+        env_map.insert(k, v);
+    }
+    env_map
+}
+
 #[derive(Debug)]
-pub(crate) struct Shadow {
-    f: File,
-    map: HashMap<ShadowConst, ConstVal>,
-    std_env: HashMap<String, String>,
+pub struct Shadow {
+    pub f: File,
+    pub map: HashMap<ShadowConst, ConstVal>,
+    pub std_env: HashMap<String, String>,
 }
 
 impl Shadow {
@@ -263,14 +272,6 @@ impl Shadow {
         writeln!(&self.f, "\n{}\n", desc)?;
         f(&self.f)?;
         Ok(())
-    }
-
-    fn get_env() -> HashMap<String, String> {
-        let mut env_map = HashMap::new();
-        for (k, v) in std_env::vars() {
-            env_map.insert(k, v);
-        }
-        env_map
     }
 
     /// try get current ci env
@@ -292,7 +293,7 @@ impl Shadow {
         CiType::None
     }
 
-    fn build() -> SdResult<Shadow> {
+    pub fn build() -> SdResult<Shadow> {
         let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
         let out_path = std::env::var("OUT_DIR")?;
         Self::build_inner(src_path, out_path)
@@ -313,7 +314,7 @@ impl Shadow {
             map: Default::default(),
             std_env: Default::default(),
         };
-        shadow.std_env = Self::get_env();
+        shadow.std_env = get_std_env();
 
         let ci_type = shadow.try_ci();
         let src_path = Path::new(src_path.as_str());
@@ -335,9 +336,6 @@ impl Shadow {
     fn write_all(&mut self) -> SdResult<()> {
         self.gen_header()?;
 
-        //std env rerun
-        self.cargo_rerun_if_env_changed();
-
         self.gen_const()?;
 
         //write version function
@@ -348,9 +346,15 @@ impl Shadow {
         Ok(())
     }
 
-    fn cargo_rerun_if_env_changed(&self) {
+    pub fn cargo_rerun_if_env_changed(&self) {
         for k in self.std_env.keys() {
             println!("cargo:rerun-if-env-changed={}", k);
+        }
+    }
+
+    pub fn cargo_rerun_env_inject(&self, env: &[&str]) {
+        for k in env {
+            println!("cargo:rerun-if-env-changed={}", *k);
         }
     }
 
