@@ -264,7 +264,7 @@ pub struct Shadow {
 }
 
 impl Shadow {
-    fn hook<F>(&self, f: F) -> SdResult<()>
+    pub fn hook<F>(&self, f: F) -> SdResult<()>
     where
         F: FnOnce(&File) -> SdResult<()>,
     {
