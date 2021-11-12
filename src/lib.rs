@@ -143,12 +143,21 @@
 
 mod build;
 mod build_fn;
-mod channel;
 mod ci;
 mod env;
 mod err;
 mod git;
 mod time;
+
+/// Get current project build mode.
+///
+/// It's very useful. Debug mode is usually used for debugging information.
+/// For example, log printing, environment variable switch.
+///
+/// The default value is `true`.
+///
+/// If we compile with `cargo build --release`. It's return value is `false`.
+pub use is_debug::*;
 
 use build::*;
 use env::*;
@@ -167,7 +176,6 @@ use crate::build_fn::{
     clap_version_branch_fn, clap_version_tag_fn, version_branch_fn, version_tag_fn,
     BUILD_FN_CLAP_VERSION, BUILD_FN_VERSION,
 };
-pub use channel::BuildRustChannel;
 use chrono::Local;
 pub use err::{SdResult, ShadowError};
 pub use git::{branch, git_clean, git_status_file, tag};
@@ -233,18 +241,6 @@ where
 {
     let shadow = Shadow::build()?;
     shadow.hook(f)
-}
-
-/// Get current project build mode.
-///
-/// It's very useful. Debug mode is usually used for debugging information.
-/// For example, log printing, environment variable switch.
-///
-/// The default value is `true`.
-///
-/// If we compile with `cargo build --release`. It's return value is `false`.
-pub fn is_debug() -> bool {
-    channel::build_channel() == BuildRustChannel::Debug
 }
 
 /// get std::env:vars

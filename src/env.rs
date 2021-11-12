@@ -1,5 +1,4 @@
 use crate::build::*;
-use crate::channel::*;
 use crate::err::SdResult;
 
 use chrono::SecondsFormat;
@@ -9,6 +8,7 @@ use std::process::Command;
 use crate::env::dep_source_replace::filter_cargo_tree;
 use crate::time::now_data_time;
 use crate::Format;
+use is_debug::build_channel;
 use std::collections::HashMap;
 
 #[derive(Default, Debug)]
