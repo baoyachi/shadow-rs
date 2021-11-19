@@ -42,11 +42,9 @@ impl SystemEnv {
                 val.v = v;
             }
         };
-        if let Ok(out) = Command::new("rustup").arg("default").output() {
-            update_val(
-                RUST_CHANNEL,
-                String::from_utf8(out.stdout)?.trim().to_string(),
-            );
+
+        if let Some(v) = std_env.get("RUSTUP_TOOLCHAIN") {
+            update_val(RUST_CHANNEL, v.to_string());
         }
 
         if let Ok(out) = Command::new("rustc").arg("-V").output() {
