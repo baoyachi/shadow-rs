@@ -12,10 +12,20 @@ license = "MIT AND Apache-2.0"
 exclude = ["shadow-rs.png"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+
+[package.metadata.docs.rs]
+all-features = true
+
 [dependencies]
 is_debug = "1.0.1"
 chrono = "0.4.13"
+
+#! Optional Dependencies:
+
+## Use `libgit2` as a backend for git operations
 git2 = { version = "0.13.20", default-features = false, optional = true }
+
+document-features = { version = "0.2", optional = true }
 
 [features]
 default = ["git2"]
