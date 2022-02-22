@@ -6,7 +6,7 @@ shadow!(build);
 
 fn main() {
     App::new("example_shadow")
-        .version(build::clap_version().as_str())
+        .long_version(build::clap_long_version().as_str())
         .get_matches(); //USAGE: ./example_shadow -V
 
     // shadow-rs built in function
@@ -23,7 +23,7 @@ fn main() {
 
 #[allow(dead_code)]
 pub fn print_build() {
-    println!("clap_version:{}", build::clap_version());
+    println!("clap_long_version:{}", build::clap_long_version());
     println!("version:{}", build::version());
     println!("pkg_version:{}", build::PKG_VERSION);
     println!("pkg_version_major:{}", build::PKG_VERSION_MAJOR);
