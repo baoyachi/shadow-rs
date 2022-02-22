@@ -78,6 +78,7 @@
 //! [build-dependencies]
 //! shadow-rs = "0.7"
 //! ```
+#![cfg_attr(feature = "document-features", doc = document_features::document_features!())]
 //!
 //! ### 2) Create `build.rs` file
 //! Now in the root of your project (same directory as `Cargo.toml`) add a file `build.rs`:
