@@ -173,8 +173,9 @@ use std::io::Write;
 use std::path::Path;
 
 use crate::build_fn::{
-    clap_version_branch_fn, clap_version_tag_fn, version_branch_fn, version_tag_fn,
-    BUILD_FN_CLAP_VERSION, BUILD_FN_VERSION,
+    clap_long_version_branch_fn, clap_long_version_tag_fn, clap_version_branch_fn,
+    clap_version_tag_fn, version_branch_fn, version_tag_fn, BUILD_FN_CLAP_LONG_VERSION,
+    BUILD_FN_VERSION,
 };
 use chrono::Local;
 pub use err::{SdResult, ShadowError};
@@ -407,20 +408,33 @@ impl Shadow {
     }
 
     fn gen_version(&mut self) -> SdResult<Vec<&'static str>> {
-        let (ver_fn, clap_ver_fn) = match self.map.get(TAG) {
-            None => (version_branch_fn(), clap_version_branch_fn()),
+        let (ver_fn, clap_ver_fn, clap_long_ver_fn) = match self.map.get(TAG) {
+            None => (
+                version_branch_fn(),
+                clap_version_branch_fn(),
+                clap_long_version_branch_fn(),
+            ),
             Some(tag) => {
                 if !tag.v.is_empty() {
-                    (version_tag_fn(), clap_version_tag_fn())
+                    (
+                        version_tag_fn(),
+                        clap_version_tag_fn(),
+                        clap_long_version_tag_fn(),
+                    )
                 } else {
-                    (version_branch_fn(), clap_version_branch_fn())
+                    (
+                        version_branch_fn(),
+                        clap_version_branch_fn(),
+                        clap_long_version_branch_fn(),
+                    )
                 }
             }
         };
         writeln!(&self.f, "{}\n", ver_fn)?;
         writeln!(&self.f, "{}\n", clap_ver_fn)?;
+        writeln!(&self.f, "{}\n", clap_long_ver_fn)?;
 
-        Ok(vec![BUILD_FN_VERSION, BUILD_FN_CLAP_VERSION])
+        Ok(vec![BUILD_FN_VERSION, BUILD_FN_CLAP_LONG_VERSION])
     }
 
     fn gen_build_in(&self, build_fn: Vec<&'static str>) -> SdResult<()> {

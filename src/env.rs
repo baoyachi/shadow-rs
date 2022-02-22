@@ -177,7 +177,7 @@ mod dep_source_replace {
         } else {
             (DEP_REPLACE_NONE, input.len())
         };
-        format!("{}{}", input[..index].to_string(), val)
+        format!("{}{}", &input[..index], val)
     }
 
     pub fn filter_cargo_tree(lines: Vec<&str>) -> String {
