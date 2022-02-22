@@ -1,11 +1,11 @@
-use clap::App;
+use clap::Command;
 
 use shadow_rs::shadow;
 
 shadow!(build);
 
 fn main() {
-    App::new("example_shadow")
+    Command::new("example_shadow")
         .version(build::clap_version().as_str())
         .get_matches(); //USAGE: ./example_shadow -V
 
