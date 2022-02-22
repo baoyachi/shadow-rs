@@ -73,10 +73,10 @@
 //! build = "build.rs"
 //!
 //! [dependencies]
-//! shadow-rs = "0.7"
+//! shadow-rs = "0.9"
 //!
 //! [build-dependencies]
-//! shadow-rs = "0.7"
+//! shadow-rs = "0.9"
 //! ```
 #![cfg_attr(feature = "document-features", doc = document_features::document_features!())]
 //!
