@@ -8,6 +8,8 @@ keywords = ["shadow", "build-script", "build", "script", "compile"]
 readme = "README.md"
 categories = ["development-tools", "development-tools::build-utils"]
 repository = "https://github.com/baoyachi/shadow-rs"
+documentation = "https://docs.rs/shadow-rs"
+homepage = "https://github.com/baoyachi/shadow-rs"
 license = "MIT AND Apache-2.0"
 exclude = ["shadow-rs.png"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
