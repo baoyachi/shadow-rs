@@ -25,7 +25,7 @@ chrono = "0.4.13"
 #! Optional Dependencies:
 
 ## Use `libgit2` as a backend for git operations
-git2 = { version = "0.13.20", default-features = false, optional = true }
+git2 = { version = "0.14.0", default-features = false, optional = true }
 
 document-features = { version = "0.2", optional = true }
 
