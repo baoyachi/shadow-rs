@@ -16,6 +16,7 @@
 [![Download](https://img.shields.io/crates/d/shadow-rs)](https://crates.io/crates/shadow-rs)
 [![DepStatus](https://deps.rs/repo/github/baoyachi/shadow-rs/status.svg)](https://deps.rs/repo/github/baoyachi/shadow-rs)
 [![Gitter](https://badges.gitter.im/shadow-rs/community.svg)](https://gitter.im/shadow-rs/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Coverage Status](https://coveralls.io/repos/github/baoyachi/shadow-rs/badge.svg)](https://coveralls.io/github/baoyachi/shadow-rs)
 
 `shadow-rs` allows you to recall properties of the build process and environment at runtime, including:
 
