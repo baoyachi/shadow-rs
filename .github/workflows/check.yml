@@ -20,7 +20,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: true
       - uses: actions-rs/toolchain@v1
@@ -87,7 +87,7 @@ jobs:
           version: 0.14.2
           use-tool-cache: true
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Test
         run: |
           cargo test --all-features
@@ -108,7 +108,7 @@ jobs:
     steps:
       - name: Set up Rust
         uses: hecrj/setup-rust-action@v1
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Publish
         shell: bash
         run: |
