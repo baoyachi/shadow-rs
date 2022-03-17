@@ -7,8 +7,8 @@ macro_rules! concat_fn {
 }
 
 const VERSION_BRANCH_FN: &str = r##"#[allow(dead_code)]
-pub fn version() -> String {
-    format!(r#"
+pub fn version() -> &'static str {
+    shadow_rs::const_format::concatcp!(r#"
 pkg_version:{}
 branch:{}
 commit_hash:{}
@@ -18,8 +18,8 @@ build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, R
 }"##;
 
 const VERSION_TAG_FN: &str = r##"#[allow(dead_code)]
-pub fn version() -> String {
-    format!(r#"
+pub fn version() -> &'static str {
+    shadow_rs::const_format::concatcp!(r#"
 pkg_version:{}
 tag:{}
 commit_hash:{}
@@ -30,8 +30,8 @@ build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST
 
 const CLAP_VERSION_BRANCH_FN: &str = r##"#[allow(dead_code)]
 #[deprecated = "Replaced with `clap_long_version`"]
-pub fn clap_version() -> String {
-    format!(r#"{}
+pub fn clap_version() -> &'static str {
+    shadow_rs::const_format::concatcp!(r#"{}
 branch:{}
 commit_hash:{}
 build_time:{}
@@ -41,8 +41,8 @@ build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, R
 
 const CLAP_VERSION_TAG_FN: &str = r##"#[allow(dead_code)]
 #[deprecated = "Replaced with `clap_long_version`"]
-pub fn clap_version() -> String {
-    format!(r#"{}
+pub fn clap_version() -> &'static str {
+    shadow_rs::const_format::concatcp!(r#"{}
 tag:{}
 commit_hash:{}
 build_time:{}
@@ -51,8 +51,8 @@ build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST
 }"##;
 
 const CLAP_LONG_VERSION_BRANCH_FN: &str = r##"#[allow(dead_code)]
-pub fn clap_long_version() -> String {
-    format!(r#"{}
+pub fn clap_long_version() -> &'static str {
+    shadow_rs::const_format::concatcp!(r#"{}
 branch:{}
 commit_hash:{}
 build_time:{}
@@ -61,8 +61,8 @@ build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, R
 }"##;
 
 const CLAP_LONG_VERSION_TAG_FN: &str = r##"#[allow(dead_code)]
-pub fn clap_long_version() -> String {
-    format!(r#"{}
+pub fn clap_long_version() -> &'static str {
+    shadow_rs::const_format::concatcp!(r#"{}
 tag:{}
 commit_hash:{}
 build_time:{}

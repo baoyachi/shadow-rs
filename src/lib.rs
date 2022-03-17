@@ -141,6 +141,7 @@
 //! For the user guide and futher documentation, please read
 //! [The shadow-rs document](https://github.com/baoyachi/shadow-rs).
 //!
+pub extern crate const_format;
 
 mod build;
 mod build_fn;
