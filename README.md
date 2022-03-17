@@ -29,6 +29,9 @@
 
 You can use this tool to check in production exactly where a binary came from and how it was built.
 
+![build_module](./build_module.png)
+
+
 # Full Examples
 
 * Check out the [example_shadow](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow) for a simple
