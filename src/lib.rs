@@ -144,7 +144,7 @@
 pub extern crate const_format;
 
 mod build;
-mod build_fn;
+mod gen_const;
 mod ci;
 mod env;
 mod err;
@@ -174,9 +174,9 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
-use crate::build_fn::{
-    clap_long_version_branch_fn, clap_long_version_tag_fn, clap_version_branch_fn,
-    clap_version_tag_fn, version_branch_fn, version_tag_fn, BUILD_FN_CLAP_LONG_VERSION,
+use crate::gen_const::{
+    clap_long_version_branch_const, clap_long_version_tag_const, clap_version_branch_const,
+    clap_version_tag_const, version_branch_const, version_tag_const, BUILD_FN_CLAP_LONG_VERSION,
     BUILD_FN_VERSION,
 };
 use chrono::Local;
@@ -412,22 +412,22 @@ impl Shadow {
     fn gen_version(&mut self) -> SdResult<Vec<&'static str>> {
         let (ver_fn, clap_ver_fn, clap_long_ver_fn) = match self.map.get(TAG) {
             None => (
-                version_branch_fn(),
-                clap_version_branch_fn(),
-                clap_long_version_branch_fn(),
+                version_branch_const(),
+                clap_version_branch_const(),
+                clap_long_version_branch_const(),
             ),
             Some(tag) => {
                 if !tag.v.is_empty() {
                     (
-                        version_tag_fn(),
-                        clap_version_tag_fn(),
-                        clap_long_version_tag_fn(),
+                        version_tag_const(),
+                        clap_version_tag_const(),
+                        clap_long_version_tag_const(),
                     )
                 } else {
                     (
-                        version_branch_fn(),
-                        clap_version_branch_fn(),
-                        clap_long_version_branch_fn(),
+                        version_branch_const(),
+                        clap_version_branch_const(),
+                        clap_long_version_branch_const(),
                     )
                 }
             }
