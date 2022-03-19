@@ -142,7 +142,6 @@
 //! For the user guide and futher documentation, please read
 //! [The shadow-rs document](https://github.com/baoyachi/shadow-rs).
 //!
-pub extern crate const_format;
 
 mod build;
 mod ci;
@@ -167,6 +166,7 @@ use env::*;
 
 use git::*;
 
+pub use const_format::*;
 use crate::ci::CiType;
 use crate::time::BuildTime;
 use std::collections::HashMap;
