@@ -166,9 +166,9 @@ use env::*;
 
 use git::*;
 
-pub use const_format::*;
 use crate::ci::CiType;
 use crate::time::BuildTime;
+pub use const_format::*;
 use std::collections::HashMap;
 use std::env as std_env;
 use std::fs::File;
