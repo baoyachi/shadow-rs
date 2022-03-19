@@ -112,7 +112,8 @@
 //!    println!("git_clean:{}", shadow_rs::git_clean()); // get current project clean. e.g 'true/false'
 //!    println!("git_status_file:{}", shadow_rs::git_status_file()); // get current project statue file. e.g '  * examples/builtin_fn.rs (dirty)'
 //!
-//!    println!("{}",build::version()); //print version() function
+//!    println!("{}",build::VERSION); //print version const
+//!    println!("{}",build::CLAP_LONG_VERSION); //print CLAP_LONG_VERSION const
 //!    println!("{}",build::BRANCH); //master
 //!    println!("{}",build::SHORT_COMMIT);//8405e28e
 //!    println!("{}",build::COMMIT_HASH);//8405e28e64080a09525a6cf1b07c22fcaf71a5c5
@@ -144,10 +145,10 @@
 pub extern crate const_format;
 
 mod build;
-mod gen_const;
 mod ci;
 mod env;
 mod err;
+mod gen_const;
 mod git;
 mod time;
 
@@ -176,8 +177,8 @@ use std::path::Path;
 
 use crate::gen_const::{
     clap_long_version_branch_const, clap_long_version_tag_const, clap_version_branch_const,
-    clap_version_tag_const, version_branch_const, version_tag_const, BUILD_FN_CLAP_LONG_VERSION,
-    BUILD_FN_VERSION,
+    clap_version_tag_const, version_branch_const, version_tag_const, BUILD_CONST_CLAP_LONG_VERSION,
+    BUILD_CONST_VERSION,
 };
 use chrono::Local;
 pub use err::{SdResult, ShadowError};
@@ -338,9 +339,9 @@ impl Shadow {
         self.gen_const()?;
 
         //write version function
-        let build_fn = self.gen_version()?;
+        let gen_version = self.gen_version()?;
 
-        self.gen_build_in(build_fn)?;
+        self.gen_build_in(gen_version)?;
 
         Ok(())
     }
@@ -436,10 +437,10 @@ impl Shadow {
         writeln!(&self.f, "{}\n", clap_ver_fn)?;
         writeln!(&self.f, "{}\n", clap_long_ver_fn)?;
 
-        Ok(vec![BUILD_FN_VERSION, BUILD_FN_CLAP_LONG_VERSION])
+        Ok(vec![BUILD_CONST_VERSION, BUILD_CONST_CLAP_LONG_VERSION])
     }
 
-    fn gen_build_in(&self, build_fn: Vec<&'static str>) -> SdResult<()> {
+    fn gen_build_in(&self, gen_const: Vec<&'static str>) -> SdResult<()> {
         let mut print_val = String::from("\n");
 
         // append gen const
@@ -449,8 +450,8 @@ impl Shadow {
         }
 
         // append gen fn
-        for k in build_fn {
-            let tmp = format!(r#"{}println!("{}:{{}}\n", {}());{}"#, "\t", k, k, "\n");
+        for k in gen_const {
+            let tmp = format!(r#"{}println!("{}:{{}}\n", {});{}"#, "\t", k, k, "\n");
             print_val.push_str(tmp.as_str());
         }
 

@@ -23,8 +23,8 @@ fn main() {
 
 #[allow(dead_code)]
 pub fn print_build() {
-    println!("clap_long_version:{}", build::clap_long_version());
-    println!("version:{}", build::version());
+    println!("version:{}", build::VERSION);
+    println!("version:{}", build::CLAP_LONG_VERSION);
     println!("pkg_version:{}", build::PKG_VERSION);
     println!("pkg_version_major:{}", build::PKG_VERSION_MAJOR);
     println!("pkg_version_minor:{}", build::PKG_VERSION_MINOR);

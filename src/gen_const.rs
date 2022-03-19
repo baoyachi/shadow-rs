@@ -7,7 +7,7 @@ macro_rules! gen_const {
 }
 
 const VERSION_BRANCH_CONST: &str = r##"#[allow(dead_code)]
-pub const VERSION:&'static str = shadow_rs::const_format::concatcp!(r#"
+pub const VERSION:&'static str = shadow_rs::const_format::formatcp!(r#"
 pkg_version:{}
 branch:{}
 commit_hash:{}
@@ -16,7 +16,7 @@ build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, R
 );"##;
 
 const VERSION_TAG_CONST: &str = r##"#[allow(dead_code)]
-pub const VERSION:&'static str = shadow_rs::const_format::concatcp!(r#"
+pub const VERSION:&'static str = shadow_rs::const_format::formatcp!(r#"
 pkg_version:{}
 tag:{}
 commit_hash:{}
@@ -26,7 +26,7 @@ build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST
 
 const CLAP_VERSION_BRANCH_CONST: &str = r##"#[allow(dead_code)]
 #[deprecated = "Replaced with `CLAP_LONG_VERSION`"]
-pub const CLAP_VERSION:&'static str = shadow_rs::const_format::concatcp!(r#"
+pub const CLAP_VERSION:&'static str = shadow_rs::const_format::formatcp!(r#"{}
 branch:{}
 commit_hash:{}
 build_time:{}
@@ -34,8 +34,8 @@ build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, R
 );"##;
 
 const CLAP_VERSION_TAG_CONST: &str = r##"#[allow(dead_code)]
-#[deprecated = "Replaced with `clap_long_version`"]
-pub const CLAP_VERSION:&'static str = shadow_rs::const_format::concatcp!(r#"
+#[deprecated = "Replaced with `CLAP_LONG_VERSION`"]
+pub const CLAP_VERSION:&'static str = shadow_rs::const_format::formatcp!(r#"{}
 tag:{}
 commit_hash:{}
 build_time:{}
@@ -43,7 +43,7 @@ build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST
 );"##;
 
 const CLAP_LONG_VERSION_BRANCH_CONST: &str = r##"#[allow(dead_code)]
-pub const CLAP_LONG_VERSION:&'static str = shadow_rs::const_format::concatcp!(r#"
+pub const CLAP_LONG_VERSION:&'static str = shadow_rs::const_format::formatcp!(r#"{}
 branch:{}
 commit_hash:{}
 build_time:{}
@@ -51,15 +51,14 @@ build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, R
 );"##;
 
 const CLAP_LONG_VERSION_TAG_CONST: &str = r##"#[allow(dead_code)]
-pub const CLAP_LONG_VERSION:&'static str = shadow_rs::const_format::concatcp!(r#"
+pub const CLAP_LONG_VERSION:&'static str = shadow_rs::const_format::formatcp!(r#"{}
 tag:{}
 commit_hash:{}
 build_time:{}
 build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST_CHANNEL
 );"##;
 
-const VERSION_CONST_DESC: &str =
-    r#"/// The common version const. It's so easy to use this const."#;
+const VERSION_CONST_DESC: &str = r#"/// The common version const. It's so easy to use this const."#;
 
 const CLAP_VERSION_CONST_DESC: &str =
     r#"/// The common version const. It's so easy to use this const with CLAP_VERSION."#;
@@ -67,7 +66,11 @@ const CLAP_VERSION_CONST_DESC: &str =
 const CLAP_LONG_VERSION_CONST_DESC: &str =
     r#"/// The common version const. It's so easy to use this const with CLAP_VERSION."#;
 
-gen_const!(version_branch_const, VERSION_CONST_DESC, VERSION_BRANCH_CONST);
+gen_const!(
+    version_branch_const,
+    VERSION_CONST_DESC,
+    VERSION_BRANCH_CONST
+);
 
 gen_const!(version_tag_const, VERSION_CONST_DESC, VERSION_TAG_CONST);
 
@@ -93,8 +96,8 @@ gen_const!(
     CLAP_LONG_VERSION_TAG_CONST
 );
 
-pub(crate) const BUILD_FN_VERSION: &str = "version";
-pub(crate) const BUILD_FN_CLAP_LONG_VERSION: &str = "clap_long_version";
+pub(crate) const BUILD_CONST_VERSION: &str = "VERSION";
+pub(crate) const BUILD_CONST_CLAP_LONG_VERSION: &str = "CLAP_LONG_VERSION";
 
 #[cfg(test)]
 mod tests {

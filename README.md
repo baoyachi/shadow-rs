@@ -95,8 +95,8 @@ fn main() {
     println!("git_status_file:{}", shadow_rs::git_status_file()); // get current project statue file. e.g '  * examples/builtin_fn.rs (dirty)'
 
     //shadow-rs built in const   
-    println!("{}", build::version());           // the version (description binary detail information)
-    println!("{}", build::clap_long_version()); // usually used by clap crates version() (description binary detail information)
+    println!("{}", build::VERSION);           // the version (description binary detail information)
+    println!("{}", build::CLAP_LONG_VERSION); // usually used by clap crates version() (description binary detail information)
     println!("{}", build::PKG_VERSION);         // current package version. e.g. '1.3.15-beta2'  
     println!("{}", build::PKG_VERSION_MAJOR);   //current package major version. e.g. '1'  
     println!("{}", build::PKG_VERSION_MINOR);   //current package minor version. e.g. '3'  
@@ -155,8 +155,8 @@ with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/s
 
 | const/fn | example |
 | ------ | ------ |
-| version() | support mini version information.It's use easy. |
-| clap_long_version() | support mini version information for clap.It's use easy. |
+| VERSION | support mini version information.It's use easy. |
+| CLAP_LONG_VERSION | support mini version information for clap.It's use easy. |
 | BRANCH | master/develop |
 | TAG | v1.0.0 |
 | SHORT_COMMIT | 8405e28e |  
