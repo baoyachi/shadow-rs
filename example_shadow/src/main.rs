@@ -6,7 +6,7 @@ shadow!(build);
 
 fn main() {
     Command::new("example_shadow")
-        .version(build::clap_long_version())
+        .version(build::CLAP_LONG_VERSION)
         .get_matches(); //USAGE: ./example_shadow -V
 
     // shadow-rs built in function

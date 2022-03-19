@@ -7,7 +7,7 @@ macro_rules! gen_const {
 }
 
 const VERSION_BRANCH_CONST: &str = r##"#[allow(dead_code)]
-pub const VERSION:&'static str = shadow_rs::const_format::formatcp!(r#"
+pub const VERSION:&str = shadow_rs::const_format::formatcp!(r#"
 pkg_version:{}
 branch:{}
 commit_hash:{}
@@ -16,7 +16,7 @@ build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, R
 );"##;
 
 const VERSION_TAG_CONST: &str = r##"#[allow(dead_code)]
-pub const VERSION:&'static str = shadow_rs::const_format::formatcp!(r#"
+pub const VERSION:&str = shadow_rs::const_format::formatcp!(r#"
 pkg_version:{}
 tag:{}
 commit_hash:{}
@@ -26,7 +26,7 @@ build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST
 
 const CLAP_VERSION_BRANCH_CONST: &str = r##"#[allow(dead_code)]
 #[deprecated = "Replaced with `CLAP_LONG_VERSION`"]
-pub const CLAP_VERSION:&'static str = shadow_rs::const_format::formatcp!(r#"{}
+pub const CLAP_VERSION:&str = shadow_rs::const_format::formatcp!(r#"{}
 branch:{}
 commit_hash:{}
 build_time:{}
@@ -35,7 +35,7 @@ build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, R
 
 const CLAP_VERSION_TAG_CONST: &str = r##"#[allow(dead_code)]
 #[deprecated = "Replaced with `CLAP_LONG_VERSION`"]
-pub const CLAP_VERSION:&'static str = shadow_rs::const_format::formatcp!(r#"{}
+pub const CLAP_VERSION:&str = shadow_rs::const_format::formatcp!(r#"{}
 tag:{}
 commit_hash:{}
 build_time:{}
@@ -43,7 +43,7 @@ build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST
 );"##;
 
 const CLAP_LONG_VERSION_BRANCH_CONST: &str = r##"#[allow(dead_code)]
-pub const CLAP_LONG_VERSION:&'static str = shadow_rs::const_format::formatcp!(r#"{}
+pub const CLAP_LONG_VERSION:&str = shadow_rs::const_format::formatcp!(r#"{}
 branch:{}
 commit_hash:{}
 build_time:{}
@@ -51,7 +51,7 @@ build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, R
 );"##;
 
 const CLAP_LONG_VERSION_TAG_CONST: &str = r##"#[allow(dead_code)]
-pub const CLAP_LONG_VERSION:&'static str = shadow_rs::const_format::formatcp!(r#"{}
+pub const CLAP_LONG_VERSION:&str = shadow_rs::const_format::formatcp!(r#"{}
 tag:{}
 commit_hash:{}
 build_time:{}
