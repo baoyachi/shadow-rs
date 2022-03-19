@@ -52,10 +52,10 @@ Modify your `Cargo.toml` like so:
 build = "build.rs"
 
 [dependencies]
-shadow-rs = "0.9"
+shadow-rs = "{latest version}"
 
 [build-dependencies]
-shadow-rs = "0.9"
+shadow-rs = "{latest version}"
 ```
 
 ### 2) Create `build.rs` file
