@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ## [0.11.0] - 2022-03-19
 
 ### Bug Fixes
+
 - https://github.com/baoyachi/shadow-rs/issues/86
 - https://github.com/baoyachi/shadow-rs/issues/68
 
