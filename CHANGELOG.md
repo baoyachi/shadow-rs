@@ -7,8 +7,8 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 
-- https://github.com/baoyachi/shadow-rs/issues/86
-- https://github.com/baoyachi/shadow-rs/issues/68
+- Https://github.com/baoyachi/shadow-rs/issues/86
+- Https://github.com/baoyachi/shadow-rs/issues/68
 
 ## [0.9.0] - 2022-02-22
 
