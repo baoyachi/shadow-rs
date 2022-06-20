@@ -100,7 +100,7 @@ impl Git {
                 let mut short_commit = commit.as_str();
 
                 if commit.len() > 8 {
-                    short_commit = &short_commit[0..8];
+                    short_commit = short_commit.get(0..8).unwrap();
                 }
                 self.update_str(SHORT_COMMIT, short_commit.to_string());
             }
@@ -184,9 +184,17 @@ impl Git {
                     let ref_tag_prefix: &str = "refs/tags/";
 
                     if v.starts_with(ref_branch_prefix) {
-                        branch = Some(v[ref_branch_prefix.len()..].to_string())
+                        branch = Some(
+                            v.get(ref_branch_prefix.len()..)
+                                .unwrap_or_default()
+                                .to_string(),
+                        )
                     } else if v.starts_with(ref_tag_prefix) {
-                        tag = Some(v[ref_tag_prefix.len()..].to_string())
+                        tag = Some(
+                            v.get(ref_tag_prefix.len()..)
+                                .unwrap_or_default()
+                                .to_string(),
+                        )
                     }
                 }
             }
