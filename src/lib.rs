@@ -478,9 +478,8 @@ mod tests {
     fn test_build() -> SdResult<()> {
         Shadow::build_inner("./".into(), "./".into())?;
         let shadow = fs::read_to_string("./shadow.rs")?;
-        assert!(shadow.len() > 0);
-        let lines: Vec<_> = shadow.lines().map(|_| true).collect();
-        assert!(lines.len() > 0);
+        assert!(!shadow.is_empty());
+        assert!(shadow.lines().count() > 0);
         println!("{}", shadow);
         Ok(())
     }

@@ -458,7 +458,7 @@ mod tests {
             //assert github tag always exist value
             if let Some(github_ref) = env_map.get("GITHUB_REF") {
                 if github_ref.starts_with("refs/tags/") && k.eq(TAG) {
-                    assert!(!v.v.is_empty());
+                    assert!(!v.v.is_empty(), "not empty");
                 } else if github_ref.starts_with("refs/heads/") && k.eq(BRANCH) {
                     assert!(!v.v.is_empty());
                 }

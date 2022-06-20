@@ -33,7 +33,7 @@ jobs:
       - name: Check fix
         run: cargo fix && cargo fix
       - name: Check with clippy
-        run: cargo clippy --all -- -D warnings
+        run: cargo clippy --all-targets --all-features -- -D warnings
       - name: Build Release
         run: cargo build --release
       - name: Run tests
