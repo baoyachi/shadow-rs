@@ -64,7 +64,8 @@ impl SystemEnv {
         if let Ok(out) = Command::new("cargo").arg("tree").output() {
             let input = String::from_utf8(out.stdout)?;
             if let Some(index) = input.find('\n') {
-                let lines = filter_cargo_tree(input[index..].split('\n').collect());
+                let lines =
+                    filter_cargo_tree(input.get(index..).unwrap_or_default().split('\n').collect());
                 update_val(CARGO_TREE, lines);
             }
         }
@@ -168,7 +169,7 @@ mod dep_source_replace {
         } else if let Some(index) = input.find(" (ssh") {
             (DEP_REPLACE_GIT, index)
         } else if let (Some(start), Some(end)) = (input.find(" ("), input.find(')')) {
-            let path = input[start + 2..end].trim();
+            let path = input.get(start + 2..end).unwrap_or_default().trim();
             if path_exists(path) {
                 (DEP_REPLACE_PATH, start)
             } else {
@@ -177,7 +178,7 @@ mod dep_source_replace {
         } else {
             (DEP_REPLACE_NONE, input.len())
         };
-        format!("{}{}", &input[..index], val)
+        format!("{}{}", &input.get(..index).unwrap_or_default(), val)
     }
 
     pub fn filter_cargo_tree(lines: Vec<&str>) -> String {
