@@ -10,7 +10,7 @@
 
 [docsrs]: https://docs.rs/shadow-rs
 
-[![Chrono GitHub Actions](https://github.com/baoyachi/shadow-rs/workflows/build/badge.svg)](https://github.com/baoyachi/shadow-rs/actions?query=workflow%3Abuild)
+[![GitHub Actions](https://github.com/baoyachi/shadow-rs/workflows/check/badge.svg)](https://github.com/baoyachi/shadow-rs/actions?query=workflow%3Acheck)
 [![Crates.io](https://img.shields.io/crates/v/shadow-rs.svg)](https://crates.io/crates/shadow-rs)
 [![Docs.rs](https://docs.rs/shadow-rs/badge.svg)](https://docs.rs/shadow-rs)
 [![Download](https://img.shields.io/crates/d/shadow-rs)](https://crates.io/crates/shadow-rs)
