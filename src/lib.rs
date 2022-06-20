@@ -139,7 +139,7 @@
 //! ## Clap example
 //! And you can also use `shadow-rs` with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs).
 //!
-//! For the user guide and futher documentation, please read
+//! For the user guide and further documentation, please read
 //! [The shadow-rs document](https://github.com/baoyachi/shadow-rs).
 //!
 
