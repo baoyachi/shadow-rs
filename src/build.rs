@@ -1,9 +1,9 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 pub type ShadowConst = &'static str;
 
 pub trait ShadowGen {
-    fn gen_const(&self) -> HashMap<ShadowConst, ConstVal>;
+    fn gen_const(&self) -> BTreeMap<ShadowConst, ConstVal>;
 }
 
 #[derive(Debug, Clone)]

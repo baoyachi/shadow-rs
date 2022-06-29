@@ -4,7 +4,7 @@ use crate::err::*;
 use crate::time::BuildTime;
 use crate::Format;
 use chrono::SecondsFormat;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::io::{BufReader, Read};
 use std::path::Path;
 use std::process::{Command, Stdio};
@@ -23,7 +23,7 @@ const GIT_STATUS_FILE: ShadowConst = "GIT_STATUS_FILE";
 
 #[derive(Default, Debug)]
 pub struct Git {
-    map: HashMap<ShadowConst, ConstVal>,
+    map: BTreeMap<ShadowConst, ConstVal>,
     ci_type: CiType,
 }
 
@@ -48,7 +48,7 @@ impl Git {
         }
     }
 
-    fn init(&mut self, path: &Path, std_env: &HashMap<String, String>) -> SdResult<()> {
+    fn init(&mut self, path: &Path, std_env: &BTreeMap<String, String>) -> SdResult<()> {
         // check git status
         let x = command_git_clean();
         self.update_bool(GIT_CLEAN, x);
@@ -167,7 +167,7 @@ impl Git {
     }
 
     #[allow(clippy::manual_strip)]
-    fn ci_branch_tag(&mut self, std_env: &HashMap<String, String>) {
+    fn ci_branch_tag(&mut self, std_env: &BTreeMap<String, String>) {
         let mut branch: Option<String> = None;
         let mut tag: Option<String> = None;
         match self.ci_type {
@@ -211,10 +211,10 @@ impl Git {
 }
 
 pub fn new_git(
-    path: &std::path::Path,
+    path: &Path,
     ci: CiType,
-    std_env: &HashMap<String, String>,
-) -> HashMap<ShadowConst, ConstVal> {
+    std_env: &BTreeMap<String, String>,
+) -> BTreeMap<ShadowConst, ConstVal> {
     let mut git = Git {
         map: Default::default(),
         ci_type: ci,
