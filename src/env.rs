@@ -9,11 +9,11 @@ use crate::env::dep_source_replace::filter_cargo_tree;
 use crate::time::now_data_time;
 use crate::Format;
 use is_debug::build_channel;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 #[derive(Default, Debug)]
 pub struct SystemEnv {
-    map: HashMap<ShadowConst, ConstVal>,
+    map: BTreeMap<ShadowConst, ConstVal>,
 }
 
 const BUILD_OS: ShadowConst = "BUILD_OS";
@@ -35,7 +35,7 @@ const PKG_VERSION_PATCH: ShadowConst = "PKG_VERSION_PATCH";
 const PKG_VERSION_PRE: ShadowConst = "PKG_VERSION_PRE";
 
 impl SystemEnv {
-    fn init(&mut self, std_env: &HashMap<String, String>) -> SdResult<()> {
+    fn init(&mut self, std_env: &BTreeMap<String, String>) -> SdResult<()> {
         let mut update_val = |c: ShadowConst, v: String| {
             if let Some(mut val) = self.map.get_mut(c) {
                 val.t = ConstType::Str;
@@ -195,7 +195,7 @@ mod dep_source_replace {
     }
 }
 
-pub fn new_system_env(std_env: &HashMap<String, String>) -> HashMap<ShadowConst, ConstVal> {
+pub fn new_system_env(std_env: &BTreeMap<String, String>) -> BTreeMap<ShadowConst, ConstVal> {
     let mut env = SystemEnv::default();
     env.map.insert(
         BUILD_OS,
@@ -274,7 +274,7 @@ pub fn new_system_env(std_env: &HashMap<String, String>) -> HashMap<ShadowConst,
 
 #[derive(Default, Debug)]
 pub struct Project {
-    map: HashMap<ShadowConst, ConstVal>,
+    map: BTreeMap<ShadowConst, ConstVal>,
 }
 
 const PROJECT_NAME: ShadowConst = "PROJECT_NAME";
@@ -313,7 +313,7 @@ pub fn build_time(project: &mut Project) {
     );
 }
 
-pub fn new_project(std_env: &HashMap<String, String>) -> HashMap<ShadowConst, ConstVal> {
+pub fn new_project(std_env: &BTreeMap<String, String>) -> BTreeMap<ShadowConst, ConstVal> {
     let mut project = Project::default();
     build_time(&mut project);
     project.map.insert(

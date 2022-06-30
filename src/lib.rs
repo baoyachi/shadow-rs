@@ -169,7 +169,7 @@ use git::*;
 use crate::ci::CiType;
 use crate::time::BuildTime;
 pub use const_format::*;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::env as std_env;
 use std::fs::File;
 use std::io::Write;
@@ -248,8 +248,8 @@ where
 }
 
 /// get std::env:vars
-pub fn get_std_env() -> HashMap<String, String> {
-    let mut env_map = HashMap::new();
+pub fn get_std_env() -> BTreeMap<String, String> {
+    let mut env_map = BTreeMap::new();
     for (k, v) in std_env::vars() {
         env_map.insert(k, v);
     }
@@ -259,8 +259,8 @@ pub fn get_std_env() -> HashMap<String, String> {
 #[derive(Debug)]
 pub struct Shadow {
     pub f: File,
-    pub map: HashMap<ShadowConst, ConstVal>,
-    pub std_env: HashMap<String, String>,
+    pub map: BTreeMap<ShadowConst, ConstVal>,
+    pub std_env: BTreeMap<String, String>,
 }
 
 impl Shadow {

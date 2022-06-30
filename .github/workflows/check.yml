@@ -97,6 +97,7 @@ jobs:
         run: cargo tarpaulin -o Lcov --output-dir ./coverage
       - name: Coveralls
         if: matrix.rust == 'stable'
+        continue-on-error: true
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
