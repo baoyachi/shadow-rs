@@ -32,7 +32,7 @@ You can use this tool to check in production exactly where a binary came from an
 ![build_module](./build_module.png)
 
 # Notice ⚠️
-The build.rs not rebuild every-time if the repository has been history builld.
+> The build.rs not rebuild every-time if the repository has been history builld.
 The recommended way is to cargo clean first, then execute cargo build, or use the ci/cd pipeline tool to help you perform this operation.
 Detail see:https://github.com/baoyachi/shadow-rs/issues/95
 
