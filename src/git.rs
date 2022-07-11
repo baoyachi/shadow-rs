@@ -3,7 +3,6 @@ use crate::ci::CiType;
 use crate::err::*;
 use crate::time::BuildTime;
 use crate::Format;
-use chrono::SecondsFormat;
 use std::collections::BTreeMap;
 use std::io::{BufReader, Read};
 use std::path::Path;
@@ -112,10 +111,7 @@ impl Git {
 
             self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
 
-            self.update_str(
-                COMMIT_DATE_3339,
-                date_time.to_rfc3339_opts(SecondsFormat::Secs, true),
-            );
+            self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
 
             let author = commit.author();
             if let Some(v) = author.email() {

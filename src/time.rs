@@ -42,10 +42,12 @@ impl BuildTime {
         }
     }
 
-    pub fn to_rfc3339_opts(&self, secform: SecondsFormat, use_z: bool) -> String {
+    pub fn to_rfc3339(&self) -> String {
+        let sec_form = SecondsFormat::Secs;
+        let use_z = true;
         match self {
-            BuildTime::Local(dt) => dt.to_rfc3339_opts(secform, use_z),
-            BuildTime::Utc(dt) => dt.to_rfc3339_opts(secform, use_z),
+            BuildTime::Local(dt) => dt.to_rfc3339_opts(sec_form, use_z),
+            BuildTime::Utc(dt) => dt.to_rfc3339_opts(sec_form, use_z),
         }
     }
 }
