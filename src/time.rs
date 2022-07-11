@@ -1,5 +1,5 @@
 use crate::Format;
-use chrono::{DateTime, Local, SecondsFormat, TimeZone, Utc};
+use chrono::{DateTime, Local, NaiveDateTime, SecondsFormat, TimeZone, Utc};
 
 pub enum BuildTime {
     Local(DateTime<Local>),
@@ -26,6 +26,15 @@ pub fn now_data_time() -> BuildTime {
 }
 
 impl BuildTime {
+    pub fn local_now() -> Self {
+        BuildTime::Local(Local::now())
+    }
+
+    pub fn timestamp_2_utc(time_stamp: i64) -> Self {
+        let dt = NaiveDateTime::from_timestamp(time_stamp, 0);
+        BuildTime::Utc(DateTime::<Utc>::from_utc(dt, Utc))
+    }
+
     pub fn to_rfc2822(&self) -> String {
         match self {
             BuildTime::Local(dt) => dt.to_rfc2822(),
