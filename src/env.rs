@@ -1,15 +1,12 @@
 use crate::build::*;
-use crate::err::SdResult;
-
-use chrono::SecondsFormat;
-use std::env;
-use std::process::Command;
-
 use crate::env::dep_source_replace::filter_cargo_tree;
+use crate::err::SdResult;
 use crate::time::now_data_time;
 use crate::Format;
 use is_debug::build_channel;
 use std::collections::BTreeMap;
+use std::env;
+use std::process::Command;
 
 #[derive(Default, Debug)]
 pub struct SystemEnv {
@@ -307,7 +304,7 @@ pub fn build_time(project: &mut Project) {
         BUILD_TIME_3339,
         ConstVal {
             desc: "display project build time by rfc3399".to_string(),
-            v: time.to_rfc3339_opts(SecondsFormat::Secs, true),
+            v: time.to_rfc3339(),
             t: ConstType::Str,
         },
     );

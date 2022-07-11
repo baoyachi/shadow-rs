@@ -180,7 +180,6 @@ use crate::gen_const::{
     clap_version_tag_const, version_branch_const, version_tag_const, BUILD_CONST_CLAP_LONG_VERSION,
     BUILD_CONST_VERSION,
 };
-use chrono::Local;
 pub use err::{SdResult, ShadowError};
 pub use git::{branch, git_clean, git_status_file, tag};
 
@@ -372,7 +371,7 @@ impl Shadow {
 // Author by:https://www.github.com/baoyachi
 // The build script repository:https://github.com/baoyachi/shadow-rs
 // Create time by:{}"#,
-            BuildTime::Local(Local::now()).human_format()
+            BuildTime::local_now().human_format()
         );
         writeln!(&self.f, "{}\n\n", desc)?;
         Ok(())
