@@ -3,8 +3,14 @@ use crate::Format;
 use chrono::{DateTime, Local, NaiveDateTime, SecondsFormat, TimeZone, Utc};
 
 pub enum BuildTime {
-    Local(DateTime<Local>),
-    Utc(DateTime<Utc>),
+    Local(tz::DateTime),
+    Utc(time::OffsetDateTime),
+}
+
+fn local_now() -> Result<tz::DateTime,tz::TzError>{
+    let current_utc_date_time = tz::UtcDateTime::now()?;
+    let date_time = current_utc_date_time.project(tz::TimeZone::local().unwrap().as_ref())?;
+    Ok(date_time)
 }
 
 pub fn now_data_time() -> BuildTime {
@@ -14,26 +20,27 @@ pub fn now_data_time() -> BuildTime {
     // https://reproducible-builds.org/docs/source-date-epoch/
     println!("cargo:rerun-if-env-changed=SOURCE_DATE_EPOCH");
     match std::env::var_os("SOURCE_DATE_EPOCH") {
-        None => BuildTime::Local(Local::now()),
+        None => BuildTime::Local(local_now().unwrap()),
         Some(timestamp) => {
             let epoch = timestamp
                 .into_string()
                 .expect("Input SOURCE_DATE_EPOCH could not be parsed")
                 .parse::<i64>()
                 .expect("Input SOURCE_DATE_EPOCH could not be cast to a number");
-            BuildTime::Utc(Utc.timestamp(epoch, 0))
+            // BuildTime::Utc(Utc.timestamp(epoch, 0))
+            BuildTime::Utc(OffsetDateTime::from_unix_timestamp(epoch).unwrap())
         }
     }
 }
 
 impl BuildTime {
     pub fn local_now() -> Self {
-        BuildTime::Local(Local::now())
+        BuildTime::Local(local_now().unwrap())
     }
 
     pub fn timestamp_2_utc(time_stamp: i64) -> Self {
-        let dt = NaiveDateTime::from_timestamp(time_stamp, 0);
-        BuildTime::Utc(DateTime::<Utc>::from_utc(dt, Utc))
+        let time = OffsetDateTime::from_unix_timestamp(time_stamp).unwrap();
+        BuildTime::Utc(time)
     }
 
     pub fn to_rfc2822(&self) -> String {
@@ -87,6 +94,8 @@ mod tests {
 }
 
 use std::fmt::Write;
+use time::OffsetDateTime;
+
 fn tz_local_time_format(date_time:tz::DateTime) -> std::result::Result<String,Box<dyn Error>>{
     let ut_offset = date_time.local_time_type().ut_offset();
 
