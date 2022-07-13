@@ -1,3 +1,4 @@
+use std::error::Error;
 use crate::Format;
 use chrono::{DateTime, Local, NaiveDateTime, SecondsFormat, TimeZone, Utc};
 
@@ -72,4 +73,56 @@ mod tests {
         let time = now_data_time();
         assert_eq!(time.human_format(), "2021-08-04 12:34:03 +00:00");
     }
+
+    #[test]
+    fn test_local_now_human_format() {
+        let time = BuildTime::local_now().human_format();
+        println!("{}",time);// 2022-07-14 00:40:05 +08:00
+
+        let current_utc_date_time = tz::UtcDateTime::now().unwrap();
+        let date_time = current_utc_date_time.project(tz::TimeZone::local().unwrap().as_ref()).unwrap();
+        println!("{}",tz_local_time_format(date_time).unwrap());
+        assert_eq!(time,tz_local_time_format(date_time).unwrap())
+    }
 }
+
+use std::fmt::Write;
+fn tz_local_time_format(date_time:tz::DateTime) -> std::result::Result<String,Box<dyn Error>>{
+    let ut_offset = date_time.local_time_type().ut_offset();
+
+    /// Number of seconds in one minute
+    pub const SECONDS_PER_MINUTE: i64 = 60;
+    /// Number of minutes in one hour
+    pub const MINUTES_PER_HOUR: i64 = 60;
+    /// Number of seconds in one hour
+    pub const SECONDS_PER_HOUR: i64 = 3600;
+
+
+    let mut f = String::new();
+    write!(f, "{}-{:02}-{:02} {:02}:{:02}:{:02} ",
+           date_time.year(),
+           date_time.month(),
+           date_time.month_day(),
+           date_time.hour(),
+           date_time.minute(),
+           date_time.second())?;
+
+    if ut_offset != 0 {
+        let ut_offset = ut_offset as i64;
+        let ut_offset_abs = ut_offset.abs();
+
+        let offset_hour = ut_offset / SECONDS_PER_HOUR;
+        let offset_minute = (ut_offset_abs / SECONDS_PER_MINUTE) % MINUTES_PER_HOUR;
+        let offset_second = ut_offset_abs % SECONDS_PER_MINUTE;
+
+        write!(f, "{:+03}:{:02}", offset_hour, offset_minute)?;
+
+        if offset_second != 0 {
+            write!(f, ":{:02}", offset_second)?;
+        }
+    } else {
+        write!(f, "Z")?;
+    }
+    Ok(f)
+}
+
