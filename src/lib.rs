@@ -151,6 +151,8 @@ mod gen_const;
 mod git;
 mod time;
 
+pub use time::*;
+
 /// Get current project build mode.
 ///
 /// It's very useful. Debug mode is usually used for debugging information.
