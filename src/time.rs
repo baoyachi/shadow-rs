@@ -92,4 +92,12 @@ mod tests {
         println!("{}", time); // 2022-07-14 00:40:05 +08:00
         assert_eq!(time.len(), 26);
     }
+
+    #[test]
+    fn test_timestamp_2_utc() {
+        let time = BuildTime::timestamp_2_utc(1628080443);
+        assert_eq!(time.to_rfc2822(), "Wed, 04 Aug 2021 12:34:03 +0000");
+        assert_eq!(time.to_rfc3339(), "2021-08-04T12:34:03Z");
+        assert_eq!(time.human_format(), "2021-08-04 12:34:03 +00:00");
+    }
 }

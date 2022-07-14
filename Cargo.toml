@@ -11,7 +11,7 @@ repository = "https://github.com/baoyachi/shadow-rs"
 documentation = "https://docs.rs/shadow-rs"
 homepage = "https://github.com/baoyachi/shadow-rs"
 license = "MIT AND Apache-2.0"
-exclude = ["shadow-rs.png","build_module.png"]
+exclude = ["shadow-rs.png", "build_module.png"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 
@@ -22,7 +22,7 @@ all-features = true
 is_debug = "1.0.1"
 const_format = "0.2.22"
 tz-rs = "0.6.11"
-time = {version="0.3.11",features=["formatting","local-offset","parsing"]}
+time = { version = "0.3.11", features = ["formatting", "local-offset", "parsing"] }
 
 #! Optional Dependencies:
 
