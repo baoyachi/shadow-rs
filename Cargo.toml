@@ -1,6 +1,6 @@
 [package]
 name = "shadow-rs"
-version = "0.12.0"
+version = "0.13.0"
 authors = ["baoyachi <liaoymxsdl@gmail.com>"]
 edition = "2021"
 description = "A build-time information stored in your rust project"
@@ -11,7 +11,7 @@ repository = "https://github.com/baoyachi/shadow-rs"
 documentation = "https://docs.rs/shadow-rs"
 homepage = "https://github.com/baoyachi/shadow-rs"
 license = "MIT AND Apache-2.0"
-exclude = ["shadow-rs.png","build_module.png"]
+exclude = ["shadow-rs.png", "build_module.png"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 
@@ -20,8 +20,9 @@ all-features = true
 
 [dependencies]
 is_debug = "1.0.1"
-chrono = "0.4.13"
 const_format = "0.2.22"
+tz-rs = "0.6.11"
+time = { version = "0.3.11", features = ["formatting", "local-offset", "parsing"] }
 
 #! Optional Dependencies:
 
