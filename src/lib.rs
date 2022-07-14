@@ -151,6 +151,8 @@ mod gen_const;
 mod git;
 mod time;
 
+pub use time::*;
+
 /// Get current project build mode.
 ///
 /// It's very useful. Debug mode is usually used for debugging information.
@@ -371,7 +373,9 @@ impl Shadow {
 // Author by:https://www.github.com/baoyachi
 // The build script repository:https://github.com/baoyachi/shadow-rs
 // Create time by:{}"#,
-            BuildTime::local_now().human_format()
+            BuildTime::local_now()
+                .map_err(|err| format!("get local DateTime error:{}", err))?
+                .human_format()
         );
         writeln!(&self.f, "{}\n\n", desc)?;
         Ok(())
