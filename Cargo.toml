@@ -20,7 +20,6 @@ all-features = true
 
 [dependencies]
 is_debug = "1.0.1"
-chrono = "0.4.13"
 const_format = "0.2.22"
 tz-rs = "0.6.11"
 time = {version="0.3.11",features=["formatting","local-offset","parsing"]}
