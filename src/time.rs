@@ -18,7 +18,7 @@ pub fn now_data_time() -> BuildTime {
     // https://reproducible-builds.org/docs/source-date-epoch/
     println!("cargo:rerun-if-env-changed=SOURCE_DATE_EPOCH");
     match std::env::var_os("SOURCE_DATE_EPOCH") {
-        None => BuildTime::local_now().unwrap(),
+        None => BuildTime::new(),
         Some(timestamp) => {
             let epoch = timestamp
                 .into_string()
@@ -32,7 +32,11 @@ pub fn now_data_time() -> BuildTime {
 }
 
 impl BuildTime {
-    pub fn local_now() -> Result<Self, Box<dyn Error>> {
+    pub fn new() -> Self {
+        Self::local_now().unwrap_or_else(|_| BuildTime::Utc(OffsetDateTime::now_utc()))
+    }
+
+    fn local_now() -> Result<Self, Box<dyn Error>> {
         let time_zone_local = TimeZone::local()?; // expensive call, should be cached
 
         let duration_since_epoch = SystemTime::now().duration_since(UNIX_EPOCH)?;
@@ -89,6 +93,9 @@ mod tests {
     #[test]
     fn test_local_now_human_format() {
         let time = BuildTime::local_now().unwrap().human_format();
+        #[cfg(unix)]
+        assert!(!std::fs::read("/etc/localtime").unwrap().is_empty());
+
         println!("{}", time); // 2022-07-14 00:40:05 +08:00
         assert_eq!(time.len(), 26);
     }

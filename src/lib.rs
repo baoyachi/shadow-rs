@@ -371,9 +371,7 @@ impl Shadow {
 // Author by:https://www.github.com/baoyachi
 // The build script repository:https://github.com/baoyachi/shadow-rs
 // Create time by:{}"#,
-            BuildTime::local_now()
-                .map_err(|err| format!("get local DateTime error:{}", err))?
-                .human_format()
+            BuildTime::new().human_format()
         );
         writeln!(&self.f, "{}\n\n", desc)?;
         Ok(())
