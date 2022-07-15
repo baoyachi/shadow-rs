@@ -63,17 +63,18 @@ jobs:
         working-directory: ./example_shadow
 
       # build on nightly
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          override: true
-      - name: Build on nightly
-        run: cargo build --release
+#      - uses: actions-rs/toolchain@v1
+#        with:
+#          toolchain: nightly
+#          override: true
+#      - name: Build on nightly
+#        run: cargo build --release
 
   test:
     strategy:
       matrix:
-        rust: [stable, beta, nightly]
+#        rust: [stable, beta, nightly]
+        rust: [stable, beta]
     runs-on: ubuntu-latest
     steps:
       - name: Setup Rust
