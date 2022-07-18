@@ -31,6 +31,12 @@ pub fn now_data_time() -> DateTime {
     }
 }
 
+impl Default for DateTime {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl DateTime {
     pub fn new() -> Self {
         Self::local_now().unwrap_or_else(|_| DateTime::Utc(OffsetDateTime::now_utc()))
