@@ -1,7 +1,7 @@
 use crate::build::{ConstType, ConstVal, ShadowConst};
 use crate::ci::CiType;
+use crate::data_time::DateTime;
 use crate::err::*;
-use crate::time::BuildTime;
 use crate::Format;
 use std::collections::BTreeMap;
 use std::io::{BufReader, Read};
@@ -106,7 +106,7 @@ impl Git {
             let commit = reference.peel_to_commit().map_err(ShadowError::new)?;
 
             let time_stamp = commit.time().seconds().to_string().parse::<i64>()?;
-            let date_time = BuildTime::timestamp_2_utc(time_stamp);
+            let date_time = DateTime::timestamp_2_utc(time_stamp);
             self.update_str(COMMIT_DATE, date_time.human_format());
 
             self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
