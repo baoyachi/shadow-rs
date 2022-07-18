@@ -6,19 +6,19 @@ use time::UtcOffset;
 use time::{format_description, OffsetDateTime};
 use tz::TimeZone;
 
-pub enum BuildTime {
+pub enum DateTime {
     Local(OffsetDateTime),
     Utc(OffsetDateTime),
 }
 
-pub fn now_data_time() -> BuildTime {
+pub fn now_data_time() -> DateTime {
     // Enable reproducibility for uses of `now_data_time` by respecting the
     // `SOURCE_DATE_EPOCH` env variable.
     //
     // https://reproducible-builds.org/docs/source-date-epoch/
     println!("cargo:rerun-if-env-changed=SOURCE_DATE_EPOCH");
     match std::env::var_os("SOURCE_DATE_EPOCH") {
-        None => BuildTime::new(),
+        None => DateTime::new(),
         Some(timestamp) => {
             let epoch = timestamp
                 .into_string()
@@ -26,17 +26,17 @@ pub fn now_data_time() -> BuildTime {
                 .parse::<i64>()
                 .expect("Input SOURCE_DATE_EPOCH could not be cast to a number");
             // BuildTime::Utc(Utc.timestamp(epoch, 0))
-            BuildTime::Utc(OffsetDateTime::from_unix_timestamp(epoch).unwrap())
+            DateTime::Utc(OffsetDateTime::from_unix_timestamp(epoch).unwrap())
         }
     }
 }
 
-impl BuildTime {
+impl DateTime {
     pub fn new() -> Self {
-        Self::local_now().unwrap_or_else(|_| BuildTime::Utc(OffsetDateTime::now_utc()))
+        Self::local_now().unwrap_or_else(|_| DateTime::Utc(OffsetDateTime::now_utc()))
     }
 
-    fn local_now() -> Result<Self, Box<dyn Error>> {
+    pub fn local_now() -> Result<Self, Box<dyn Error>> {
         let time_zone_local = TimeZone::local()?; // expensive call, should be cached
 
         let duration_since_epoch = SystemTime::now().duration_since(UNIX_EPOCH)?;
@@ -45,28 +45,28 @@ impl BuildTime {
         let time_zone_offset = UtcOffset::from_whole_seconds(local_time_type.ut_offset())?;
         let local_date_time =
             (OffsetDateTime::UNIX_EPOCH + duration_since_epoch).to_offset(time_zone_offset);
-        Ok(BuildTime::Local(local_date_time))
+        Ok(DateTime::Local(local_date_time))
     }
 
     pub fn timestamp_2_utc(time_stamp: i64) -> Self {
         let time = OffsetDateTime::from_unix_timestamp(time_stamp).unwrap();
-        BuildTime::Utc(time)
+        DateTime::Utc(time)
     }
 
     pub fn to_rfc2822(&self) -> String {
         match self {
-            BuildTime::Local(dt) | BuildTime::Utc(dt) => dt.format(&Rfc2822).unwrap(),
+            DateTime::Local(dt) | DateTime::Utc(dt) => dt.format(&Rfc2822).unwrap(),
         }
     }
 
     pub fn to_rfc3339(&self) -> String {
         match self {
-            BuildTime::Local(dt) | BuildTime::Utc(dt) => dt.format(&Rfc3339).unwrap(),
+            DateTime::Local(dt) | DateTime::Utc(dt) => dt.format(&Rfc3339).unwrap(),
         }
     }
 }
 
-impl Format for BuildTime {
+impl Format for DateTime {
     fn human_format(&self) -> String {
         let fmt = format_description::parse(
             "[year]-[month]-[day] [hour]:[minute]:[second] [offset_hour \
@@ -74,7 +74,7 @@ impl Format for BuildTime {
         )
         .unwrap();
         match self {
-            BuildTime::Local(dt) | BuildTime::Utc(dt) => dt.format(&fmt).unwrap(),
+            DateTime::Local(dt) | DateTime::Utc(dt) => dt.format(&fmt).unwrap(),
         }
     }
 }
@@ -92,7 +92,7 @@ mod tests {
 
     #[test]
     fn test_local_now_human_format() {
-        let time = BuildTime::local_now().unwrap().human_format();
+        let time = DateTime::local_now().unwrap().human_format();
         #[cfg(unix)]
         assert!(!std::fs::read("/etc/localtime").unwrap().is_empty());
 
@@ -102,7 +102,7 @@ mod tests {
 
     #[test]
     fn test_timestamp_2_utc() {
-        let time = BuildTime::timestamp_2_utc(1628080443);
+        let time = DateTime::timestamp_2_utc(1628080443);
         assert_eq!(time.to_rfc2822(), "Wed, 04 Aug 2021 12:34:03 +0000");
         assert_eq!(time.to_rfc3339(), "2021-08-04T12:34:03Z");
         assert_eq!(time.human_format(), "2021-08-04 12:34:03 +00:00");

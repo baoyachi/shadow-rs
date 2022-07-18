@@ -145,11 +145,11 @@
 
 mod build;
 mod ci;
+mod data_time;
 mod env;
 mod err;
 mod gen_const;
 mod git;
-mod time;
 
 /// Get current project build mode.
 ///
@@ -167,7 +167,7 @@ use env::*;
 use git::*;
 
 use crate::ci::CiType;
-use crate::time::BuildTime;
+pub use crate::data_time::DateTime;
 pub use const_format::*;
 use std::collections::BTreeMap;
 use std::env as std_env;
@@ -183,7 +183,7 @@ use crate::gen_const::{
 pub use err::{SdResult, ShadowError};
 pub use git::{branch, git_clean, git_status_file, tag};
 
-trait Format {
+pub trait Format {
     fn human_format(&self) -> String;
 }
 
@@ -371,7 +371,7 @@ impl Shadow {
 // Author by:https://www.github.com/baoyachi
 // The build script repository:https://github.com/baoyachi/shadow-rs
 // Create time by:{}"#,
-            BuildTime::new().human_format()
+            DateTime::new().human_format()
         );
         writeln!(&self.f, "{}\n\n", desc)?;
         Ok(())
