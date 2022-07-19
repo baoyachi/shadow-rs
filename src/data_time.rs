@@ -42,6 +42,13 @@ impl DateTime {
         Self::local_now().unwrap_or_else(|_| DateTime::Utc(OffsetDateTime::now_utc()))
     }
 
+    pub fn offset_datetime() -> OffsetDateTime {
+        let date_time = Self::new();
+        match date_time {
+            DateTime::Local(time) | DateTime::Utc(time) => time,
+        }
+    }
+
     pub fn local_now() -> Result<Self, Box<dyn Error>> {
         let time_zone_local = TimeZone::local()?; // expensive call, should be cached
 
@@ -74,14 +81,19 @@ impl DateTime {
 
 impl Format for DateTime {
     fn human_format(&self) -> String {
+        match self {
+            DateTime::Local(dt) | DateTime::Utc(dt) => dt.human_format(),
+        }
+    }
+}
+
+impl Format for OffsetDateTime {
+    fn human_format(&self) -> String {
         let fmt = format_description::parse(
             "[year]-[month]-[day] [hour]:[minute]:[second] [offset_hour \
          sign:mandatory]:[offset_minute]",
-        )
-        .unwrap();
-        match self {
-            DateTime::Local(dt) | DateTime::Utc(dt) => dt.format(&fmt).unwrap(),
-        }
+        ).unwrap();
+        self.format(&fmt).unwrap()
     }
 }
 
