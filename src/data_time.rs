@@ -92,7 +92,8 @@ impl Format for OffsetDateTime {
         let fmt = format_description::parse(
             "[year]-[month]-[day] [hour]:[minute]:[second] [offset_hour \
          sign:mandatory]:[offset_minute]",
-        ).unwrap();
+        )
+        .unwrap();
         self.format(&fmt).unwrap()
     }
 }
