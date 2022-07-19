@@ -18,7 +18,7 @@ pub fn now_data_time() -> DateTime {
     // https://reproducible-builds.org/docs/source-date-epoch/
     println!("cargo:rerun-if-env-changed=SOURCE_DATE_EPOCH");
     match std::env::var_os("SOURCE_DATE_EPOCH") {
-        None => DateTime::new(),
+        None => DateTime::now(),
         Some(timestamp) => {
             let epoch = timestamp
                 .into_string()
@@ -33,13 +33,20 @@ pub fn now_data_time() -> DateTime {
 
 impl Default for DateTime {
     fn default() -> Self {
-        Self::new()
+        Self::now()
     }
 }
 
 impl DateTime {
-    pub fn new() -> Self {
+    pub fn now() -> Self {
         Self::local_now().unwrap_or_else(|_| DateTime::Utc(OffsetDateTime::now_utc()))
+    }
+
+    pub fn offset_datetime() -> OffsetDateTime {
+        let date_time = Self::now();
+        match date_time {
+            DateTime::Local(time) | DateTime::Utc(time) => time,
+        }
     }
 
     pub fn local_now() -> Result<Self, Box<dyn Error>> {
@@ -74,14 +81,20 @@ impl DateTime {
 
 impl Format for DateTime {
     fn human_format(&self) -> String {
+        match self {
+            DateTime::Local(dt) | DateTime::Utc(dt) => dt.human_format(),
+        }
+    }
+}
+
+impl Format for OffsetDateTime {
+    fn human_format(&self) -> String {
         let fmt = format_description::parse(
             "[year]-[month]-[day] [hour]:[minute]:[second] [offset_hour \
          sign:mandatory]:[offset_minute]",
         )
         .unwrap();
-        match self {
-            DateTime::Local(dt) | DateTime::Utc(dt) => dt.format(&fmt).unwrap(),
-        }
+        self.format(&fmt).unwrap()
     }
 }
 
