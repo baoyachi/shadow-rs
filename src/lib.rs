@@ -371,7 +371,7 @@ impl Shadow {
 // Author by:https://www.github.com/baoyachi
 // The build script repository:https://github.com/baoyachi/shadow-rs
 // Create time by:{}"#,
-            DateTime::new().human_format()
+            DateTime::now().human_format()
         );
         writeln!(&self.f, "{}\n\n", desc)?;
         Ok(())

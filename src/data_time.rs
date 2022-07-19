@@ -18,7 +18,7 @@ pub fn now_data_time() -> DateTime {
     // https://reproducible-builds.org/docs/source-date-epoch/
     println!("cargo:rerun-if-env-changed=SOURCE_DATE_EPOCH");
     match std::env::var_os("SOURCE_DATE_EPOCH") {
-        None => DateTime::new(),
+        None => DateTime::now(),
         Some(timestamp) => {
             let epoch = timestamp
                 .into_string()
@@ -33,17 +33,17 @@ pub fn now_data_time() -> DateTime {
 
 impl Default for DateTime {
     fn default() -> Self {
-        Self::new()
+        Self::now()
     }
 }
 
 impl DateTime {
-    pub fn new() -> Self {
+    pub fn now() -> Self {
         Self::local_now().unwrap_or_else(|_| DateTime::Utc(OffsetDateTime::now_utc()))
     }
 
     pub fn offset_datetime() -> OffsetDateTime {
-        let date_time = Self::new();
+        let date_time = Self::now();
         match date_time {
             DateTime::Local(time) | DateTime::Utc(time) => time,
         }
