@@ -115,7 +115,7 @@ mod tests {
         #[cfg(unix)]
         assert!(!std::fs::read("/etc/localtime").unwrap().is_empty());
 
-        println!("{}", time); // 2022-07-14 00:40:05 +08:00
+        println!("local now:{}", time); // 2022-07-14 00:40:05 +08:00
         assert_eq!(time.len(), 26);
     }
 
