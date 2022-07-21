@@ -4,7 +4,6 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use time::format_description::well_known::{Rfc2822, Rfc3339};
 use time::UtcOffset;
 use time::{format_description, OffsetDateTime};
-use tz::TimeZone;
 
 pub enum DateTime {
     Local(OffsetDateTime),
@@ -50,7 +49,8 @@ impl DateTime {
     }
 
     pub fn local_now() -> Result<Self, Box<dyn Error>> {
-        let time_zone_local = TimeZone::local()?; // expensive call, should be cached
+        // expensive call, should be cached
+        let time_zone_local = tzdb::local_tz().ok_or("Could not get local timezone")?;
 
         let duration_since_epoch = SystemTime::now().duration_since(UNIX_EPOCH)?;
         let local_time_type =
