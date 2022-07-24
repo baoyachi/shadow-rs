@@ -22,7 +22,7 @@ all-features = true
 is_debug = "1.0.1"
 const_format = "0.2.22"
 time = { version = "0.3.11", features = ["formatting", "local-offset", "parsing"] }
-tzdb = { version = "0.2.7", default-features = false, features = ["local"] }
+tzdb = { version = "0.3.0", default-features = false, features = ["local"] }
 
 #! Optional Dependencies:
 
