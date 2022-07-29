@@ -27,7 +27,7 @@ tzdb = { version = "0.3.1", default-features = false, features = ["local"] }
 #! Optional Dependencies:
 
 ## Use `libgit2` as a backend for git operations
-git2 = { version = "0.14.2", default-features = false, optional = true }
+git2 = { version = "0.15.0", default-features = false, optional = true }
 
 document-features = { version = "0.2", optional = true }
 
