@@ -22,17 +22,19 @@ all-features = true
 is_debug = "1.0.1"
 const_format = "0.2.22"
 time = { version = "0.3.11", features = ["formatting", "local-offset", "parsing"] }
-tzdb = { version = "0.4.3", default-features = false, features = ["local", "std"] }
 
 #! Optional Dependencies:
 
 ## Use `libgit2` as a backend for git operations
 git2 = { version = "0.15.0", default-features = false, optional = true }
 
+## Better support for querying the local system time
+tzdb = { version = "0.4.3", optional = true, default-features = false, features = ["local", "std"] }
+
 document-features = { version = "0.2", optional = true }
 
 [features]
-default = ["git2"]
+default = ["git2", "tzdb"]
 
 [workspace]
 members = ["example_shadow", "example_shadow_hook"]
