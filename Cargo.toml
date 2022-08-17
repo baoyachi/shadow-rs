@@ -1,6 +1,6 @@
 [package]
 name = "shadow-rs"
-version = "0.16.2"
+version = "0.16.3"
 authors = ["baoyachi <liaoymxsdl@gmail.com>"]
 edition = "2021"
 description = "A build-time information stored in your rust project"
@@ -29,7 +29,7 @@ time = { version = "0.3.11", features = ["formatting", "local-offset", "parsing"
 git2 = { version = "0.15.0", default-features = false, optional = true }
 
 ## Better support for querying the local system time
-tzdb = { version = "0.4.3", optional = true, default-features = false, features = ["local", "std"] }
+tzdb = { version = "0.4.4", optional = true, default-features = false, features = ["local", "std"] }
 
 document-features = { version = "0.2", optional = true }
 
