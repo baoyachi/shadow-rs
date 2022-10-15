@@ -1,4 +1,4 @@
-[shadow-rs][docsrs]:: build-time information stored in your rust project.(binary,lib,cdylib,dylib)
+[shadow-rs][docsrs]: build-time information stored in your rust project. (binary, lib, cdylib and dylib)
 ========================================
 <p align="center">
   <img
@@ -25,16 +25,17 @@
 * The Git commit that produced the build artifact (binary)
 * What version of the rust toolchain was used in compilation
 * The build variant, e.g. `debug` or `release`
-* (And more)
+
+And more!
 
 You can use this tool to check in production exactly where a binary came from and how it was built.
 
 ![build_module](./build_module.png)
 
 # Notice ⚠️
-> The build.rs not rebuild every-time if the repository has been history builld.
-The recommended way is to cargo clean first, then execute cargo build, or use the ci/cd pipeline tool to help you perform this operation.
-Detail see:https://github.com/baoyachi/shadow-rs/issues/95
+> The build.rs **is not rebuilt** every-time if the repository has been history builld.
+The recommended way is to run `cargo clean` first, then execute `cargo build`, or use a CI/CD pipeline tool to help you perform this operation.
+For more details, see https://github.com/baoyachi/shadow-rs/issues/95.
 
 
 # Full Examples
@@ -42,9 +43,9 @@ Detail see:https://github.com/baoyachi/shadow-rs/issues/95
 * Check out the [example_shadow](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow) for a simple
   demonstration of how `shadow-rs` might be used to provide build-time information at run-time.
 * Check out the [example_shadow_hook](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow_hook) for a
-  simple demonstration of how `shadow-rs` might be used to provide build-time information at run-time,and add custom
+  simple demonstration of how `shadow-rs` might be used to provide build-time information at run-time and add a custom
   hook.
-* built in function:[examples](https://github.com/baoyachi/shadow-rs/tree/master/examples).
+* Built-in function:[examples](https://github.com/baoyachi/shadow-rs/tree/master/examples).
 
 # Setup Guide
 
@@ -137,10 +138,9 @@ fn main() {
 
 ## Clap Example
 
-And you can also use `shadow-rs`
-with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs).
+You also can use shadow-rs with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs).
 
-## Support const,function in table
+## Constants and functions in table
 
 #### shadow-rs built in function.
 
