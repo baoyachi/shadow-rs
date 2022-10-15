@@ -1,5 +1,7 @@
 use std::convert::From;
 use std::error::Error;
+use std::error::Error as StdError;
+use std::fmt::{Display, Formatter};
 use std::string::FromUtf8Error;
 
 pub type SdResult<T> = Result<T, ShadowError>;
@@ -12,14 +14,6 @@ pub enum ShadowError {
 impl ShadowError {
     pub fn new(err: impl Error) -> Self {
         ShadowError::String(err.to_string())
-    }
-}
-
-impl ToString for ShadowError {
-    fn to_string(&self) -> String {
-        match self {
-            ShadowError::String(e) => e.to_string(),
-        }
     }
 }
 
@@ -58,3 +52,13 @@ impl From<std::num::ParseIntError> for ShadowError {
         ShadowError::String(e.to_string())
     }
 }
+
+impl Display for ShadowError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ShadowError::String(err) => f.write_str(err),
+        }
+    }
+}
+
+impl StdError for ShadowError {}

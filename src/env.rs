@@ -264,7 +264,7 @@ pub fn new_system_env(std_env: &BTreeMap<String, String>) -> BTreeMap<ShadowCons
     );
 
     if let Err(e) = env.init(std_env) {
-        println!("{}", e.to_string());
+        println!("{}", e);
     }
     env.map
 }
