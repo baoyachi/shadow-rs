@@ -127,6 +127,7 @@ fn main() {
     println!("{}", build::CARGO_TREE);          // e.g. the output of '$ cargo tree'
 
     println!("{}", build::PROJECT_NAME);        // your project name, e.g. 'shadow-rs'
+    // Time respects SOURCE_DATE_EPOCH environment variable - see below
     println!("{}", build::BUILD_TIME);          // time when start build occurred, e.g. '2020-08-16 14:50:25'
     println!("{}", build::BUILD_TIME_2822);     // time when start build occurred by rfc2822, e.g. 'Thu, 24 Jun 2021 21:33:59 +0800'
     println!("{}", build::BUILD_TIME_3339);     // time when start build occurred by rfc3339, e.g. '2021-06-24T21:33:59.972494+08:00'
@@ -135,6 +136,11 @@ fn main() {
     println!("{}", build::GIT_STATUS_FILE);     // e.g. '* src/lib.rs (dirty)'
 }
 ```
+
+#### Reproducibility
+
+This tool includes the current time in the binary which would normally make it non-reproducible.
+However, it respects the [`SOURCE_DATE_EPOCH` variable](https://reproducible-builds.org/docs/source-date-epoch/) - if set to a Unix timestamp it will override the value of build time.
 
 ## Clap Example
 
