@@ -22,6 +22,7 @@ const CARGO_TREE: ShadowConst = "CARGO_TREE";
 const BUILD_TARGET: ShadowConst = "BUILD_TARGET";
 const BUILD_TARGET_ARCH: ShadowConst = "BUILD_TARGET_ARCH";
 
+const CARGO_MANIFEST_DIR: ShadowConst = "CARGO_MANIFEST_DIR";
 // const CARGO_METADATA: ShadowConst = "CARGO_METADATA";
 
 const PKG_VERSION: ShadowConst = "PKG_VERSION";
@@ -107,6 +108,9 @@ impl SystemEnv {
         }
         if let Some(v) = std_env.get("CARGO_PKG_VERSION_PRE") {
             update_val(PKG_VERSION_PRE, v.to_string());
+        }
+        if let Some(v) = std_env.get("CARGO_MANIFEST_DIR") {
+            update_val(CARGO_MANIFEST_DIR, v.to_string());
         }
 
         Ok(())
@@ -261,6 +265,10 @@ pub fn new_system_env(std_env: &BTreeMap<String, String>) -> BTreeMap<ShadowCons
     env.map.insert(
         PKG_VERSION_PRE,
         ConstVal::new("display build current project preview version"),
+    );
+    env.map.insert(
+        CARGO_MANIFEST_DIR,
+        ConstVal::new("display build current build cargo manifest dir"),
     );
 
     if let Err(e) = env.init(std_env) {

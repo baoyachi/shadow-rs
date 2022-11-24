@@ -33,10 +33,12 @@ You can use this tool to check in production exactly where a binary came from an
 ![build_module](./build_module.png)
 
 # Notice ⚠️
-> The build.rs **is not rebuilt** every-time if the repository has been history builld.
-The recommended way is to run `cargo clean` first, then execute `cargo build`, or use a CI/CD pipeline tool to help you perform this operation.
-For more details, see https://github.com/baoyachi/shadow-rs/issues/95.
 
+> The build.rs **is not rebuilt** every-time if the repository has been history builld.
+> The recommended way is to run `cargo clean` first, then execute `cargo build`, or use a CI/CD pipeline tool to help
+> you
+> perform this operation.
+> For more details, see https://github.com/baoyachi/shadow-rs/issues/95.
 
 # Full Examples
 
@@ -67,7 +69,9 @@ shadow-rs = "{latest version}"
 ### 2) Create `build.rs` file
 
 Now in the root of your project (same directory as `Cargo.toml`) add a file `build.rs`:
-  * with add custom `const` or `fn` see:[example_shadow_hook](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow_hook/build.rs)
+
+* with add custom `const` or `fn`
+  see:[example_shadow_hook](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow_hook/build.rs)
 
 ```rust
 fn main() -> shadow_rs::SdResult<()> {
@@ -125,6 +129,7 @@ fn main() {
     println!("{}", build::RUST_CHANNEL);        // rust toolchain e.g. 'stable-x86_64-apple-darwin (default)'
     println!("{}", build::CARGO_VERSION);       // cargo version e.g. 'cargo 1.45.0 (744bd1fbb 2020-06-15)'
     println!("{}", build::CARGO_TREE);          // e.g. the output of '$ cargo tree'
+    println!("{}", build::CARGO_MANIFEST_DIR);  // e.g. /User/baoyachi/shadow-rs/
 
     println!("{}", build::PROJECT_NAME);        // your project name, e.g. 'shadow-rs'
     // Time respects SOURCE_DATE_EPOCH environment variable - see below
@@ -140,7 +145,8 @@ fn main() {
 #### Reproducibility
 
 This tool includes the current time in the binary which would normally make it non-reproducible.
-However, it respects the [`SOURCE_DATE_EPOCH` variable](https://reproducible-builds.org/docs/source-date-epoch/) - if set to a Unix timestamp it will override the value of build time.
+However, it respects the [`SOURCE_DATE_EPOCH` variable](https://reproducible-builds.org/docs/source-date-epoch/) - if
+set to a Unix timestamp it will override the value of build time.
 
 ## Clap Example
 
@@ -185,6 +191,7 @@ You also can use shadow-rs with [`clap`](https://github.com/baoyachi/shadow-rs/b
 | CARGO_VERSION | cargo 1.45.0 (744bd1fbb 2020-06-15) |  
 | PKG_VERSION | 0.3.13 |
 | CARGO_TREE | cargo tree |  
+| CARGO_MANIFEST_DIR | /User/baoyachi/shadow-rs/ |
 | PROJECT_NAME | shadow-rs |  
 | BUILD_TIME | 2021-06-24 21:33:59 |  
 | BUILD_TIME_2822 | Thu, 24 Jun 2021 21:33:59 +0800 |  
@@ -208,6 +215,6 @@ here: [Shadow Users Collection](https://github.com/baoyachi/shadow-rs/issues/19)
     <td align="center"><a href="https://github.com/appaquet/exocore">exocore<br /><sub><b>exocore</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/BaguaSys/bagua-core"><img src="https://avatars.githubusercontent.com/u/84775468?s=200&v=4" width="100px;" alt="starship"/><br /><sub><b>bagua-core</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/alibaba/inclavare-containers"><img src="https://avatars.githubusercontent.com/u/1961952?s=200&v=4" width="100px;" alt="starship"/><br /><sub><b>inclavare-containers</b></sub></a><br /></td>
-    
+
   </tr>
 </table>
