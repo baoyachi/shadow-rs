@@ -127,6 +127,7 @@
 //!    println!("{}",build::CARGO_VERSION);//cargo 1.45.0 (744bd1fbb 2020-06-15)
 //!    println!("{}",build::PKG_VERSION);//0.3.13
 //!    println!("{}",build::CARGO_TREE); //like command:cargo tree
+//!    println!("{}",build::CARGO_MANIFEST_DIR); // /User/baoyachi/shadow-rs/ |
 //!
 //!    println!("{}",build::PROJECT_NAME);//shadow-rs
 //!    println!("{}",build::BUILD_TIME);//2020-08-16 14:50:25
