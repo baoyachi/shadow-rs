@@ -1,6 +1,6 @@
 [package]
 name = "shadow-rs"
-version = "0.17.1"
+version = "0.18.0"
 authors = ["baoyachi <liaoymxsdl@gmail.com>"]
 edition = "2021"
 description = "A build-time information stored in your rust project"
@@ -35,6 +35,9 @@ document-features = { version = "0.2", optional = true }
 
 [features]
 default = ["git2", "tzdb"]
+
+[dev-dependencies]
+regex = "1.7.0"
 
 [workspace]
 members = ["example_shadow", "example_shadow_hook"]

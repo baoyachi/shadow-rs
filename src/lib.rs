@@ -145,7 +145,7 @@
 
 mod build;
 mod ci;
-mod data_time;
+mod date_time;
 mod env;
 mod err;
 mod gen_const;
@@ -167,7 +167,7 @@ use env::*;
 use git::*;
 
 use crate::ci::CiType;
-pub use crate::data_time::DateTime;
+pub use crate::date_time::DateTime;
 pub use const_format::*;
 use std::collections::BTreeMap;
 use std::env as std_env;
