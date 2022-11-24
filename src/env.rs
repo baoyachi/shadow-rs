@@ -68,7 +68,7 @@ impl SystemEnv {
         }
 
         if let Ok(_out) = Command::new("cargo")
-            .args(&["metadata", "--format-version", "1"])
+            .args(["metadata", "--format-version", "1"])
             .output()
         {
             //TODO completed
