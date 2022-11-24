@@ -1,5 +1,5 @@
 use crate::build::*;
-use crate::data_time::now_data_time;
+use crate::date_time::now_date_time;
 use crate::env::dep_source_replace::filter_cargo_tree;
 use crate::err::SdResult;
 use crate::Format;
@@ -282,7 +282,7 @@ const BUILD_RUST_CHANNEL: ShadowConst = "BUILD_RUST_CHANNEL";
 
 pub fn build_time(project: &mut Project) {
     // Enable reproducible builds: https://reproducible-builds.org/docs/source-date-epoch/
-    let time = now_data_time();
+    let time = now_date_time();
     project.map.insert(
         BUILD_TIME,
         ConstVal {

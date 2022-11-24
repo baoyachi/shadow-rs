@@ -12,8 +12,8 @@ pub enum DateTime {
     Utc(OffsetDateTime),
 }
 
-pub fn now_data_time() -> DateTime {
-    // Enable reproducibility for uses of `now_data_time` by respecting the
+pub fn now_date_time() -> DateTime {
+    // Enable reproducibility for uses of `now_date_time` by respecting the
     // `SOURCE_DATE_EPOCH` env variable.
     //
     // https://reproducible-builds.org/docs/source-date-epoch/
@@ -114,11 +114,12 @@ impl Format for OffsetDateTime {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use regex::Regex;
 
     #[test]
     fn test_source_date_epoch() {
         std::env::set_var("SOURCE_DATE_EPOCH", "1628080443");
-        let time = now_data_time();
+        let time = now_date_time();
         assert_eq!(time.human_format(), "2021-08-04 12:34:03 +00:00");
     }
 
@@ -127,6 +128,12 @@ mod tests {
         let time = DateTime::local_now().unwrap().human_format();
         #[cfg(unix)]
         assert!(!std::fs::read("/etc/localtime").unwrap().is_empty());
+
+        let regex = Regex::new(
+            r#"^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}:[0-9]{2}\s[+][0-9]{2}:[0-9]{2}"#,
+        )
+        .unwrap();
+        assert!(regex.is_match(&time));
 
         println!("local now:{}", time); // 2022-07-14 00:40:05 +08:00
         assert_eq!(time.len(), 26);
