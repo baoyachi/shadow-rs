@@ -348,7 +348,7 @@ pub fn git_status_file() -> String {
 /// Command exec git current tag
 fn command_current_tag() -> Option<String> {
     Command::new("git")
-        .args(&["tag", "-l", "--contains", "HEAD"])
+        .args(["tag", "-l", "--contains", "HEAD"])
         .output()
         .map(|x| String::from_utf8(x.stdout).ok())
         .map(|x| x.map(|x| x.trim().to_string()))
@@ -359,7 +359,7 @@ fn command_current_tag() -> Option<String> {
 /// check repository git status is clean
 fn command_git_clean() -> bool {
     Command::new("git")
-        .args(&["status", "--porcelain"])
+        .args(["status", "--porcelain"])
         .output()
         .map(|x| String::from_utf8(x.stdout).ok())
         .map(|x| x.map(|x| x.trim().to_string()))
@@ -418,7 +418,7 @@ fn command_git_status_file() -> String {
 /// Command exec git current branch
 fn command_current_branch() -> Option<String> {
     Command::new("git")
-        .args(&["symbolic-ref", "--short", "HEAD"])
+        .args(["symbolic-ref", "--short", "HEAD"])
         .output()
         .map(|x| String::from_utf8(x.stdout).ok())
         .map(|x| x.map(|x| x.trim().to_string()))
