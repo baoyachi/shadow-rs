@@ -1,7 +1,5 @@
 use crate::Format;
 use std::error::Error;
-#[cfg(feature = "tzdb")]
-use std::time::{SystemTime, UNIX_EPOCH};
 use time::format_description::well_known::{Rfc2822, Rfc3339};
 #[cfg(feature = "tzdb")]
 use time::UtcOffset;
@@ -62,15 +60,11 @@ impl DateTime {
 
     #[cfg(feature = "tzdb")]
     pub fn local_now() -> Result<Self, Box<dyn Error>> {
-        // expensive call, should be cached
-        let time_zone_local = tzdb::local_tz().ok_or("Could not get local timezone")?;
-
-        let duration_since_epoch = SystemTime::now().duration_since(UNIX_EPOCH)?;
-        let local_time_type =
-            time_zone_local.find_local_time_type(duration_since_epoch.as_secs().try_into()?)?;
-        let time_zone_offset = UtcOffset::from_whole_seconds(local_time_type.ut_offset())?;
-        let local_date_time =
-            (OffsetDateTime::UNIX_EPOCH + duration_since_epoch).to_offset(time_zone_offset);
+        let local_time = tzdb::now::local()?;
+        let time_zone_offset =
+            UtcOffset::from_whole_seconds(local_time.local_time_type().ut_offset())?;
+        let local_date_time = OffsetDateTime::from_unix_timestamp(local_time.unix_time())?
+            .to_offset(time_zone_offset);
         Ok(DateTime::Local(local_date_time))
     }
 
