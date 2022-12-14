@@ -189,7 +189,7 @@ mod dep_source_replace {
             if tree.trim().is_empty() {
                 tree.push_str(&val);
             } else {
-                tree = format!("{}\n{}", tree, val);
+                tree = format!("{tree}\n{val}");
             }
         }
         tree
@@ -272,7 +272,7 @@ pub fn new_system_env(std_env: &BTreeMap<String, String>) -> BTreeMap<ShadowCons
     );
 
     if let Err(e) = env.init(std_env) {
-        println!("{}", e);
+        println!("{e}");
     }
     env.map
 }

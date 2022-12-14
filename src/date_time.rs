@@ -129,7 +129,7 @@ mod tests {
         .unwrap();
         assert!(regex.is_match(&time));
 
-        println!("local now:{}", time); // 2022-07-14 00:40:05 +08:00
+        println!("local now:{time}"); // 2022-07-14 00:40:05 +08:00
         assert_eq!(time.len(), 26);
     }
 
