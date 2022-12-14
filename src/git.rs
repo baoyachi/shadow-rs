@@ -256,7 +256,7 @@ pub fn new_git(
     );
 
     if let Err(e) = git.init(path, std_env) {
-        println!("{}", e);
+        println!("{e}");
     }
 
     git.map
