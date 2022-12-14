@@ -6,7 +6,7 @@ shadow!(build);
 
 fn main() {
     let local_time = shadow_rs::DateTime::now().human_format();
-    println!("{}", local_time);
+    println!("{local_time}");
 
     Command::new("example_shadow")
         .version(build::CLAP_LONG_VERSION)
