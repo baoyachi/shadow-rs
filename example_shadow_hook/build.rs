@@ -14,7 +14,7 @@ fn hook(file: &File) -> SdResult<()> {
 
 fn append_write_const(mut file: &File) -> SdResult<()> {
     let hook_const: &str = r#"pub const HOOK_CONST: &str = "hello hook const";"#;
-    writeln!(file, "{}", hook_const)?;
+    writeln!(file, "{hook_const}")?;
     Ok(())
 }
 
@@ -23,6 +23,6 @@ fn append_write_fn(mut file: &File) -> SdResult<()> {
 pub fn hook_fn() -> &'static str{
     "hello hook bar fn"
 }"#;
-    writeln!(file, "{}", hook_fn)?;
+    writeln!(file, "{hook_fn}")?;
     Ok(())
 }
