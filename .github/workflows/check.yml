@@ -67,6 +67,7 @@ jobs:
         with:
           toolchain: nightly
           override: true
+          components: clippy
       - name: Build on nightly
         run: |
           cargo build --release
