@@ -445,13 +445,13 @@ impl Shadow {
 
         // append gen const
         for k in self.map.keys() {
-            let tmp = format!(r#"{}println!("{}:{{}}", {});{}"#, "\t", k, k, "\n");
+            let tmp = format!(r#"{}println!("{k}:{{{k}}}\n");{}"#, "\t", "\n");
             print_val.push_str(tmp.as_str());
         }
 
         // append gen fn
         for k in gen_const {
-            let tmp = format!(r#"{}println!("{}:{{}}\n", {});{}"#, "\t", k, k, "\n");
+            let tmp = format!(r#"{}println!("{k}:{{{k}}}\n");{}"#, "\t", "\n");
             print_val.push_str(tmp.as_str());
         }
 
