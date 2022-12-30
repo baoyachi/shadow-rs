@@ -163,9 +163,6 @@ mod git;
 pub use is_debug::*;
 
 use build::*;
-use env::*;
-
-use git::*;
 
 use crate::ci::CiType;
 pub use crate::date_time::DateTime;
@@ -182,7 +179,8 @@ use crate::gen_const::{
     BUILD_CONST_VERSION,
 };
 pub use err::{SdResult, ShadowError};
-pub use git::{branch, git_clean, git_status_file, tag};
+
+pub use {build::ShadowConst, env::*, git::*};
 
 pub trait Format {
     fn human_format(&self) -> String;
@@ -217,7 +215,29 @@ macro_rules! shadow {
 /// }
 /// ```
 pub fn new() -> SdResult<()> {
-    Shadow::build()?;
+    Shadow::build(Default::default())?;
+    Ok(())
+}
+
+/// It's shadow-rs Initialization entry, If deny const is configured, constants will not be generated.
+///
+/// In build.rs `main()` function call for this function.
+///
+/// # Examples
+///
+///
+/// ```ignore
+///
+/// use std::collections::BTreeSet;
+///
+/// fn main() -> shadow_rs::SdResult<()> {
+///    let mut deny = BTreeSet::new();
+///    deny.insert(shadow_rs::CARGO_TREE);
+///    shadow_rs::new_deny(deny)
+/// }
+/// ```
+pub fn new_deny(deny_const: BTreeSet<ShadowConst>) -> SdResult<()> {
+    Shadow::build(deny_const)?;
     Ok(())
 }
 
@@ -243,7 +263,7 @@ pub fn new_hook<F>(f: F) -> SdResult<()>
 where
     F: FnOnce(&File) -> SdResult<()>,
 {
-    let shadow = Shadow::build()?;
+    let shadow = Shadow::build(Default::default())?;
     shadow.hook(f)
 }
 
@@ -294,16 +314,16 @@ impl Shadow {
         CiType::None
     }
 
-    pub fn build() -> SdResult<Shadow> {
+    pub fn build(deny_const: BTreeSet<ShadowConst>) -> SdResult<Shadow> {
         let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
         let out_path = std::env::var("OUT_DIR")?;
-        Self::build_inner(src_path, out_path, Default::default())
+        Self::build_inner(src_path, out_path, deny_const)
     }
 
     fn build_inner(
         src_path: String,
         out_path: String,
-        deny_info: BTreeSet<ShadowConst>,
+        deny_const: BTreeSet<ShadowConst>,
     ) -> SdResult<Shadow> {
         let out = {
             let path = Path::new(out_path.as_str());
@@ -318,7 +338,7 @@ impl Shadow {
             f: File::create(out)?,
             map: Default::default(),
             std_env: Default::default(),
-            deny_const: deny_info,
+            deny_const,
         };
         shadow.std_env = get_std_env();
 
