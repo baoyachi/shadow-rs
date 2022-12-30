@@ -13,24 +13,24 @@ pub struct SystemEnv {
     map: BTreeMap<ShadowConst, ConstVal>,
 }
 
-const BUILD_OS: ShadowConst = "BUILD_OS";
-const RUST_VERSION: ShadowConst = "RUST_VERSION";
-const RUST_CHANNEL: ShadowConst = "RUST_CHANNEL";
-const CARGO_VERSION: ShadowConst = "CARGO_VERSION";
-const CARGO_TREE: ShadowConst = "CARGO_TREE";
+pub const BUILD_OS: ShadowConst = "BUILD_OS";
+pub const RUST_VERSION: ShadowConst = "RUST_VERSION";
+pub const RUST_CHANNEL: ShadowConst = "RUST_CHANNEL";
+pub const CARGO_VERSION: ShadowConst = "CARGO_VERSION";
+pub const CARGO_TREE: ShadowConst = "CARGO_TREE";
 
-const BUILD_TARGET: ShadowConst = "BUILD_TARGET";
-const BUILD_TARGET_ARCH: ShadowConst = "BUILD_TARGET_ARCH";
+pub const BUILD_TARGET: ShadowConst = "BUILD_TARGET";
+pub const BUILD_TARGET_ARCH: ShadowConst = "BUILD_TARGET_ARCH";
 
-const CARGO_MANIFEST_DIR: ShadowConst = "CARGO_MANIFEST_DIR";
+pub const CARGO_MANIFEST_DIR: ShadowConst = "CARGO_MANIFEST_DIR";
 // const CARGO_METADATA: ShadowConst = "CARGO_METADATA";
 
-const PKG_VERSION: ShadowConst = "PKG_VERSION";
-const PKG_DESCRIPTION: ShadowConst = "PKG_DESCRIPTION";
-const PKG_VERSION_MAJOR: ShadowConst = "PKG_VERSION_MAJOR";
-const PKG_VERSION_MINOR: ShadowConst = "PKG_VERSION_MINOR";
-const PKG_VERSION_PATCH: ShadowConst = "PKG_VERSION_PATCH";
-const PKG_VERSION_PRE: ShadowConst = "PKG_VERSION_PRE";
+pub const PKG_VERSION: ShadowConst = "PKG_VERSION";
+pub const PKG_DESCRIPTION: ShadowConst = "PKG_DESCRIPTION";
+pub const PKG_VERSION_MAJOR: ShadowConst = "PKG_VERSION_MAJOR";
+pub const PKG_VERSION_MINOR: ShadowConst = "PKG_VERSION_MINOR";
+pub const PKG_VERSION_PATCH: ShadowConst = "PKG_VERSION_PATCH";
+pub const PKG_VERSION_PRE: ShadowConst = "PKG_VERSION_PRE";
 
 impl SystemEnv {
     fn init(&mut self, std_env: &BTreeMap<String, String>) -> SdResult<()> {

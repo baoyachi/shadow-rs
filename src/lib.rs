@@ -163,14 +163,11 @@ mod git;
 pub use is_debug::*;
 
 use build::*;
-use env::*;
-
-use git::*;
 
 use crate::ci::CiType;
 pub use crate::date_time::DateTime;
 pub use const_format::*;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::env as std_env;
 use std::fs::File;
 use std::io::Write;
@@ -182,7 +179,8 @@ use crate::gen_const::{
     BUILD_CONST_VERSION,
 };
 pub use err::{SdResult, ShadowError};
-pub use git::{branch, git_clean, git_status_file, tag};
+
+pub use {build::ShadowConst, env::*, git::*};
 
 pub trait Format {
     fn human_format(&self) -> String;
@@ -217,7 +215,29 @@ macro_rules! shadow {
 /// }
 /// ```
 pub fn new() -> SdResult<()> {
-    Shadow::build()?;
+    Shadow::build(Default::default())?;
+    Ok(())
+}
+
+/// It's shadow-rs Initialization entry, If deny const is configured, constants will not be generated.
+///
+/// In build.rs `main()` function call for this function.
+///
+/// # Examples
+///
+///
+/// ```ignore
+///
+/// use std::collections::BTreeSet;
+///
+/// fn main() -> shadow_rs::SdResult<()> {
+///    let mut deny = BTreeSet::new();
+///    deny.insert(shadow_rs::CARGO_TREE);
+///    shadow_rs::new_deny(deny)
+/// }
+/// ```
+pub fn new_deny(deny_const: BTreeSet<ShadowConst>) -> SdResult<()> {
+    Shadow::build(deny_const)?;
     Ok(())
 }
 
@@ -243,7 +263,7 @@ pub fn new_hook<F>(f: F) -> SdResult<()>
 where
     F: FnOnce(&File) -> SdResult<()>,
 {
-    let shadow = Shadow::build()?;
+    let shadow = Shadow::build(Default::default())?;
     shadow.hook(f)
 }
 
@@ -261,6 +281,7 @@ pub struct Shadow {
     pub f: File,
     pub map: BTreeMap<ShadowConst, ConstVal>,
     pub std_env: BTreeMap<String, String>,
+    pub deny_const: BTreeSet<ShadowConst>,
 }
 
 impl Shadow {
@@ -293,13 +314,17 @@ impl Shadow {
         CiType::None
     }
 
-    pub fn build() -> SdResult<Shadow> {
+    pub fn build(deny_const: BTreeSet<ShadowConst>) -> SdResult<Shadow> {
         let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
         let out_path = std::env::var("OUT_DIR")?;
-        Self::build_inner(src_path, out_path)
+        Self::build_inner(src_path, out_path, deny_const)
     }
 
-    fn build_inner(src_path: String, out_path: String) -> SdResult<Shadow> {
+    fn build_inner(
+        src_path: String,
+        out_path: String,
+        deny_const: BTreeSet<ShadowConst>,
+    ) -> SdResult<Shadow> {
         let out = {
             let path = Path::new(out_path.as_str());
             if !out_path.ends_with('/') {
@@ -313,6 +338,7 @@ impl Shadow {
             f: File::create(out)?,
             map: Default::default(),
             std_env: Default::default(),
+            deny_const,
         };
         shadow.std_env = get_std_env();
 
@@ -328,9 +354,18 @@ impl Shadow {
         }
         shadow.map = map;
 
+        // deny const
+        shadow.filter_deny();
+
         shadow.write_all()?;
 
         Ok(shadow)
+    }
+
+    fn filter_deny(&mut self) {
+        self.deny_const.iter().for_each(|x| {
+            self.map.remove(&**x);
+        })
     }
 
     fn write_all(&mut self) -> SdResult<()> {
@@ -475,11 +510,25 @@ mod tests {
 
     #[test]
     fn test_build() -> SdResult<()> {
-        Shadow::build_inner("./".into(), "./".into())?;
+        Shadow::build_inner("./".into(), "./".into(), Default::default())?;
         let shadow = fs::read_to_string("./shadow.rs")?;
         assert!(!shadow.is_empty());
         assert!(shadow.lines().count() > 0);
         println!("{shadow}");
+        Ok(())
+    }
+
+    #[test]
+    fn test_build_deny() -> SdResult<()> {
+        let mut deny = BTreeSet::new();
+        deny.insert(CARGO_TREE);
+        Shadow::build_inner("./".into(), "./".into(), deny)?;
+        let shadow = fs::read_to_string("./shadow.rs")?;
+        assert!(!shadow.is_empty());
+        assert!(shadow.lines().count() > 0);
+        println!("{shadow}");
+        let expect = "pub const CARGO_TREE :&str";
+        assert!(!shadow.contains(expect));
         Ok(())
     }
 

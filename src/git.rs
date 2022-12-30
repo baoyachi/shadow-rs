@@ -9,16 +9,16 @@ use std::path::Path;
 use std::process::{Command, Stdio};
 
 pub const BRANCH: ShadowConst = "BRANCH";
-pub(crate) const TAG: ShadowConst = "TAG";
-const SHORT_COMMIT: ShadowConst = "SHORT_COMMIT";
-const COMMIT_HASH: ShadowConst = "COMMIT_HASH";
-const COMMIT_DATE: ShadowConst = "COMMIT_DATE";
-const COMMIT_DATE_2822: ShadowConst = "COMMIT_DATE_2822";
-const COMMIT_DATE_3339: ShadowConst = "COMMIT_DATE_3339";
-const COMMIT_AUTHOR: ShadowConst = "COMMIT_AUTHOR";
-const COMMIT_EMAIL: ShadowConst = "COMMIT_EMAIL";
-const GIT_CLEAN: ShadowConst = "GIT_CLEAN";
-const GIT_STATUS_FILE: ShadowConst = "GIT_STATUS_FILE";
+pub const TAG: ShadowConst = "TAG";
+pub const SHORT_COMMIT: ShadowConst = "SHORT_COMMIT";
+pub const COMMIT_HASH: ShadowConst = "COMMIT_HASH";
+pub const COMMIT_DATE: ShadowConst = "COMMIT_DATE";
+pub const COMMIT_DATE_2822: ShadowConst = "COMMIT_DATE_2822";
+pub const COMMIT_DATE_3339: ShadowConst = "COMMIT_DATE_3339";
+pub const COMMIT_AUTHOR: ShadowConst = "COMMIT_AUTHOR";
+pub const COMMIT_EMAIL: ShadowConst = "COMMIT_EMAIL";
+pub const GIT_CLEAN: ShadowConst = "GIT_CLEAN";
+pub const GIT_STATUS_FILE: ShadowConst = "GIT_STATUS_FILE";
 
 #[derive(Default, Debug)]
 pub struct Git {
