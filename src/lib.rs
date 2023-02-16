@@ -197,7 +197,7 @@ const SHADOW_RS: &str = "shadow.rs";
 #[macro_export]
 macro_rules! shadow {
     ($build_mod:ident) => {
-        #[doc=r#"shadow-rs mod"#]
+        #[doc = r#"shadow-rs mod"#]
         pub mod $build_mod {
             include!(concat!(env!("OUT_DIR"), "/shadow.rs"));
         }
