@@ -61,10 +61,10 @@ build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST
 const VERSION_CONST_DESC: &str = r#"/// The common version const. It's so easy to use this const."#;
 
 const CLAP_VERSION_CONST_DESC: &str =
-    r#"/// The common version const. It's so easy to use this const with CLAP_VERSION."#;
+    r#"/// The common version const. It's so easy to use this const with `CLAP_VERSION`."#;
 
 const CLAP_LONG_VERSION_CONST_DESC: &str =
-    r#"/// The common version const. It's so easy to use this const with CLAP_VERSION."#;
+    r#"/// The common version const. It's so easy to use this const with `CLAP_VERSION`."#;
 
 gen_const!(
     version_branch_const,
