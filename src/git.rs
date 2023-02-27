@@ -10,6 +10,7 @@ use std::process::{Command, Stdio};
 
 pub const BRANCH: ShadowConst = "BRANCH";
 pub const TAG: ShadowConst = "TAG";
+pub const LAST_TAG: ShadowConst = "LAST_TAG";
 pub const SHORT_COMMIT: ShadowConst = "SHORT_COMMIT";
 pub const COMMIT_HASH: ShadowConst = "COMMIT_HASH";
 pub const COMMIT_DATE: ShadowConst = "COMMIT_DATE";
@@ -67,6 +68,11 @@ impl Git {
             self.update_str(TAG, x)
         }
 
+        // use command get last tag
+        if let Some(x) = command_last_tag() {
+            self.update_str(LAST_TAG, x)
+        }
+
         // try use ci branch,tag
         self.ci_branch_tag(std_env);
         Ok(())
@@ -89,9 +95,11 @@ impl Git {
 
             //get HEAD branch
             let tag = command_current_tag().unwrap_or_default();
-
+            let last_tag = command_last_tag().unwrap_or_default();
             self.update_str(BRANCH, branch);
             self.update_str(TAG, tag);
+            self.update_str(LAST_TAG, last_tag);
+
             if let Some(v) = reference.target() {
                 let commit = v.to_string();
                 self.update_str(COMMIT_HASH, commit.clone());
@@ -199,7 +207,8 @@ impl Git {
         }
 
         if let Some(x) = tag {
-            self.update_str(TAG, x);
+            self.update_str(TAG, x.clone());
+            self.update_str(LAST_TAG, x);
         }
     }
 }
@@ -217,6 +226,8 @@ pub fn new_git(
         .insert(BRANCH, ConstVal::new("display current branch"));
 
     git.map.insert(TAG, ConstVal::new("display current tag"));
+
+    git.map.insert(LAST_TAG, ConstVal::new("display last tag"));
 
     git.map
         .insert(COMMIT_HASH, ConstVal::new("display current commit_id"));
@@ -355,6 +366,17 @@ fn command_current_tag() -> Option<String> {
         .unwrap_or(None)
 }
 
+/// git describe --tags --abbrev=0 HEAD
+/// Command exec git last tag
+fn command_last_tag() -> Option<String> {
+    Command::new("git")
+        .args(["describe", "--tags", "--abbrev=0", "HEAD"])
+        .output()
+        .map(|x| String::from_utf8(x.stdout).ok())
+        .map(|x| x.map(|x| x.trim().to_string()))
+        .unwrap_or(None)
+}
+
 /// git clean:git status --porcelain
 /// check repository git status is clean
 fn command_git_clean() -> bool {
@@ -486,5 +508,11 @@ mod tests {
         }
 
         assert_eq!(Some(branch()), command_current_branch());
+    }
+
+    #[test]
+    fn test_command_last_tag() {
+        let opt_last_tag = command_last_tag();
+        assert!(opt_last_tag.is_some())
     }
 }
