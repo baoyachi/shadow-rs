@@ -433,7 +433,7 @@ fn command_git_status_file() -> String {
         &[r#"^[A|M|D|R]"#],
         &["{print $2}"],
     )
-    .unwrap_or_default();
+        .unwrap_or_default();
     filter_git_dirty_stage(dirty, stage)
 }
 
@@ -473,6 +473,7 @@ mod tests {
         let env_map = get_std_env();
         let map = new_git(Path::new("./"), CiType::Github, &env_map);
         for (k, v) in map {
+            println!("k:{},v:{:?}", k, v);
             assert!(!v.desc.is_empty());
             if !k.eq(TAG) && !k.eq(BRANCH) && !k.eq(GIT_STATUS_FILE) {
                 assert!(!v.v.is_empty());
