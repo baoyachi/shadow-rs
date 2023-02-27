@@ -433,7 +433,7 @@ fn command_git_status_file() -> String {
         &[r#"^[A|M|D|R]"#],
         &["{print $2}"],
     )
-        .unwrap_or_default();
+    .unwrap_or_default();
     filter_git_dirty_stage(dirty, stage)
 }
 
