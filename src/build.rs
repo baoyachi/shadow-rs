@@ -1,15 +1,20 @@
 use std::collections::BTreeMap;
 
+/// `shadow-rs` build constant identifiers.
 pub type ShadowConst = &'static str;
 
 pub trait ShadowGen {
     fn gen_const(&self) -> BTreeMap<ShadowConst, ConstVal>;
 }
 
+/// Serialized values for build constants.
 #[derive(Debug, Clone)]
 pub struct ConstVal {
+    /// User-facing documentation for the build constant.
     pub desc: String,
+    /// Serialized value of the build constant.
     pub v: String,
+    /// Type of the build constant.
     pub t: ConstType,
 }
 
@@ -31,10 +36,14 @@ impl ConstVal {
     }
 }
 
+/// Supported types of build constants.
 #[derive(Debug, Clone)]
 pub enum ConstType {
+    /// [`Option<&str>`](`Option`).
     OptStr,
+    /// [`&str`](`str`).
     Str,
+    /// [`bool`].
     Bool,
 }
 

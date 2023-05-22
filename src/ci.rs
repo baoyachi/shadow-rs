@@ -1,9 +1,9 @@
+/// [`CiType`] holds the types of CI environment that `shadow-rs` can detect.
 #[derive(Debug)]
 pub enum CiType {
     Github,
     Gitlab,
-    // Jenkins,
-    // Travis,
+    // TODO: Recognize other CI types, especially Travis and Jenkins
     None,
 }
 
@@ -18,8 +18,6 @@ impl ToString for CiType {
         match self {
             CiType::Github => "github".into(),
             CiType::Gitlab => "gitlab".into(),
-            // CIType::Jenkins => "jenkins".into(),
-            // CIType::Travis => "travis".into(),
             _ => "none".into(),
         }
     }

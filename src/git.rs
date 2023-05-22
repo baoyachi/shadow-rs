@@ -8,17 +8,74 @@ use std::io::{BufReader, Read};
 use std::path::Path;
 use std::process::{Command, Stdio};
 
+const BRANCH_DOC: &str = r#"
+The name of the Git branch that this project was built from.
+
+This constant will be empty if the branch cannot be determined."#;
 pub const BRANCH: ShadowConst = "BRANCH";
+const TAG_DOC: &str = r#"
+The name of the Git tag that this project was built from.
+Note that this will be empty if there is no tag for the HEAD at the time of build."#;
 pub const TAG: ShadowConst = "TAG";
+const LAST_TAG_DOC: &str = r#"
+The name of the last Git tag on the branch that this project was built from.
+As opposed to [`TAG`], this does not require the current commit to be tagged, just one of its parents.
+
+This constant will be empty if the last tag cannot be determined."#;
 pub const LAST_TAG: ShadowConst = "LAST_TAG";
+const SHORT_COMMIT_DOC: &str = r#"
+The short hash of the Git commit that this project was built from.
+Note that this will always truncate [`COMMIT_HASH`] to 8 characters if necessary.
+Depending on the amount of commits in your project, this may not yield a unique Git identifier
+([see here for more details on hash abbreviation](https://git-scm.com/docs/git-describe#_examples)).
+
+This constant will be empty if the last commit cannot be determined."#;
 pub const SHORT_COMMIT: ShadowConst = "SHORT_COMMIT";
+const COMMIT_HASH_DOC: &str = r#"
+The full commit hash of the Git commit that this project was built from.
+An abbreviated, but not necessarily unique, version of this is [`SHORT_COMMIT`].
+
+This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_HASH: ShadowConst = "COMMIT_HASH";
+const COMMIT_DATE_DOC: &str = r#"The time of the Git commit that this project was built from.
+The time is formatted in modified ISO 8601 format (`YYYY-MM-DD HH-MM ±hh-mm` where hh-mm is the offset from UTC).
+
+This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_DATE: ShadowConst = "COMMIT_DATE";
+const COMMIT_DATE_2822_DOC: &str = r#"
+The name of the Git branch that this project was built from.
+The time is formatted according to [RFC 2822](https://datatracker.ietf.org/doc/html/rfc2822#section-3.3) (e.g. HTTP Headers).
+
+This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_DATE_2822: ShadowConst = "COMMIT_DATE_2822";
+const COMMIT_DATE_3339_DOC: &str = r#"
+The name of the Git branch that this project was built from.
+The time is formatted according to [RFC 3339 and ISO 8601](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6).
+
+This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_DATE_3339: ShadowConst = "COMMIT_DATE_3339";
+const COMMIT_AUTHOR_DOC: &str = r#"
+The author of the Git commit that this project was built from.
+
+This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_AUTHOR: ShadowConst = "COMMIT_AUTHOR";
+const COMMIT_EMAIL_DOC: &str = r#"
+The e-mail address of the author of the Git commit that this project was built from.
+
+This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_EMAIL: ShadowConst = "COMMIT_EMAIL";
+const GIT_CLEAN_DOC: &str = r#"
+Whether the Git working tree was clean at the time of project build (`true`), or not (`false`).
+
+This constant will be `false` if the last commit cannot be determined."#;
 pub const GIT_CLEAN: ShadowConst = "GIT_CLEAN";
+const GIT_STATUS_FILE_DOC: &str = r#"
+The Git working tree status as a list of files with their status, similar to `git status`.
+Each line of the list is preceded with `  * `, followed by the file name.
+Files marked `(dirty)` have unstaged changes.
+Files marked `(staged)` have staged changes.
+
+This constant will be empty if the working tree status cannot be determined."#;
 pub const GIT_STATUS_FILE: ShadowConst = "GIT_STATUS_FILE";
 
 #[derive(Default, Debug)]
@@ -222,49 +279,33 @@ pub fn new_git(
         map: Default::default(),
         ci_type: ci,
     };
+    git.map.insert(BRANCH, ConstVal::new(BRANCH_DOC));
+
+    git.map.insert(TAG, ConstVal::new(TAG_DOC));
+
+    git.map.insert(LAST_TAG, ConstVal::new(LAST_TAG_DOC));
+
+    git.map.insert(COMMIT_HASH, ConstVal::new(COMMIT_HASH_DOC));
+
     git.map
-        .insert(BRANCH, ConstVal::new("display current branch"));
-
-    git.map.insert(TAG, ConstVal::new("display current tag"));
-
-    git.map.insert(LAST_TAG, ConstVal::new("display last tag"));
+        .insert(SHORT_COMMIT, ConstVal::new(SHORT_COMMIT_DOC));
 
     git.map
-        .insert(COMMIT_HASH, ConstVal::new("display current commit_id"));
-
-    git.map.insert(
-        SHORT_COMMIT,
-        ConstVal::new("display current short commit_id"),
-    );
-
-    git.map.insert(
-        COMMIT_AUTHOR,
-        ConstVal::new("display current commit author"),
-    );
+        .insert(COMMIT_AUTHOR, ConstVal::new(COMMIT_AUTHOR_DOC));
     git.map
-        .insert(COMMIT_EMAIL, ConstVal::new("display current commit email"));
+        .insert(COMMIT_EMAIL, ConstVal::new(COMMIT_EMAIL_DOC));
+    git.map.insert(COMMIT_DATE, ConstVal::new(COMMIT_DATE_DOC));
+
     git.map
-        .insert(COMMIT_DATE, ConstVal::new("display current commit date"));
+        .insert(COMMIT_DATE_2822, ConstVal::new(COMMIT_DATE_2822_DOC));
 
-    git.map.insert(
-        COMMIT_DATE_2822,
-        ConstVal::new("display current commit date by rfc2822"),
-    );
+    git.map
+        .insert(COMMIT_DATE_3339, ConstVal::new(COMMIT_DATE_3339_DOC));
 
-    git.map.insert(
-        COMMIT_DATE_3339,
-        ConstVal::new("display current commit date by rfc3339"),
-    );
+    git.map.insert(GIT_CLEAN, ConstVal::new_bool(GIT_CLEAN_DOC));
 
-    git.map.insert(
-        GIT_CLEAN,
-        ConstVal::new_bool("display current git repository status clean:'true or false'"),
-    );
-
-    git.map.insert(
-        GIT_STATUS_FILE,
-        ConstVal::new("display current git repository status files:'dirty or stage'"),
-    );
+    git.map
+        .insert(GIT_STATUS_FILE, ConstVal::new(GIT_STATUS_FILE_DOC));
 
     if let Err(e) = git.init(path, std_env) {
         println!("{e}");
