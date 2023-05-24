@@ -24,7 +24,6 @@ pub fn now_date_time() -> DateTime {
                 .expect("Input SOURCE_DATE_EPOCH could not be parsed")
                 .parse::<i64>()
                 .expect("Input SOURCE_DATE_EPOCH could not be cast to a number");
-            // BuildTime::Utc(Utc.timestamp(epoch, 0))
             DateTime::Utc(OffsetDateTime::from_unix_timestamp(epoch).unwrap())
         }
     }
@@ -50,9 +49,9 @@ impl DateTime {
 
     #[cfg(not(feature = "tzdb"))]
     pub fn local_now() -> Result<Self, Box<dyn Error>> {
-        // Warning: Attempt to create a new OffsetDateTime with the current date and time in the local offset. If the offset cannot be determined, an error is returned.
-        // At present, using it on MacOS return error. Use it with careful.
-        // Suggestion use feature tzdb crate exposed function at below.
+        // Warning: This attempts to create a new OffsetDateTime with the current date and time in the local offset, which may fail.
+        // Currently, it always fails on MacOS.
+        // This issue does not exist with the "tzdb" feature (see below), which should be used instead.
         OffsetDateTime::now_local()
             .map(DateTime::Local)
             .map_err(|e| e.into())
