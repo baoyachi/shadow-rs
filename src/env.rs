@@ -82,7 +82,7 @@ pub const PKG_VERSION_PRE: ShadowConst = "PKG_VERSION_PRE";
 impl SystemEnv {
     fn init(&mut self, std_env: &BTreeMap<String, String>) -> SdResult<()> {
         let mut update_val = |c: ShadowConst, v: String| {
-            if let Some(mut val) = self.map.get_mut(c) {
+            if let Some(val) = self.map.get_mut(c) {
                 val.t = ConstType::Str;
                 val.v = v;
             }
@@ -369,7 +369,7 @@ pub fn new_project(std_env: &BTreeMap<String, String>) -> BTreeMap<ShadowConst, 
         .map
         .insert(PROJECT_NAME, ConstVal::new(PROJECT_NAME_DOC));
 
-    if let (Some(v), Some(mut val)) = (
+    if let (Some(v), Some(val)) = (
         std_env.get("CARGO_PKG_NAME"),
         project.map.get_mut(PROJECT_NAME),
     ) {
