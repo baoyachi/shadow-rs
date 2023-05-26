@@ -1,69 +1,23 @@
 #![doc(html_logo_url = "https://raw.githubusercontent.com/baoyachi/shadow-rs/master/shadow-rs.png")]
-//! `shadow-rs` :build-time information stored in your rust project.(binary,lib,cdylib,dylib)
+//! `shadow-rs`: Build-time information stored in your Rust project (binary, lib, cdylib, dylib).
 //!
-//! It's allows you to recall properties of the build process and environment at runtime, including:
+//! `shadow-rs` allows you to access properties of the build process and environment at runtime, including:
 //!
-//! `Cargo.toml` project version
+//! * `Cargo.toml` information, such as the project version
 //! * Dependency information
-//! * The Git commit that produced the build artifact (binary)
-//! * What version of the rust toolchain was used in compilation
+//! * Git information, such as the commit that produced the build artifact
+//! * What version of the Rust toolchain was used in compilation
 //! * The build variant, e.g. `debug` or `release`
-//! * (And more)
+//! * ... And more!
 //!
-//! You can use this tool to check in production exactly where a binary came from and how it was built.
+//! You can use this crate to programmatically check where a binary came from and how it was built.
 //!
-//! # Full Examples
+//! # Examples
 //! * Check out the [example_shadow](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow) for a simple demonstration of how `shadow-rs` might be used to provide build-time information at run-time.
-//! * Check out the [example_shadow_hook](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow_hook) for a simple demonstration of how `shadow-rs` might be used to provide build-time information at run-time,and add custom hook.
+//! * Check out the [example_shadow_hook](https://github.com/baoyachi/shadow-rs/tree/master/example_shadow_hook) for a demonstration of how custom hooks can be used to add extra information to `shadow-rs`'s output.
+//! * Check out the [`builtin_fn` example](https://github.com/baoyachi/shadow-rs/tree/master/examples/builtin_fn.rs) for a simple demonstration of the built-in functions that `shadow-rs` provides.
 //!
-//! ## Built in function
-//! * Check out the [examples](https://github.com/baoyachi/shadow-rs/tree/master/examples) for a simple demonstration of how `shadow-rs` might be used to provide build in function.
-//!
-//! # Example
-//!
-//! ```
-//! pub const PKG_VERSION :&str = "1.3.8-beta3";
-//! pub const PKG_VERSION_MAJOR :&str = "1";
-//! pub const PKG_VERSION_MINOR :&str = "3";
-//! pub const PKG_VERSION_PATCH :&str = "8";
-//! pub const PKG_VERSION_PRE :&str = "beta3";
-//! pub const RUST_VERSION :&str = "rustc 1.45.0 (5c1f21c3b 2020-07-13)";
-//! pub const BUILD_RUST_CHANNEL :&str = "debug";
-//! pub const COMMIT_AUTHOR :&str = "baoyachi";
-//! pub const BUILD_TIME :&str = "2020-08-16 13:48:52";
-//! pub const BUILD_TIME_2822 :&str = "Thu, 24 Jun 2021 21:44:14 +0800";
-//! pub const BUILD_TIME_3339 :&str = "2021-06-24T15:53:55+08:00";
-//! pub const COMMIT_DATE :&str = "2021-08-04 12:34:03 +00:00";
-//! pub const COMMIT_DATE_2822 :&str = "Thu, 24 Jun 2021 21:44:14 +0800";
-//! pub const COMMIT_DATE_3339 :&str = "2021-06-24T21:44:14.473058+08:00";
-//! pub const COMMIT_EMAIL :&str = "xxx@gmail.com";
-//! pub const PROJECT_NAME :&str = "shadow-rs";
-//! pub const RUST_CHANNEL :&str = "stable-x86_64-apple-darwin (default)";
-//! pub const BRANCH :&str = "master";
-//! pub const CARGO_LOCK :&str = r#"
-//! ├── chrono v0.4.19
-//! │   ├── libc v0.2.80
-//! │   ├── num-integer v0.1.44
-//! │   │   └── num-traits v0.2.14
-//! │   │       [build-dependencies]
-//! │   │       └── autocfg v1.0.1
-//! │   ├── num-traits v0.2.14 (*)
-//! │   └── time v0.1.44
-//! │       └── libc v0.2.80
-//! └── git2 v0.13.12
-//! ├── log v0.4.11
-//! │   └── cfg-if v0.1.10
-//! └── url v2.2.0
-//! ├── form_urlencoded v1.0.0
-//! │   └── percent-encoding v2.1.0
-//! └── percent-encoding v2.1.0"#;
-//! pub const CARGO_VERSION :&str = "cargo 1.45.0 (744bd1fbb 2020-06-15)";
-//! pub const BUILD_OS :&str = "macos-x86_64";
-//! pub const COMMIT_HASH :&str = "386741540d73c194a3028b96b92fdeb53ca2788a";
-//! pub const GIT_CLEAN :bool = true;
-//! pub const GIT_STATUS_FILE :&str = "* src/lib.rs (dirty)";
-//! ```
-//! # Setup Guide
+//! # Setup
 //!
 //! ### 1) Modify `Cargo.toml` fields
 //! Modify your `Cargo.toml` like so:
@@ -85,63 +39,110 @@
 //!
 //! ```ignore
 //! fn main() -> shadow_rs::SdResult<()> {
-//!    shadow_rs::new()
+//!     shadow_rs::new()
 //! }
 //! ```
 //!
+//! If you want to exclude some build constants, you can use [`new_deny`] instead of [`new`].
+//!
 //! ### 3) Integrate Shadow
-//! In your rust file (e.g. `*.rs`):
+//! In your main Rust file (usually `main.rs` or `lib.rs`), add this:
 //!
 //! ```ignore
 //! use shadow_rs::shadow;
 //!
 //! shadow!(build);
 //! ```
-//! **Notice that the `shadow!` macro is provided the identifier `build`.  You can now use this identifier to access build-time information.**
 //!
-//! ### 4) Done. Use Shadow.
-//! Then you can use const that's shadow build it(main.rs).
+//! The `shadow!` macro uses the given identifier to create a module with that name.
 //!
-//! The `build` mod just we use `shadow!(build)` generated.
+//! ### 4) Use Shadow Constants
+//! You can now use the module defined with `shadow!` to access build-time information.
 //!
 //! ```ignore
 //! fn main(){
-//!    println!("debug:{}", shadow_rs::is_debug()); // check if this is a debug build. e.g 'true/false'
-//!    println!("branch:{}", shadow_rs::branch()); // get current project branch. e.g 'master/develop'
-//!    println!("tag:{}", shadow_rs::tag()); // get current project tag. e.g 'v1.3.5'
-//!    println!("git_clean:{}", shadow_rs::git_clean()); // get current project clean. e.g 'true/false'
-//!    println!("git_status_file:{}", shadow_rs::git_status_file()); // get current project statue file. e.g '  * examples/builtin_fn.rs (dirty)'
+//!     println!("debug:{}", shadow_rs::is_debug()); // check if this is a debug build. e.g 'true/false'
+//!     println!("branch:{}", shadow_rs::branch()); // get current project branch. e.g 'master/develop'
+//!     println!("tag:{}", shadow_rs::tag()); // get current project tag. e.g 'v1.3.5'
+//!     println!("git_clean:{}", shadow_rs::git_clean()); // get current project clean. e.g 'true/false'
+//!     println!("git_status_file:{}", shadow_rs::git_status_file()); // get current project statue file. e.g '  * examples/builtin_fn.rs (dirty)'
 //!
-//!    println!("{}",build::VERSION); //print version const
-//!    println!("{}",build::CLAP_LONG_VERSION); //print CLAP_LONG_VERSION const
-//!    println!("{}",build::BRANCH); //master
-//!    println!("{}",build::SHORT_COMMIT);//8405e28e
-//!    println!("{}",build::COMMIT_HASH);//8405e28e64080a09525a6cf1b07c22fcaf71a5c5
-//!    println!("{}",build::COMMIT_DATE);//2021-08-04 12:34:03 +00:00
-//!    println!("{}",build::COMMIT_AUTHOR);//baoyachi
-//!    println!("{}",build::COMMIT_EMAIL);//xxx@gmail.com
+//!     println!("{}", build::VERSION); //print version const
+//!     println!("{}", build::CLAP_LONG_VERSION); //print CLAP_LONG_VERSION const
+//!     println!("{}", build::BRANCH); //master
+//!     println!("{}", build::SHORT_COMMIT);//8405e28e
+//!     println!("{}", build::COMMIT_HASH);//8405e28e64080a09525a6cf1b07c22fcaf71a5c5
+//!     println!("{}", build::COMMIT_DATE);//2021-08-04 12:34:03 +00:00
+//!     println!("{}", build::COMMIT_AUTHOR);//baoyachi
+//!     println!("{}", build::COMMIT_EMAIL);//xxx@gmail.com
 //!
-//!    println!("{}",build::BUILD_OS);//macos-x86_64
-//!    println!("{}",build::RUST_VERSION);//rustc 1.45.0 (5c1f21c3b 2020-07-13)
-//!    println!("{}",build::RUST_CHANNEL);//stable-x86_64-apple-darwin (default)
-//!    println!("{}",build::CARGO_VERSION);//cargo 1.45.0 (744bd1fbb 2020-06-15)
-//!    println!("{}",build::PKG_VERSION);//0.3.13
-//!    println!("{}",build::CARGO_TREE); //like command:cargo tree
-//!    println!("{}",build::CARGO_MANIFEST_DIR); // /User/baoyachi/shadow-rs/ |
+//!     println!("{}", build::BUILD_OS);//macos-x86_64
+//!     println!("{}", build::RUST_VERSION);//rustc 1.45.0 (5c1f21c3b 2020-07-13)
+//!     println!("{}", build::RUST_CHANNEL);//stable-x86_64-apple-darwin (default)
+//!     println!("{}", build::CARGO_VERSION);//cargo 1.45.0 (744bd1fbb 2020-06-15)
+//!     println!("{}", build::PKG_VERSION);//0.3.13
+//!     println!("{}", build::CARGO_TREE); //like command:cargo tree
+//!     println!("{}", build::CARGO_MANIFEST_DIR); // /User/baoyachi/shadow-rs/ |
 //!
-//!    println!("{}",build::PROJECT_NAME);//shadow-rs
-//!    println!("{}",build::BUILD_TIME);//2020-08-16 14:50:25
-//!    println!("{}",build::BUILD_RUST_CHANNEL);//debug
-//!    println!("{}",build::GIT_CLEAN);//false
-//!    println!("{}",build::GIT_STATUS_FILE);//* src/lib.rs (dirty)
+//!     println!("{}", build::PROJECT_NAME);//shadow-rs
+//!     println!("{}", build::BUILD_TIME);//2020-08-16 14:50:25
+//!     println!("{}", build::BUILD_RUST_CHANNEL);//debug
+//!     println!("{}", build::GIT_CLEAN);//false
+//!     println!("{}", build::GIT_STATUS_FILE);//* src/lib.rs (dirty)
 //! }
-//!```
+//! ```
 //!
-//! ## Clap example
-//! And you can also use `shadow-rs` with [`clap`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs).
+//! ## Clap
+//! You can also use `shadow-rs` to provide information to command-line interface crates such as [`clap`](https://docs.rs/clap/latest/clap/). An example of this can be found in [`example_shadow`](https://github.com/baoyachi/shadow-rs/blob/master/example_shadow/src/main.rs).
 //!
-//! For the user guide and further documentation, please read
-//! [The shadow-rs document](https://github.com/baoyachi/shadow-rs).
+//! For the user guide and further documentation, see the [README of `shadow-rs`](https://github.com/baoyachi/shadow-rs).
+//!
+//! # List of Generated Output Constants
+//!
+//! All constants produced by `shadow-rs` are documented in the module created with [`shadow!`], so `rustdoc` and your IDE will pick it up.
+//!
+//! ```
+//! pub const PKG_VERSION: &str = "1.3.8-beta3";
+//! pub const PKG_VERSION_MAJOR: &str = "1";
+//! pub const PKG_VERSION_MINOR: &str = "3";
+//! pub const PKG_VERSION_PATCH: &str = "8";
+//! pub const PKG_VERSION_PRE: &str = "beta3";
+//! pub const RUST_VERSION: &str = "rustc 1.45.0 (5c1f21c3b 2020-07-13)";
+//! pub const BUILD_RUST_CHANNEL: &str = "debug";
+//! pub const COMMIT_AUTHOR: &str = "baoyachi";
+//! pub const BUILD_TIME: &str = "2020-08-16 13:48:52";
+//! pub const BUILD_TIME_2822: &str = "Thu, 24 Jun 2021 21:44:14 +0800";
+//! pub const BUILD_TIME_3339: &str = "2021-06-24T15:53:55+08:00";
+//! pub const COMMIT_DATE: &str = "2021-08-04 12:34:03 +00:00";
+//! pub const COMMIT_DATE_2822: &str = "Thu, 24 Jun 2021 21:44:14 +0800";
+//! pub const COMMIT_DATE_3339: &str = "2021-06-24T21:44:14.473058+08:00";
+//! pub const COMMIT_EMAIL: &str = "xxx@gmail.com";
+//! pub const PROJECT_NAME: &str = "shadow-rs";
+//! pub const RUST_CHANNEL: &str = "stable-x86_64-apple-darwin (default)";
+//! pub const BRANCH: &str = "master";
+//! pub const CARGO_LOCK: &str = r#"
+//! ├── chrono v0.4.19
+//! │   ├── libc v0.2.80
+//! │   ├── num-integer v0.1.44
+//! │   │   └── num-traits v0.2.14
+//! │   │       [build-dependencies]
+//! │   │       └── autocfg v1.0.1
+//! │   ├── num-traits v0.2.14 (*)
+//! │   └── time v0.1.44
+//! │       └── libc v0.2.80
+//! └── git2 v0.13.12
+//! ├── log v0.4.11
+//! │   └── cfg-if v0.1.10
+//! └── url v2.2.0
+//! ├── form_urlencoded v1.0.0
+//! │   └── percent-encoding v2.1.0
+//! └── percent-encoding v2.1.0"#;
+//! pub const CARGO_VERSION: &str = "cargo 1.45.0 (744bd1fbb 2020-06-15)";
+//! pub const BUILD_OS: &str = "macos-x86_64";
+//! pub const COMMIT_HASH: &str = "386741540d73c194a3028b96b92fdeb53ca2788a";
+//! pub const GIT_CLEAN: bool = true;
+//! pub const GIT_STATUS_FILE: &str = "* src/lib.rs (dirty)";
+//! ```
 //!
 
 mod build;
@@ -152,14 +153,7 @@ mod err;
 mod gen_const;
 mod git;
 
-/// Get current project build mode.
-///
-/// It's very useful. Debug mode is usually used for debugging information.
-/// For example, log printing, environment variable switch.
-///
-/// The default value is `true`.
-///
-/// If we compile with `cargo build --release`. It's return value is `false`.
+/// Re-exported from the is_debug crate
 pub use is_debug::*;
 
 use build::*;
@@ -188,12 +182,21 @@ pub trait Format {
 
 const SHADOW_RS: &str = "shadow.rs";
 
-/// Add a mod in project with `$build_mod`.
+/// Add a module with the provided name which contains the build information generated by `shadow-rs`.
 ///
-/// You can use `shadow!(build_shadow)`. Then shadow-rs can help you add a mod with name `build_shadow`.
-/// Next, use mod with name `build_shadow`,and also use const like:`build_shadow::BRANCH`.
+/// # Example
 ///
-/// Normally, you just config `shadow!(build)`.It looks more concise.
+/// ```ignore
+/// use shadow_rs::shadow;
+///
+/// shadow!(my_build_information);
+///
+/// fn main() {
+///     println!("I'm version {}!", my_build_information::VERSION);
+/// }
+/// ```
+///
+/// The convention, however, is to use `shadow!(build);`.
 #[macro_export]
 macro_rules! shadow {
     ($build_mod:ident) => {
@@ -204,13 +207,14 @@ macro_rules! shadow {
     };
 }
 
-/// It's shadow-rs Initialization entry.
+/// Generates build information for the current project.
+/// This function must be called from `build.rs`.
 ///
-/// In build.rs `main()` function call for this function.
-///
-/// # Examples
+/// # Example
 ///
 /// ```ignore
+/// // build.rs
+///
 /// fn main() -> shadow_rs::SdResult<()> {
 ///    shadow_rs::new()
 /// }
@@ -220,14 +224,16 @@ pub fn new() -> SdResult<()> {
     Ok(())
 }
 
-/// It's shadow-rs Initialization entry, If deny const is configured, constants will not be generated.
+/// Identical to [`new`], but additionally accepts a build output denylist.
+/// This list determines constants to be excluded in the build output.
 ///
-/// In build.rs `main()` function call for this function.
+/// Note that not all constants can be excluded independently, since some constants depend on others.
+/// See [`ShadowConst`] for a list of constants that can be excluded.
 ///
-/// # Examples
-///
+/// # Example
 ///
 /// ```ignore
+/// // build.rs
 ///
 /// use std::collections::BTreeSet;
 ///
@@ -242,13 +248,15 @@ pub fn new_deny(deny_const: BTreeSet<ShadowConst>) -> SdResult<()> {
     Ok(())
 }
 
-/// It's shadow-rs Initialization entry with add custom hook.
+/// Identical to [`new`], but additionally accepts an output hook.
+/// The hook receives the output file of `shadow-rs`, and it can add additional entries to the output of `shadow-rs` by writing to this file.
+/// Note that since the output will be compiled as a Rust module, inserting invalid Rust code will lead to a compile error later on.
 ///
-/// In build.rs `main()` function call for this function.
-///
-/// # Examples
+/// # Example
 ///
 /// ```ignore
+/// // build.rs
+///
 /// fn main() -> shadow_rs::SdResult<()> {
 ///    shadow_rs::new_hook(append_write_const)
 /// }
@@ -268,7 +276,7 @@ where
     shadow.hook(f)
 }
 
-/// get std::env:vars
+/// Returns the contents of [`std::env::vars`] as an ordered map.
 pub fn get_std_env() -> BTreeMap<String, String> {
     let mut env_map = BTreeMap::new();
     for (k, v) in std_env::vars() {
@@ -277,15 +285,25 @@ pub fn get_std_env() -> BTreeMap<String, String> {
     env_map
 }
 
+/// `shadow-rs` configuration.
+///
+/// If you use the recommended utility functions [`new`], [`new_deny`], or [`new_hook`], you do not have to handle [`Shadow`] configurations themselves.
+/// However, this struct provides more fine-grained access to `shadow-rs` configuration, such as using a denylist and a hook function at the same time.
 #[derive(Debug)]
 pub struct Shadow {
+    /// The file that `shadow-rs` writes build information to.
     pub f: File,
+    /// The values of build constants to be written.
     pub map: BTreeMap<ShadowConst, ConstVal>,
+    /// Build environment variables, obtained through [`get_std_env`].
     pub std_env: BTreeMap<String, String>,
+    /// Constants in the denylist, passed through [`new_deny`] or [`Shadow::build`].
     pub deny_const: BTreeSet<ShadowConst>,
 }
 
 impl Shadow {
+    /// Write the build configuration specified by this [`Shadow`] instance.
+    /// The hook function is run as well, allowing it to append to `shadow-rs`'s output.
     pub fn hook<F>(&self, f: F) -> SdResult<()>
     where
         F: FnOnce(&File) -> SdResult<()>,
@@ -296,7 +314,9 @@ impl Shadow {
         Ok(())
     }
 
-    /// try get current ci env
+    /// Try to infer the CI system that we're currently running under.
+    ///
+    /// TODO: Recognize other CI types, especially Travis and Jenkins.
     fn try_ci(&self) -> CiType {
         if let Some(c) = self.std_env.get("GITLAB_CI") {
             if c == "true" {
@@ -310,11 +330,11 @@ impl Shadow {
             }
         }
 
-        //TODO completed [travis,jenkins] env
-
         CiType::None
     }
 
+    /// Create a new [`Shadow`] configuration with a provided denylist.
+    /// The project source path and output file are automatically derived from Cargo build environment variables.
     pub fn build(deny_const: BTreeSet<ShadowConst>) -> SdResult<Shadow> {
         let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
         let out_path = std::env::var("OUT_DIR")?;
@@ -382,12 +402,15 @@ impl Shadow {
         Ok(())
     }
 
+    /// Request Cargo to re-run the build script if any environment variable observed by this [`Shadow`] configuration changes.
     pub fn cargo_rerun_if_env_changed(&self) {
         for k in self.std_env.keys() {
             println!("cargo:rerun-if-env-changed={k}");
         }
     }
 
+    /// Request Cargo to re-run the build script if any of the specified environment variables change.
+    /// This function is not influenced by this [`Shadow`] configuration.
     pub fn cargo_rerun_env_inject(&self, env: &[&str]) {
         for k in env {
             println!("cargo:rerun-if-env-changed={}", *k);
@@ -404,10 +427,9 @@ impl Shadow {
 
     fn gen_header(&self) -> SdResult<()> {
         let desc = format!(
-            r#"// Code generated by shadow-rs generator. DO NOT EDIT.
-// Author by:https://www.github.com/baoyachi
-// The build script repository:https://github.com/baoyachi/shadow-rs
-// Create time by:{}"#,
+            r#"// Code automatically generated by `shadow-rs` (https://github.com/baoyachi/shadow-rs), do not edit.
+// Author: https://www.github.com/baoyachi
+// Generation time: {}"#,
             DateTime::now().human_format()
         );
         writeln!(&self.f, "{desc}\n\n")?;
@@ -492,7 +514,7 @@ impl Shadow {
         }
 
         let everything_define = format!(
-            "/// print build in method\n\
+            "/// Prints all built-in `shadow-rs` build constants to standard output.\n\
             #[allow(dead_code)]\n\
             pub fn print_build_in() {\
             {{print_val}}\

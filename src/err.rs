@@ -4,8 +4,12 @@ use std::error::Error as StdError;
 use std::fmt::{Display, Formatter};
 use std::string::FromUtf8Error;
 
+/// Results returned by the `shadow-rs` build process.
+/// For more information see [`ShadowError`].
 pub type SdResult<T> = Result<T, ShadowError>;
 
+/// `shadow-rs` build process errors.
+/// This type wraps multiple kinds of underlying errors that can occur downstream of `shadow-rs`, such as [`std::io::Error`].
 #[derive(Debug)]
 pub enum ShadowError {
     String(String),
