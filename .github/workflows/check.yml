@@ -79,6 +79,7 @@ jobs:
       matrix:
         rust: [ stable, beta, nightly ]
     runs-on: ubuntu-latest
+    needs: [ build ]
     steps:
       - name: Setup Rust
         uses: hecrj/setup-rust-action@v1
