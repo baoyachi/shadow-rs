@@ -435,7 +435,7 @@ mod tests {
 
     #[test]
     fn test_filter_dep_windows_path() {
-        let input = r#"shadow-rs v0.5.23 (FD:\a\shadow-rs\shadow-rs)"#;
+        let input = r"shadow-rs v0.5.23 (FD:\a\shadow-rs\shadow-rs)";
         let ret = filter_dep_source(input);
         assert_eq!(input, ret)
     }

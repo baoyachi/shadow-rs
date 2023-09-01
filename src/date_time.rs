@@ -123,7 +123,7 @@ mod tests {
         assert!(!std::fs::read("/etc/localtime").unwrap().is_empty());
 
         let regex = Regex::new(
-            r#"^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}:[0-9]{2}\s[+][0-9]{2}:[0-9]{2}"#,
+            r"^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}:[0-9]{2}\s[+][0-9]{2}:[0-9]{2}",
         )
         .unwrap();
         assert!(regex.is_match(&time));
