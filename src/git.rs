@@ -466,7 +466,7 @@ fn command_git_status_file() -> String {
             Ok(line.lines().map(|x| x.into()).collect())
         };
 
-    let dirty = git_status_files(&["status", "--porcelain"], &[r#"^\sM."#], &["{print $2}"])
+    let dirty = git_status_files(&["status", "--porcelain"], &[r"^\sM."], &["{print $2}"])
         .unwrap_or_default();
 
     let stage = git_status_files(
