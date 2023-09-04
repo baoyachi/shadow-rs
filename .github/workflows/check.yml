@@ -82,7 +82,7 @@ jobs:
     needs: [ build ]
     steps:
       - name: Setup Rust
-        uses: hecrj/setup-rust-action@v1
+        uses: hecrj/setup-rust-action@v2
         with:
           rust-version: ${{ matrix.rust }}
       - name: Install Tarpaulin
@@ -113,7 +113,7 @@ jobs:
     needs: [ test ]
     steps:
       - name: Set up Rust
-        uses: hecrj/setup-rust-action@v1
+        uses: hecrj/setup-rust-action@v2
       - uses: actions/checkout@v3
       - name: Publish
         shell: bash
