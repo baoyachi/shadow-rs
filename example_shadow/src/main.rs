@@ -1,6 +1,3 @@
-#![allow(clippy::needless_raw_strings)]
-#![allow(clippy::needless_raw_string_hashes)]
-
 use clap::Command;
 
 use shadow_rs::{shadow, Format};
