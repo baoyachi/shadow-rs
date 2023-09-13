@@ -20,7 +20,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
       - uses: actions-rs/toolchain@v1
@@ -82,7 +82,7 @@ jobs:
     needs: [ build ]
     steps:
       - name: Setup Rust
-        uses: hecrj/setup-rust-action@v1
+        uses: hecrj/setup-rust-action@v2
         with:
           rust-version: ${{ matrix.rust }}
       - name: Install Tarpaulin
@@ -92,7 +92,7 @@ jobs:
           version: 0.14.2
           use-tool-cache: true
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Test
         run: |
           cargo test --all-features
@@ -113,8 +113,8 @@ jobs:
     needs: [ test ]
     steps:
       - name: Set up Rust
-        uses: hecrj/setup-rust-action@v1
-      - uses: actions/checkout@v3
+        uses: hecrj/setup-rust-action@v2
+      - uses: actions/checkout@v4
       - name: Publish
         shell: bash
         run: |
