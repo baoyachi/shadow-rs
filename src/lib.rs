@@ -443,7 +443,7 @@ impl Shadow {
         let define = match val.t {
             ConstType::OptStr => format!(
                 "#[allow(dead_code)]\n\
-                #[allow(clippy::needless_raw_string_hashes)]\n\
+                #[allow(clippy::all)]\n\
             pub const {} :{} = r#\"{}\"#;",
                 shadow_const.to_ascii_uppercase(),
                 ConstType::Str.to_string(),
@@ -451,7 +451,7 @@ impl Shadow {
             ),
             ConstType::Str => format!(
                 "#[allow(dead_code)]\n\
-                #[allow(clippy::needless_raw_string_hashes)]\n\
+                #[allow(clippy::all)]\n\
             pub const {} :{} = r#\"{}\"#;",
                 shadow_const.to_ascii_uppercase(),
                 ConstType::Str.to_string(),
