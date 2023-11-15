@@ -1,8 +1,6 @@
 use crate::build::{ConstType, ConstVal, ShadowConst};
 use crate::ci::CiType;
-use crate::date_time::DateTime;
 use crate::err::*;
-use crate::Format;
 use std::collections::BTreeMap;
 use std::io::{BufReader, Read};
 use std::path::Path;
@@ -135,10 +133,13 @@ impl Git {
         Ok(())
     }
 
+    #[allow(unused_variables)]
     fn init_git2(&mut self, path: &Path) -> SdResult<()> {
         #[cfg(feature = "git2")]
         {
+            use crate::date_time::DateTime;
             use crate::git::git2_mod::git_repo;
+            use crate::Format;
 
             let repo = git_repo(path).map_err(ShadowError::new)?;
             let reference = repo.head().map_err(ShadowError::new)?;

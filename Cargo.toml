@@ -14,7 +14,6 @@ license = "MIT AND Apache-2.0"
 exclude = ["shadow-rs.png", "build_module.png"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-
 [package.metadata.docs.rs]
 all-features = true
 
@@ -40,4 +39,4 @@ default = ["git2", "tzdb"]
 regex = "1.7.0"
 
 [workspace]
-members = ["example_shadow", "example_shadow_hook"]
+members = ["example_shadow", "example_shadow_hook", "example_wasm"]
