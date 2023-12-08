@@ -68,10 +68,6 @@ jobs:
         uses: jetli/wasm-pack-action@v0.4.0
         with:
           version: latest
-        run: |
-          cargo b
-          wasm-pack build --target bundler 
-          wasm-pack build --target web
         working-directory: ./example_wasm
 
       # build on nightly
