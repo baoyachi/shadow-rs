@@ -64,10 +64,14 @@ jobs:
         working-directory: ./example_shadow_hook
 
       # example_wasm check
-      - name: Setup wasm-pack
-        uses: jetli/wasm-pack-action@v0.4.0
+      - uses: jetli/wasm-pack-action@v0.4.0
         with:
           version: latest
+      - name: Setup wasm-pack
+        run: |
+          cargo b
+          wasm-pack build --target bundler 
+          wasm-pack build --target web
         working-directory: ./example_wasm
 
       # build on nightly
