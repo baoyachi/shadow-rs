@@ -28,6 +28,8 @@
 
 You can use this crate to programmatically check where a binary came from and how it was built.
 
+Currently, integration into **wasm** is also supported. For detailed settings, please refer to the link [example_wasm](https://github.com/baoyachi/shadow-rs/tree/master/example_wasm).
+
 ![build_module](./build_module.png)
 
 # Note on Caching
