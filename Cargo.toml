@@ -21,7 +21,7 @@ all-features = true
 is_debug = "1.0.1"
 const_format = "0.2.22"
 time = { version = "0.3.11", features = ["formatting", "local-offset", "parsing"] }
-winnow = "0.5.31"
+
 
 #! Optional Dependencies:
 
@@ -35,6 +35,9 @@ document-features = { version = "0.2", optional = true }
 
 [features]
 default = ["git2", "tzdb"]
+
+[dev-dependencies]
+winnow = "0.5.31"
 
 [workspace]
 members = ["example_shadow", "example_shadow_hook", "example_wasm"]
