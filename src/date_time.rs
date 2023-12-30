@@ -107,7 +107,66 @@ impl Format for OffsetDateTime {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use regex::Regex;
+    use human_format_validate::parse_human_format;
+
+    mod human_format_validate {
+        use std::num::{NonZeroU32, NonZeroU8};
+        use winnow::ascii::space1;
+        use winnow::error::{ContextError, ParseError};
+        use winnow::token::{tag, take};
+        use winnow::{PResult, Parser};
+
+        fn u8_len2(input: &mut &str) -> PResult<u8> {
+            take(2_usize).try_map(str::parse).parse_next(input)
+        }
+
+        fn non_zero_u8_len2(input: &mut &str) -> PResult<NonZeroU8> {
+            take(2_usize).try_map(str::parse).parse_next(input)
+        }
+
+        //
+        fn non_zero_u32_len4(input: &mut &str) -> PResult<NonZeroU32> {
+            take(4_usize).try_map(str::parse).parse_next(input)
+        }
+
+        // 2022-07-14 00:40:05 +08:00
+        pub(crate) fn parse_human_format(
+            input: &str,
+        ) -> Result<(), ParseError<&str, ContextError>> {
+            (
+                non_zero_u32_len4,
+                tag("-"),
+                non_zero_u8_len2,
+                tag("-"),
+                non_zero_u8_len2,
+                space1,
+                u8_len2,
+                tag(":"),
+                u8_len2,
+                tag(":"),
+                u8_len2,
+                space1,
+                tag("+"),
+                u8_len2,
+                tag(":"),
+                u8_len2,
+            )
+                .parse(input)?;
+            Ok(())
+        }
+
+        #[test]
+        fn test_parse() {
+            assert!(parse_human_format("2022-07-14 00:40:05 +08:00").is_ok());
+            assert!(parse_human_format("2022-07-14 00:40:05 +08:0").is_err());
+            assert!(parse_human_format("2022-07-14 00:40:05 -08:0").is_err());
+            assert!(parse_human_format("2022-07-00 00:40:05 +08:00").is_err());
+            assert!(parse_human_format("2022-00-01 00:40:05 +08:00").is_err());
+            assert!(parse_human_format("2022-00-01 00:40:05 08:00").is_err());
+            assert!(parse_human_format("2022-00-01 00:40:05+08:00").is_err());
+            assert!(parse_human_format("20221-00-01 00:40:05+08:00").is_err());
+        }
+    }
 
     #[test]
     fn test_source_date_epoch() {
@@ -122,11 +181,7 @@ mod tests {
         #[cfg(unix)]
         assert!(!std::fs::read("/etc/localtime").unwrap().is_empty());
 
-        let regex = Regex::new(
-            r"^[0-9]{4}-[0-9]{2}-[0-9]{2}\s[0-9]{2}:[0-9]{2}:[0-9]{2}\s[+][0-9]{2}:[0-9]{2}",
-        )
-        .unwrap();
-        assert!(regex.is_match(&time));
+        assert!(parse_human_format(&time).is_ok());
 
         println!("local now:{time}"); // 2022-07-14 00:40:05 +08:00
         assert_eq!(time.len(), 26);
