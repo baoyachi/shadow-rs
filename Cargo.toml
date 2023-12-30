@@ -22,6 +22,7 @@ is_debug = "1.0.1"
 const_format = "0.2.22"
 time = { version = "0.3.11", features = ["formatting", "local-offset", "parsing"] }
 
+
 #! Optional Dependencies:
 
 ## Use `libgit2` as a backend for git operations
@@ -36,7 +37,7 @@ document-features = { version = "0.2", optional = true }
 default = ["git2", "tzdb"]
 
 [dev-dependencies]
-regex = "1.7.0"
+winnow = "0.5.31"
 
 [workspace]
 members = ["example_shadow", "example_shadow_hook", "example_wasm"]
