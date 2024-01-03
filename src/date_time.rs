@@ -111,7 +111,7 @@ mod tests {
 
     mod human_format_validate {
         use std::num::{NonZeroU32, NonZeroU8};
-        use winnow::ascii::space1;
+        use winnow::ascii::{digit1, space1};
         use winnow::error::{ContextError, ParseError};
         use winnow::token::{tag, take};
         use winnow::{PResult, Parser};
@@ -120,13 +120,16 @@ mod tests {
             take(2_usize).try_map(str::parse).parse_next(input)
         }
 
-        fn non_zero_u8_len2(input: &mut &str) -> PResult<NonZeroU8> {
-            take(2_usize).try_map(str::parse).parse_next(input)
+        fn non_zero_u8_len2<const LIMIT: u8>(input: &mut &str) -> PResult<NonZeroU8> {
+            take(2_usize)
+                .try_map(str::parse)
+                .verify(|x| *x <= unsafe { NonZeroU8::new_unchecked(LIMIT) })
+                .parse_next(input)
         }
 
         //
-        fn non_zero_u32_len4(input: &mut &str) -> PResult<NonZeroU32> {
-            take(4_usize).try_map(str::parse).parse_next(input)
+        fn non_zero_u32(input: &mut &str) -> PResult<NonZeroU32> {
+            digit1.try_map(str::parse).parse_next(input)
         }
 
         // 2022-07-14 00:40:05 +08:00
@@ -134,11 +137,11 @@ mod tests {
             input: &str,
         ) -> Result<(), ParseError<&str, ContextError>> {
             (
-                non_zero_u32_len4,
+                non_zero_u32,
                 tag("-"),
-                non_zero_u8_len2,
+                non_zero_u8_len2::<12>,
                 tag("-"),
-                non_zero_u8_len2,
+                non_zero_u8_len2::<31>,
                 space1,
                 u8_len2,
                 tag(":"),
@@ -158,6 +161,10 @@ mod tests {
         #[test]
         fn test_parse() {
             assert!(parse_human_format("2022-07-14 00:40:05 +08:00").is_ok());
+            assert!(parse_human_format("2022-12-14 00:40:05 +08:00").is_ok());
+            assert!(parse_human_format("2022-13-14 00:40:05 +08:00").is_err());
+            assert!(parse_human_format("2022-12-31 00:40:05 +08:00").is_ok());
+            assert!(parse_human_format("2022-12-32 00:40:05 +08:00").is_err());
             assert!(parse_human_format("2022-07-14 00:40:05 +08:0").is_err());
             assert!(parse_human_format("2022-07-14 00:40:05 -08:0").is_err());
             assert!(parse_human_format("2022-07-00 00:40:05 +08:00").is_err());
@@ -165,6 +172,7 @@ mod tests {
             assert!(parse_human_format("2022-00-01 00:40:05 08:00").is_err());
             assert!(parse_human_format("2022-00-01 00:40:05+08:00").is_err());
             assert!(parse_human_format("20221-00-01 00:40:05+08:00").is_err());
+            assert!(parse_human_format("20221-01-01 00:40:05 +08:00").is_ok());
         }
     }
 
