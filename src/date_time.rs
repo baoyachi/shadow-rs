@@ -138,20 +138,20 @@ mod tests {
         ) -> Result<(), ParseError<&str, ContextError>> {
             (
                 non_zero_u32,
-                tag("-"),
+                tag('-'),
                 non_zero_u8_len2::<12>,
-                tag("-"),
+                tag('-'),
                 non_zero_u8_len2::<31>,
                 space1,
                 u8_len2,
-                tag(":"),
+                tag(':'),
                 u8_len2,
-                tag(":"),
+                tag(':'),
                 u8_len2,
                 space1,
-                tag("+"),
+                tag('+'),
                 u8_len2,
-                tag(":"),
+                tag(':'),
                 u8_len2,
             )
                 .parse(input)?;
