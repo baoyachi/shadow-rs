@@ -37,7 +37,7 @@ document-features = { version = "0.2", optional = true }
 default = ["git2", "tzdb"]
 
 [dev-dependencies]
-winnow = "0.5.33"
+winnow = "0.6.5"
 
 [workspace]
 members = ["example_shadow", "example_shadow_hook", "example_wasm"]
