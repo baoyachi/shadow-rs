@@ -113,7 +113,7 @@ mod tests {
         use std::num::{NonZeroU32, NonZeroU8};
         use winnow::ascii::{digit1, space1};
         use winnow::error::{ContextError, ParseError};
-        use winnow::token::{tag, take};
+        use winnow::token::{literal, take};
         use winnow::{PResult, Parser};
 
         fn u8_len2(input: &mut &str) -> PResult<u8> {
@@ -138,20 +138,20 @@ mod tests {
         ) -> Result<(), ParseError<&str, ContextError>> {
             (
                 non_zero_u32,
-                tag('-'),
+                literal('-'),
                 non_zero_u8_len2::<12>,
-                tag('-'),
+                literal('-'),
                 non_zero_u8_len2::<31>,
                 space1,
                 u8_len2,
-                tag(':'),
+                literal(':'),
                 u8_len2,
-                tag(':'),
+                literal(':'),
                 u8_len2,
                 space1,
-                tag('+'),
+                literal('+'),
                 u8_len2,
-                tag(':'),
+                literal(':'),
                 u8_len2,
             )
                 .parse(input)?;
