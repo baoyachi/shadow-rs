@@ -1,4 +1,3 @@
-use std::convert::From;
 use std::error::Error;
 use std::error::Error as StdError;
 use std::fmt::{Display, Formatter};

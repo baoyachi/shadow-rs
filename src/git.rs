@@ -508,7 +508,6 @@ fn filter_git_dirty_stage(dirty_files: Vec<String>, staged_files: Vec<String>) -
 mod tests {
     use super::*;
     use crate::get_std_env;
-    use std::path::Path;
 
     #[test]
     fn test_git() {
@@ -535,7 +534,7 @@ mod tests {
 
     #[test]
     fn test_current_branch() {
-        if get_std_env().get("GITHUB_REF").is_some() {
+        if get_std_env().contains_key("GITHUB_REF") {
             return;
         }
         #[cfg(feature = "git2")]

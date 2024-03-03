@@ -446,7 +446,7 @@ impl Shadow {
                 #[allow(clippy::all)]\n\
             pub const {} :{} = r#\"{}\"#;",
                 shadow_const.to_ascii_uppercase(),
-                ConstType::Str.to_string(),
+                ConstType::Str,
                 ""
             ),
             ConstType::Str => format!(
@@ -454,14 +454,14 @@ impl Shadow {
                 #[allow(clippy::all)]\n\
             pub const {} :{} = r#\"{}\"#;",
                 shadow_const.to_ascii_uppercase(),
-                ConstType::Str.to_string(),
+                ConstType::Str,
                 val.v
             ),
             ConstType::Bool => format!(
                 "#[allow(dead_code)]\n\
             pub const {} :{} = {};",
                 shadow_const.to_ascii_uppercase(),
-                ConstType::Bool.to_string(),
+                ConstType::Bool,
                 val.v.parse::<bool>().unwrap()
             ),
         };
