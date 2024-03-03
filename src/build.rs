@@ -1,11 +1,7 @@
-use std::collections::BTreeMap;
+use std::fmt::{Display, Formatter};
 
 /// `shadow-rs` build constant identifiers.
 pub type ShadowConst = &'static str;
-
-pub trait ShadowGen {
-    fn gen_const(&self) -> BTreeMap<ShadowConst, ConstVal>;
-}
 
 /// Serialized values for build constants.
 #[derive(Debug, Clone)]
@@ -47,12 +43,12 @@ pub enum ConstType {
     Bool,
 }
 
-impl ToString for ConstType {
-    fn to_string(&self) -> String {
+impl Display for ConstType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ConstType::OptStr => "Option<&str>".to_string(),
-            ConstType::Str => "&str".to_string(),
-            ConstType::Bool => "bool".to_string(),
+            ConstType::OptStr => write!(f, "Option<&str>"),
+            ConstType::Str => write!(f, "&str"),
+            ConstType::Bool => write!(f, "bool"),
         }
     }
 }

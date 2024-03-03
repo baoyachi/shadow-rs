@@ -1,3 +1,5 @@
+use std::fmt::{Display, Formatter};
+
 /// [`CiType`] holds the types of CI environment that `shadow-rs` can detect.
 #[derive(Debug)]
 pub enum CiType {
@@ -13,12 +15,12 @@ impl Default for CiType {
     }
 }
 
-impl ToString for CiType {
-    fn to_string(&self) -> String {
+impl Display for CiType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            CiType::Github => "github".into(),
-            CiType::Gitlab => "gitlab".into(),
-            _ => "none".into(),
+            CiType::Github => write!(f, "github"),
+            CiType::Gitlab => write!(f, "gitlab"),
+            _ => write!(f, "none"),
         }
     }
 }
