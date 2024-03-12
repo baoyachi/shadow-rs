@@ -58,6 +58,10 @@ shadow-rs = "{latest version}"
 shadow-rs = "{latest version}"
 ```
 
+>About `build = "build.rs"`,this is an optional addition where, by default, build points to the build.rs file. It is recommended to use it as such. However, if your build script file is not named build.rs, please manually specify it. For example: `build = "gen.rs"`.
+
+
+
 ### 2) Create `build.rs` file
 Now in the root of your project (same directory as `Cargo.toml`) add a file `build.rs`:
 
