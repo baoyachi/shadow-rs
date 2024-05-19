@@ -32,7 +32,7 @@ build_time:{}
 build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST_CHANNEL
 );"##;
 
-const CLAP_VERSION_BRANCH_CONST: &str = r##"#[allow(dead_code)]
+const CLAP_VERSION_BRANCH_CONST: &str = r##"#[allow(dead_code,missing_docs)]
 #[deprecated = "Replaced with `CLAP_LONG_VERSION`"]
 pub const CLAP_VERSION:&str = shadow_rs::formatcp!(r#"{}
 branch:{}
@@ -41,7 +41,7 @@ build_time:{}
 build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST_CHANNEL
 );"##;
 
-const CLAP_VERSION_TAG_CONST: &str = r##"#[allow(dead_code)]
+const CLAP_VERSION_TAG_CONST: &str = r##"#[allow(dead_code,missing_docs)]
 #[deprecated = "Replaced with `CLAP_LONG_VERSION`"]
 pub const CLAP_VERSION:&str = shadow_rs::formatcp!(r#"{}
 tag:{}
