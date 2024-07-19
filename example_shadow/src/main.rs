@@ -49,6 +49,7 @@ pub fn print_build() {
     println!("rust_channel:{}", build::RUST_CHANNEL);
     println!("cargo_version:{}", build::CARGO_VERSION);
     println!("cargo_tree:{}", build::CARGO_TREE);
+    println!("cargo_tree:{}", build::CARGO_METADATA);
 
     println!("project_name:{}", build::PROJECT_NAME);
     println!("build_time:{}", build::BUILD_TIME);

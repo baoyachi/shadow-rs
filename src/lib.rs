@@ -504,8 +504,15 @@ impl Shadow {
         let mut print_val = String::from("\n");
 
         // append gen const
-        for k in self.map.keys() {
-            let tmp = format!(r#"{}println!("{k}:{{{k}}}\n");{}"#, "\t", "\n");
+        for (k, v) in &self.map {
+            let tmp = match v.t {
+                ConstType::Str | ConstType::Bool => {
+                    format!(r#"{}println!("{k}:{{{k}}}\n");{}"#, "\t", "\n")
+                }
+                ConstType::Slice => {
+                    format!(r#"{}println!("{k}:{{:?}}\n",{});{}"#, "\t", k, "\n",)
+                }
+            };
             print_val.push_str(tmp.as_str());
         }
 
