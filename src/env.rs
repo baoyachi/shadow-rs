@@ -32,6 +32,11 @@ Note that as per Rustup toolchain format, this variable may or may not contain h
 but it will always contain [channel](https://rust-lang.github.io/rustup/concepts/channels.html) information (stable, beta or nightly)."#;
 pub const RUST_CHANNEL: ShadowConst = "RUST_CHANNEL";
 
+pub const CARGO_METADATA: ShadowConst = "CARGO_METADATA";
+const CARGO_METADATA_DOC: ShadowConst = r#"
+The information about the workspace members and resolved dependencies of the current package.
+See the [cargo_metadata](https://crates.io/crates/cargo_metadata) crate for a Rust API for reading the metadata."#;
+
 const CARGO_VERSION_DOC: &str = r#"
 The cargo version which which the project was built, as output by `cargo --version`."#;
 pub const CARGO_VERSION: ShadowConst = "CARGO_VERSION";
@@ -83,7 +88,6 @@ impl SystemEnv {
     fn init(&mut self, std_env: &BTreeMap<String, String>) -> SdResult<()> {
         let mut update_val = |c: ShadowConst, v: String| {
             if let Some(val) = self.map.get_mut(c) {
-                val.t = ConstType::Str;
                 val.v = v;
             }
         };
@@ -115,17 +119,15 @@ impl SystemEnv {
             }
         }
 
-        // TODO completed
-
-        // if let Ok(_out) = Command::new("cargo")
-        //     .args(["metadata", "--format-version", "1"])
-        //     .output()
-        // {
-        //     update_val(
-        //         CARGO_METADATA,
-        //         String::from_utf8(out.stdout)?.trim().to_string(),
-        //     );
-        // }
+        if let Ok(out) = Command::new("cargo")
+            .args(["metadata", "--format-version", "1"])
+            .output()
+        {
+            update_val(
+                CARGO_METADATA,
+                String::from_utf8(out.stdout)?.trim().to_string(),
+            );
+        }
 
         if let Some(v) = std_env.get("TARGET") {
             update_val(BUILD_TARGET, v.to_string());
@@ -258,6 +260,8 @@ pub fn new_system_env(std_env: &BTreeMap<String, String>) -> BTreeMap<ShadowCons
 
     env.map
         .insert(RUST_CHANNEL, ConstVal::new(RUST_CHANNEL_DOC));
+    env.map
+        .insert(CARGO_METADATA, ConstVal::new_slice(CARGO_METADATA_DOC));
     env.map
         .insert(RUST_VERSION, ConstVal::new(RUST_VERSION_DOC));
     env.map

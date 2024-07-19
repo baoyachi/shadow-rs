@@ -441,14 +441,6 @@ impl Shadow {
         let desc = format!("#[doc=r#\"{}\"#]", val.desc);
 
         let define = match val.t {
-            ConstType::OptStr => format!(
-                "#[allow(dead_code)]\n\
-                #[allow(clippy::all)]\n\
-            pub const {} :{} = r#\"{}\"#;",
-                shadow_const.to_ascii_uppercase(),
-                ConstType::Str,
-                ""
-            ),
             ConstType::Str => format!(
                 "#[allow(dead_code)]\n\
                 #[allow(clippy::all)]\n\
@@ -463,6 +455,13 @@ impl Shadow {
                 shadow_const.to_ascii_uppercase(),
                 ConstType::Bool,
                 val.v.parse::<bool>().unwrap()
+            ),
+            ConstType::Slice => format!(
+                "#[allow(dead_code)]\n\
+            pub const {} :{} = &{:?};",
+                shadow_const.to_ascii_uppercase(),
+                ConstType::Slice,
+                val.v.as_bytes()
             ),
         };
 
@@ -540,7 +539,6 @@ mod tests {
         let shadow = fs::read_to_string("./shadow.rs")?;
         assert!(!shadow.is_empty());
         assert!(shadow.lines().count() > 0);
-        println!("{shadow}");
         Ok(())
     }
 
