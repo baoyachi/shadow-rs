@@ -19,7 +19,7 @@ impl ConstVal {
         ConstVal {
             desc: desc.into(),
             v: "".to_string(),
-            t: ConstType::OptStr,
+            t: ConstType::Str,
         }
     }
 
@@ -30,25 +30,33 @@ impl ConstVal {
             t: ConstType::Bool,
         }
     }
+
+    pub fn new_slice<S: Into<String>>(desc: S) -> ConstVal {
+        ConstVal {
+            desc: desc.into(),
+            v: "".to_string(),
+            t: ConstType::Slice,
+        }
+    }
 }
 
 /// Supported types of build constants.
 #[derive(Debug, Clone)]
 pub enum ConstType {
-    /// [`Option<&str>`](`Option`).
-    OptStr,
     /// [`&str`](`str`).
     Str,
     /// [`bool`].
     Bool,
+    /// [`&[u8]`].
+    Slice,
 }
 
 impl Display for ConstType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ConstType::OptStr => write!(f, "Option<&str>"),
             ConstType::Str => write!(f, "&str"),
             ConstType::Bool => write!(f, "bool"),
+            ConstType::Slice => write!(f, "&[u8]"),
         }
     }
 }
