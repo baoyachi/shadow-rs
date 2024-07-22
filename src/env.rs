@@ -247,7 +247,9 @@ mod dep_source_replace {
 
 /// Create all `shadow-rs` constants which are determined by the build environment.
 /// The data for these constants is provided by the `std_env` argument.
-pub fn new_system_env(std_env: &BTreeMap<String, String>) -> BTreeMap<ShadowConst, ConstVal> {
+pub(crate) fn new_system_env(
+    std_env: &BTreeMap<String, String>,
+) -> BTreeMap<ShadowConst, ConstVal> {
     let mut env = SystemEnv::default();
     env.map.insert(
         BUILD_OS,
@@ -328,7 +330,7 @@ The debug configuration with which the project was built.
 Note that this is not the Rust channel, but either `debug` or `release`, depending on whether debug assertions were enabled in the build or not. "#;
 const BUILD_RUST_CHANNEL: ShadowConst = "BUILD_RUST_CHANNEL";
 
-pub fn build_time(project: &mut Project) {
+pub(crate) fn build_time(project: &mut Project) {
     // Enable reproducible builds: https://reproducible-builds.org/docs/source-date-epoch/
     let time = now_date_time();
     project.map.insert(
@@ -358,7 +360,7 @@ pub fn build_time(project: &mut Project) {
     );
 }
 
-pub fn new_project(std_env: &BTreeMap<String, String>) -> BTreeMap<ShadowConst, ConstVal> {
+pub(crate) fn new_project(std_env: &BTreeMap<String, String>) -> BTreeMap<ShadowConst, ConstVal> {
     let mut project = Project::default();
     build_time(&mut project);
     project.map.insert(

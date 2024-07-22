@@ -220,8 +220,18 @@ macro_rules! shadow {
 /// }
 /// ```
 pub fn new() -> SdResult<()> {
-    Shadow::build(Default::default())?;
+    Shadow::build(default_deny())?;
     Ok(())
+}
+
+/// Since [cargo metadata](https://crates.io/crates/cargo_metadata) details about workspace
+/// membership and resolved dependencies for the current package, storing this data can result in
+/// significantly larger crate sizes. As such, the CARGO_METADATA const is disabled by default.
+///
+/// Should you choose to retain this information, you have the option to customize a deny_const object
+/// and override the `new_deny` method parameters accordingly.
+pub fn default_deny() -> BTreeSet<ShadowConst> {
+    BTreeSet::from([CARGO_METADATA])
 }
 
 /// Identical to [`new`], but additionally accepts a build output denylist.
@@ -272,12 +282,12 @@ pub fn new_hook<F>(f: F) -> SdResult<()>
 where
     F: FnOnce(&File) -> SdResult<()>,
 {
-    let shadow = Shadow::build(Default::default())?;
+    let shadow = Shadow::build(default_deny())?;
     shadow.hook(f)
 }
 
 /// Returns the contents of [`std::env::vars`] as an ordered map.
-pub fn get_std_env() -> BTreeMap<String, String> {
+pub(crate) fn get_std_env() -> BTreeMap<String, String> {
     let mut env_map = BTreeMap::new();
     for (k, v) in std_env::vars() {
         env_map.insert(k, v);
@@ -295,7 +305,7 @@ pub struct Shadow {
     pub f: File,
     /// The values of build constants to be written.
     pub map: BTreeMap<ShadowConst, ConstVal>,
-    /// Build environment variables, obtained through [`get_std_env`].
+    /// Build environment variables, obtained through [`std::env::vars`].
     pub std_env: BTreeMap<String, String>,
     /// Constants in the denylist, passed through [`new_deny`] or [`Shadow::build`].
     pub deny_const: BTreeSet<ShadowConst>,
