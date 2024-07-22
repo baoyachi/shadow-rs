@@ -69,7 +69,7 @@ impl DateTime {
 
     pub fn timestamp_2_utc(time_stamp: i64) -> SdResult<Self> {
         let time =
-            OffsetDateTime::from_unix_timestamp(time_stamp).map_err(|err| ShadowError::new(err))?;
+            OffsetDateTime::from_unix_timestamp(time_stamp).map_err(ShadowError::new)?;
         Ok(DateTime::Utc(time))
     }
 
