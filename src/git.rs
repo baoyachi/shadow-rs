@@ -271,7 +271,7 @@ impl Git {
     }
 }
 
-pub fn new_git(
+pub(crate) fn new_git(
     path: &Path,
     ci: CiType,
     std_env: &BTreeMap<String, String>,
