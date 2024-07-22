@@ -1,6 +1,7 @@
 use crate::build::{ConstType, ConstVal, ShadowConst};
 use crate::ci::CiType;
 use crate::err::*;
+use crate::{DateTime, Format};
 use std::collections::BTreeMap;
 use std::io::{BufReader, Read};
 use std::path::Path;
@@ -104,13 +105,10 @@ impl Git {
     }
 
     fn init(&mut self, path: &Path, std_env: &BTreeMap<String, String>) -> SdResult<()> {
-        // check git status
-        let x = command_git_clean();
-        self.update_bool(GIT_CLEAN, x);
+        // First, try executing using the git command.
+        self.init_git()?;
 
-        let x = command_git_status_file();
-        self.update_str(GIT_STATUS_FILE, x);
-
+        // If the git2 feature is enabled, then replace the corresponding values with git2.
         self.init_git2(path)?;
 
         // use command branch
@@ -130,6 +128,30 @@ impl Git {
 
         // try use ci branch,tag
         self.ci_branch_tag(std_env);
+        Ok(())
+    }
+
+    fn init_git(&mut self) -> SdResult<()> {
+        // check git status
+        let x = command_git_clean();
+        self.update_bool(GIT_CLEAN, x);
+
+        let x = command_git_status_file();
+        self.update_str(GIT_STATUS_FILE, x);
+
+        let git_info = command_git_head();
+
+        self.update_str(COMMIT_EMAIL, git_info.email);
+        self.update_str(COMMIT_AUTHOR, git_info.author);
+        self.update_str(SHORT_COMMIT, git_info.short_commit);
+        self.update_str(COMMIT_HASH, git_info.commit);
+
+        let time_stamp = git_info.date.parse::<i64>()?;
+        let date_time = DateTime::timestamp_2_utc(time_stamp);
+        self.update_str(COMMIT_DATE, date_time.human_format());
+        self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
+        self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
+
         Ok(())
     }
 
@@ -322,7 +344,7 @@ pub mod git2_mod {
     use std::path::Path;
 
     pub fn git_repo<P: AsRef<Path>>(path: P) -> Result<Repository, git2Error> {
-        git2::Repository::discover(path)
+        Repository::discover(path)
     }
 
     pub fn git2_current_branch(repo: &Repository) -> Option<String> {
@@ -395,6 +417,33 @@ pub fn git_status_file() -> String {
     #[cfg(not(feature = "git2"))]
     {
         command_git_status_file()
+    }
+}
+
+struct GitHeadInfo {
+    commit: String,
+    short_commit: String,
+    email: String,
+    author: String,
+    date: String,
+}
+
+fn command_git_head() -> GitHeadInfo {
+    let cli = |args: &[&str]| {
+        Command::new("git")
+            .args(args)
+            .output()
+            .map(|x| String::from_utf8(x.stdout).ok())
+            .map(|x| x.map(|x| x.trim().to_string()))
+            .unwrap_or_default()
+            .unwrap_or_default()
+    };
+    GitHeadInfo {
+        commit: cli(&["rev-parse", "HEAD"]),
+        short_commit: cli(&["rev-parse", "--short", "HEAD"]),
+        author: cli(&["log", "-1", "--pretty=format:%an"]),
+        email: cli(&["log", "-1", "--pretty=format:%ae"]),
+        date: cli(&["show", "--pretty=format:%ct", "--date=raw", "-s"]),
     }
 }
 
