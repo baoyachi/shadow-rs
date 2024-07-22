@@ -277,7 +277,7 @@ where
 }
 
 /// Returns the contents of [`std::env::vars`] as an ordered map.
-pub fn get_std_env() -> BTreeMap<String, String> {
+pub(crate) fn get_std_env() -> BTreeMap<String, String> {
     let mut env_map = BTreeMap::new();
     for (k, v) in std_env::vars() {
         env_map.insert(k, v);
@@ -295,7 +295,7 @@ pub struct Shadow {
     pub f: File,
     /// The values of build constants to be written.
     pub map: BTreeMap<ShadowConst, ConstVal>,
-    /// Build environment variables, obtained through [`get_std_env`].
+    /// Build environment variables, obtained through [`std::env::vars`].
     pub std_env: BTreeMap<String, String>,
     /// Constants in the denylist, passed through [`new_deny`] or [`Shadow::build`].
     pub deny_const: BTreeSet<ShadowConst>,
