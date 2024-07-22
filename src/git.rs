@@ -147,10 +147,11 @@ impl Git {
         self.update_str(COMMIT_HASH, git_info.commit);
 
         let time_stamp = git_info.date.parse::<i64>()?;
-        let date_time = DateTime::timestamp_2_utc(time_stamp);
-        self.update_str(COMMIT_DATE, date_time.human_format());
-        self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
-        self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
+        if let Ok(date_time) = DateTime::timestamp_2_utc(time_stamp) {
+            self.update_str(COMMIT_DATE, date_time.human_format());
+            self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
+            self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
+        }
 
         Ok(())
     }
@@ -193,14 +194,6 @@ impl Git {
 
             let commit = reference.peel_to_commit().map_err(ShadowError::new)?;
 
-            let time_stamp = commit.time().seconds().to_string().parse::<i64>()?;
-            let date_time = DateTime::timestamp_2_utc(time_stamp);
-            self.update_str(COMMIT_DATE, date_time.human_format());
-
-            self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
-
-            self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
-
             let author = commit.author();
             if let Some(v) = author.email() {
                 self.update_str(COMMIT_EMAIL, v.to_string());
@@ -216,6 +209,15 @@ impl Git {
                 self.update_bool(GIT_CLEAN, false);
             }
             self.update_str(GIT_STATUS_FILE, status_file);
+
+            let time_stamp = commit.time().seconds().to_string().parse::<i64>()?;
+            if let Ok(date_time) = DateTime::timestamp_2_utc(time_stamp) {
+                self.update_str(COMMIT_DATE, date_time.human_format());
+
+                self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
+
+                self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
+            }
         }
         Ok(())
     }
