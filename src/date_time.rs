@@ -1,4 +1,4 @@
-use crate::Format;
+use crate::{Format, SdResult, ShadowError};
 use std::error::Error;
 use time::format_description::well_known::{Rfc2822, Rfc3339};
 #[cfg(feature = "tzdb")]
@@ -67,20 +67,21 @@ impl DateTime {
         Ok(DateTime::Local(local_date_time))
     }
 
-    pub fn timestamp_2_utc(time_stamp: i64) -> Self {
-        let time = OffsetDateTime::from_unix_timestamp(time_stamp).unwrap();
-        DateTime::Utc(time)
+    pub fn timestamp_2_utc(time_stamp: i64) -> SdResult<Self> {
+        let time =
+            OffsetDateTime::from_unix_timestamp(time_stamp).map_err(|err| ShadowError::new(err))?;
+        Ok(DateTime::Utc(time))
     }
 
     pub fn to_rfc2822(&self) -> String {
         match self {
-            DateTime::Local(dt) | DateTime::Utc(dt) => dt.format(&Rfc2822).unwrap(),
+            DateTime::Local(dt) | DateTime::Utc(dt) => dt.format(&Rfc2822).unwrap_or_default(),
         }
     }
 
     pub fn to_rfc3339(&self) -> String {
         match self {
-            DateTime::Local(dt) | DateTime::Utc(dt) => dt.format(&Rfc3339).unwrap(),
+            DateTime::Local(dt) | DateTime::Utc(dt) => dt.format(&Rfc3339).unwrap_or_default(),
         }
     }
 }
@@ -197,7 +198,7 @@ mod tests {
 
     #[test]
     fn test_timestamp_2_utc() {
-        let time = DateTime::timestamp_2_utc(1628080443);
+        let time = DateTime::timestamp_2_utc(1628080443).unwrap();
         assert_eq!(time.to_rfc2822(), "Wed, 04 Aug 2021 12:34:03 +0000");
         assert_eq!(time.to_rfc3339(), "2021-08-04T12:34:03Z");
         assert_eq!(time.human_format(), "2021-08-04 12:34:03 +00:00");
