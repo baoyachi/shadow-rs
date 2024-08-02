@@ -348,10 +348,10 @@ impl Shadow {
     pub fn build(deny_const: BTreeSet<ShadowConst>) -> SdResult<Shadow> {
         let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
         let out_path = std::env::var("OUT_DIR")?;
-        Self::build_inner(src_path, out_path, deny_const)
+        Self::build_with(src_path, out_path, deny_const)
     }
 
-    fn build_inner(
+    pub fn build_with(
         src_path: String,
         out_path: String,
         deny_const: BTreeSet<ShadowConst>,
@@ -552,7 +552,7 @@ mod tests {
 
     #[test]
     fn test_build() -> SdResult<()> {
-        Shadow::build_inner("./".into(), "./".into(), Default::default())?;
+        Shadow::build_with("./".into(), "./".into(), Default::default())?;
         let shadow = fs::read_to_string("./shadow.rs")?;
         assert!(!shadow.is_empty());
         assert!(shadow.lines().count() > 0);
@@ -563,7 +563,7 @@ mod tests {
     fn test_build_deny() -> SdResult<()> {
         let mut deny = BTreeSet::new();
         deny.insert(CARGO_TREE);
-        Shadow::build_inner("./".into(), "./".into(), deny)?;
+        Shadow::build_with("./".into(), "./".into(), deny)?;
         let shadow = fs::read_to_string("./shadow.rs")?;
         assert!(!shadow.is_empty());
         assert!(shadow.lines().count() > 0);
