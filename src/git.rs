@@ -112,7 +112,7 @@ impl Git {
         self.init_git2(path)?;
 
         // use command branch
-        if let Some(x) = command_current_branch() {
+        if let Some(x) = find_branch_in(path) {
             self.update_str(BRANCH, x)
         };
 
@@ -430,16 +430,37 @@ struct GitHeadInfo {
     date: String,
 }
 
-fn command_git_head() -> GitHeadInfo {
-    let cli = |args: &[&str]| {
+struct GitCommandExecutor<'a> {
+    path: &'a Path,
+}
+
+impl Default for GitCommandExecutor<'_> {
+    fn default() -> Self {
+        Self::new(Path::new("."))
+    }
+}
+
+impl<'a> GitCommandExecutor<'a> {
+    fn new(path: &'a Path) -> Self {
+        GitCommandExecutor { path }
+    }
+
+    fn exec(&self, args: &[&str]) -> Option<String> {
         Command::new("git")
+            .current_dir(self.path)
             .args(args)
             .output()
-            .map(|x| String::from_utf8(x.stdout).ok())
-            .map(|x| x.map(|x| x.trim().to_string()))
-            .unwrap_or_default()
-            .unwrap_or_default()
-    };
+            .map(|x| {
+                String::from_utf8(x.stdout)
+                    .map(|x| x.trim().to_string())
+                    .ok()
+            })
+            .unwrap_or(None)
+    }
+}
+
+fn command_git_head() -> GitHeadInfo {
+    let cli = |args: &[&str]| GitCommandExecutor::default().exec(args).unwrap_or_default();
     GitHeadInfo {
         commit: cli(&["rev-parse", "HEAD"]),
         short_commit: cli(&["rev-parse", "--short", "HEAD"]),
@@ -451,34 +472,21 @@ fn command_git_head() -> GitHeadInfo {
 
 /// Command exec git current tag
 fn command_current_tag() -> Option<String> {
-    Command::new("git")
-        .args(["tag", "-l", "--contains", "HEAD"])
-        .output()
-        .map(|x| String::from_utf8(x.stdout).ok())
-        .map(|x| x.map(|x| x.trim().to_string()))
-        .unwrap_or(None)
+    GitCommandExecutor::default().exec(&["tag", "-l", "--contains", "HEAD"])
 }
 
 /// git describe --tags --abbrev=0 HEAD
 /// Command exec git last tag
 fn command_last_tag() -> Option<String> {
-    Command::new("git")
-        .args(["describe", "--tags", "--abbrev=0", "HEAD"])
-        .output()
-        .map(|x| String::from_utf8(x.stdout).ok())
-        .map(|x| x.map(|x| x.trim().to_string()))
-        .unwrap_or(None)
+    GitCommandExecutor::default().exec(&["describe", "--tags", "--abbrev=0", "HEAD"])
 }
 
 /// git clean:git status --porcelain
 /// check repository git status is clean
 fn command_git_clean() -> bool {
-    Command::new("git")
-        .args(["status", "--porcelain"])
-        .output()
-        .map(|x| String::from_utf8(x.stdout).ok())
-        .map(|x| x.map(|x| x.trim().to_string()))
-        .map(|x| x.is_none() || x.map(|y| y.is_empty()).unwrap_or_default())
+    GitCommandExecutor::default()
+        .exec(&["status", "--porcelain"])
+        .map(|x| x.is_empty())
         .unwrap_or(true)
 }
 
@@ -532,12 +540,11 @@ fn command_git_status_file() -> String {
 
 /// Command exec git current branch
 fn command_current_branch() -> Option<String> {
-    Command::new("git")
-        .args(["symbolic-ref", "--short", "HEAD"])
-        .output()
-        .map(|x| String::from_utf8(x.stdout).ok())
-        .map(|x| x.map(|x| x.trim().to_string()))
-        .unwrap_or(None)
+    find_branch_in(Path::new("."))
+}
+
+fn find_branch_in(path: &Path) -> Option<String> {
+    GitCommandExecutor::new(path).exec(&["symbolic-ref", "--short", "HEAD"])
 }
 
 fn filter_git_dirty_stage(dirty_files: Vec<String>, staged_files: Vec<String>) -> String {
