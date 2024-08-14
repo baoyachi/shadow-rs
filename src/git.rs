@@ -106,7 +106,9 @@ impl Git {
 
     fn init(&mut self, path: &Path, std_env: &BTreeMap<String, String>) -> SdResult<()> {
         // First, try executing using the git command.
-        self.init_git()?;
+        if let Err(err) = self.init_git() {
+            println!("{err}");
+        }
 
         // If the git2 feature is enabled, then replace the corresponding values with git2.
         self.init_git2(path)?;
