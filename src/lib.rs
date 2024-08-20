@@ -453,7 +453,7 @@ impl Shadow {
         let define = match val.t {
             ConstType::Str => format!(
                 "#[allow(dead_code)]\n\
-                #[allow(clippy::all)]\n\
+                #[allow(clippy::all,clippy::pedantic)]\n\
             pub const {} :{} = r#\"{}\"#;",
                 shadow_const.to_ascii_uppercase(),
                 ConstType::Str,
