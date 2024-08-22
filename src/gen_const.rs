@@ -102,8 +102,8 @@ mod tests {
 
     #[test]
     fn test_version_fn() {
-        assert!(version_tag_const().contains(VERSION_TAG_CONST));
-        assert!(clap_version_branch_const().contains(CLAP_VERSION_BRANCH_CONST));
-        assert!(clap_long_version_branch_const().contains(CLAP_LONG_VERSION_BRANCH_CONST));
+        assert!(version_tag_const().contains(VERSION_TAG_CONST.0));
+        assert!(clap_version_branch_const().contains(CLAP_VERSION_BRANCH_CONST.1));
+        assert!(clap_long_version_branch_const().contains(CLAP_LONG_VERSION_BRANCH_CONST.1));
     }
 }
