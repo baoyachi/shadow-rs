@@ -9,7 +9,6 @@ use std::process::{Command, Stdio};
 
 const BRANCH_DOC: &str = r#"
 The name of the Git branch that this project was built from.
-
 This constant will be empty if the branch cannot be determined."#;
 pub const BRANCH: ShadowConst = "BRANCH";
 const TAG_DOC: &str = r#"
