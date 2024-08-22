@@ -11,6 +11,7 @@ const VERSION_BRANCH_CONST: &str = r##"
 /// The version string contains the package version, branch, commit hash, build time, and build environment on separate lines.
 /// This constant is suitable for printing to the user.
 #[allow(dead_code)]
+#[allow(clippy::all, clippy::pedantic, clippy::restriction, clippy::nursery)]
 pub const VERSION:&str = shadow_rs::formatcp!(r#"
 pkg_version:{}
 branch:{}
@@ -24,6 +25,7 @@ const VERSION_TAG_CONST: &str = r##"
 /// The version string contains the package version, current Git tag, commit hash, build time, and build environment on separate lines.
 /// This constant is suitable for printing to the user.
 #[allow(dead_code)]
+#[allow(clippy::all, clippy::pedantic, clippy::restriction, clippy::nursery)]
 pub const VERSION:&str = shadow_rs::formatcp!(r#"
 pkg_version:{}
 tag:{}
@@ -33,6 +35,7 @@ build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST
 );"##;
 
 const CLAP_VERSION_BRANCH_CONST: &str = r##"#[allow(dead_code,missing_docs)]
+#[allow(clippy::all, clippy::pedantic, clippy::restriction, clippy::nursery)]
 #[deprecated = "Replaced with `CLAP_LONG_VERSION`"]
 pub const CLAP_VERSION:&str = shadow_rs::formatcp!(r#"{}
 branch:{}
@@ -42,6 +45,7 @@ build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, R
 );"##;
 
 const CLAP_VERSION_TAG_CONST: &str = r##"#[allow(dead_code,missing_docs)]
+#[allow(clippy::all, clippy::pedantic, clippy::restriction, clippy::nursery)]
 #[deprecated = "Replaced with `CLAP_LONG_VERSION`"]
 pub const CLAP_VERSION:&str = shadow_rs::formatcp!(r#"{}
 tag:{}
@@ -55,6 +59,7 @@ const CLAP_LONG_VERSION_BRANCH_CONST: &str = r##"
 /// The version string contains the package version, branch, commit hash, build time, and build environment on separate lines.
 /// This constant is intended to be used by clap or other CLI tools as a long version string.
 #[allow(dead_code)]
+#[allow(clippy::all, clippy::pedantic, clippy::restriction, clippy::nursery)]
 pub const CLAP_LONG_VERSION:&str = shadow_rs::formatcp!(r#"{}
 branch:{}
 commit_hash:{}
@@ -67,6 +72,7 @@ const CLAP_LONG_VERSION_TAG_CONST: &str = r##"
 /// The version string contains the package version, current Git tag, commit hash, build time, and build environment on separate lines.
 /// This constant is intended to be used by clap or other CLI tools as a long version string.
 #[allow(dead_code)]
+#[allow(clippy::all, clippy::pedantic, clippy::restriction, clippy::nursery)]
 pub const CLAP_LONG_VERSION:&str = shadow_rs::formatcp!(r#"{}
 tag:{}
 commit_hash:{}

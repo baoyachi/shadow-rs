@@ -4,6 +4,7 @@ use shadow_rs::{shadow, Format};
 
 shadow!(build);
 
+#[allow(clippy::all, clippy::pedantic, clippy::restriction, clippy::nursery)]
 fn main() {
     let local_time = shadow_rs::DateTime::now().human_format();
     println!("{local_time}");
@@ -25,6 +26,7 @@ fn main() {
 }
 
 #[allow(dead_code)]
+#[allow(clippy::all, clippy::pedantic, clippy::restriction, clippy::nursery)]
 pub fn print_build() {
     println!("version:{}", build::VERSION);
     println!("version:{}", build::CLAP_LONG_VERSION);
