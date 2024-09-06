@@ -9,7 +9,7 @@ build = "build.rs"
 
 [dependencies]
 clap = "4.0.1"
-shadow-rs = { path = "../" }
+shadow-rs = { path = "../",features = ["metadata"] }
 
 [build-dependencies]
 shadow-rs = { path = "../" }

@@ -57,4 +57,6 @@ pub fn print_build() {
     println!("build_time_2822:{}", build::BUILD_TIME_2822);
     println!("build_time_3339:{}", build::BUILD_TIME_3339);
     println!("build_rust_channel:{}", build::BUILD_RUST_CHANNEL);
+
+    println!("{:?}", build::cargo_metadata().unwrap())
 }
