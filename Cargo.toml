@@ -1,6 +1,6 @@
 [package]
 name = "shadow-rs"
-version = "0.35.0"
+version = "0.35.1"
 authors = ["baoyachi <liaoymxsdl@gmail.com>"]
 edition = "2021"
 description = "A build-time information stored in your rust project"
