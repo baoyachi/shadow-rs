@@ -2,7 +2,7 @@ use crate::build::*;
 use crate::date_time::now_date_time;
 use crate::env::dep_source_replace::filter_cargo_tree;
 use crate::err::SdResult;
-use crate::Format;
+use crate::{Format, Shadow};
 use is_debug::build_channel;
 use std::collections::BTreeMap;
 use std::env;
@@ -85,7 +85,8 @@ The project's semver pre-release version, as determined by the Cargo.toml manife
 pub const PKG_VERSION_PRE: ShadowConst = "PKG_VERSION_PRE";
 
 impl SystemEnv {
-    fn init(&mut self, std_env: &BTreeMap<String, String>) -> SdResult<()> {
+    fn init(&mut self, shadow: &Shadow) -> SdResult<()> {
+        let std_env = &shadow.std_env;
         let mut update_val = |c: ShadowConst, v: String| {
             if let Some(val) = self.map.get_mut(c) {
                 val.v = v;
@@ -110,23 +111,42 @@ impl SystemEnv {
             );
         }
 
-        if let Ok(out) = Command::new("cargo").arg("tree").output() {
-            let input = String::from_utf8(out.stdout)?;
-            if let Some(index) = input.find('\n') {
-                let lines =
-                    filter_cargo_tree(input.get(index..).unwrap_or_default().split('\n').collect());
-                update_val(CARGO_TREE, lines);
+        // If the build constant `CARGO_TREE` is not in the deny list,
+        // See discussions and issues related to this functionality:
+        // - https://github.com/baoyachi/shadow-rs/issues/184
+        // - https://github.com/baoyachi/shadow-rs/issues/135
+        // - https://github.com/rust-lang/cargo/issues/12195
+        // - https://doc.rust-lang.org/nightly/cargo/reference/unstable.html#lockfile-path
+        if !shadow.deny_contains(CARGO_TREE) {
+            if let Ok(out) = Command::new("cargo").arg("tree").output() {
+                let input = String::from_utf8(out.stdout)?;
+                if let Some(index) = input.find('\n') {
+                    let lines = filter_cargo_tree(
+                        input.get(index..).unwrap_or_default().split('\n').collect(),
+                    );
+                    update_val(CARGO_TREE, lines);
+                }
             }
         }
 
-        if let Ok(out) = Command::new("cargo")
-            .args(["metadata", "--format-version", "1"])
-            .output()
-        {
-            update_val(
-                CARGO_METADATA,
-                String::from_utf8(out.stdout)?.trim().to_string(),
-            );
+        // If the build constant `CARGO_METADATA` is not in the deny list,
+        // See discussions and issues related to this functionality:
+        // - https://github.com/baoyachi/shadow-rs/issues/184
+        // - https://github.com/baoyachi/shadow-rs/issues/135
+        // - https://github.com/rust-lang/cargo/issues/12195
+        // - https://doc.rust-lang.org/nightly/cargo/reference/unstable.html#lockfile-path
+        if !shadow.deny_contains(CARGO_METADATA) {
+            // Attempt to run the `cargo metadata --format-version 1` command.
+            if let Ok(output) = Command::new("cargo")
+                .args(["metadata", "--format-version", "1"])
+                .output()
+            {
+                // If successful, parse the output and update the value associated with `CARGO_METADATA`.
+                update_val(
+                    CARGO_METADATA,
+                    String::from_utf8(output.stdout)?.trim().to_string(),
+                );
+            }
         }
 
         if let Some(v) = std_env.get("TARGET") {
@@ -247,9 +267,7 @@ mod dep_source_replace {
 
 /// Create all `shadow-rs` constants which are determined by the build environment.
 /// The data for these constants is provided by the `std_env` argument.
-pub(crate) fn new_system_env(
-    std_env: &BTreeMap<String, String>,
-) -> BTreeMap<ShadowConst, ConstVal> {
+pub(crate) fn new_system_env(shadow: &Shadow) -> BTreeMap<ShadowConst, ConstVal> {
     let mut env = SystemEnv::default();
     env.map.insert(
         BUILD_OS,
@@ -270,11 +288,6 @@ pub(crate) fn new_system_env(
         .insert(CARGO_VERSION, ConstVal::new(CARGO_VERSION_DOC));
 
     env.map.insert(CARGO_TREE, ConstVal::new(CARGO_TREE_DOC));
-
-    // env.map.insert(
-    //     CARGO_METADATA,
-    //     ConstVal::new("display build cargo dependencies by metadata.It's use by exec command `cargo metadata`"),
-    // );
 
     env.map
         .insert(BUILD_TARGET, ConstVal::new(BUILD_TARGET_DOC));
@@ -298,7 +311,7 @@ pub(crate) fn new_system_env(
     env.map
         .insert(CARGO_MANIFEST_DIR, ConstVal::new(CARGO_MANIFEST_DIR_DOC));
 
-    if let Err(e) = env.init(std_env) {
+    if let Err(e) = env.init(shadow) {
         println!("{e}");
     }
     env.map

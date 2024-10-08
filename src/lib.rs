@@ -319,7 +319,7 @@ pub struct Shadow {
     pub map: BTreeMap<ShadowConst, ConstVal>,
     /// Build environment variables, obtained through [`std::env::vars`].
     pub std_env: BTreeMap<String, String>,
-    /// Constants in the denylist, passed through [`new_deny`] or [`Shadow::build`].
+    /// Constants in the deny list, passed through [`new_deny`] or [`Shadow::build`].
     pub deny_const: BTreeSet<ShadowConst>,
 }
 
@@ -353,6 +353,17 @@ impl Shadow {
         }
 
         CiType::None
+    }
+
+    /// Checks if the specified build constant is in the deny list.
+    ///
+    /// # Arguments
+    /// * `deny_const` - A value of type `ShadowConst` representing the build constant to check.
+    ///
+    /// # Returns
+    /// * `true` if the build constant is present in the deny list; otherwise, `false`.
+    pub fn deny_contains(&self, deny_const: ShadowConst) -> bool {
+        self.deny_const.contains(&deny_const)
     }
 
     /// Create a new [`Shadow`] configuration with a provided denylist.
@@ -392,7 +403,7 @@ impl Shadow {
         for (k, v) in new_project(&shadow.std_env) {
             map.insert(k, v);
         }
-        for (k, v) in new_system_env(&shadow.std_env) {
+        for (k, v) in new_system_env(&shadow) {
             map.insert(k, v);
         }
         shadow.map = map;
