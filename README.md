@@ -195,14 +195,3 @@ the documentation where it may be unclear.
 
 If you are using `shadow-rs`, please tell me! Or instead, consider making a note
 here: [Shadow Users Collection](https://github.com/baoyachi/shadow-rs/issues/19).
-
-<table>
-  <tr>
-    <td align="center"><a href="https://github.com/nushell/nushell"><img src="https://avatars3.githubusercontent.com/u/50749515?s=200&v=4" width="100px;" alt="nushell"/><br /><sub><b>nushell</b></sub></a><br /></td>
-    <td align="center"><a href="https://github.com/starship/starship"><img src="https://raw.githubusercontent.com/starship/starship/master/media/icon.png?s=200&v=4" width="100px;" alt="starship"/><br /><sub><b>starship</b></sub></a><br /></td>
-    <td align="center"><a href="https://github.com/appaquet/exocore">exocore<br /><sub><b>exocore</b></sub></a><br /></td>
-    <td align="center"><a href="https://github.com/BaguaSys/bagua-core"><img src="https://avatars.githubusercontent.com/u/84775468?s=200&v=4" width="100px;" alt="starship"/><br /><sub><b>bagua-core</b></sub></a><br /></td>
-    <td align="center"><a href="https://github.com/alibaba/inclavare-containers"><img src="https://avatars.githubusercontent.com/u/1961952?s=200&v=4" width="100px;" alt="starship"/><br /><sub><b>inclavare-containers</b></sub></a><br /></td>
-
-  </tr>
-</table>
