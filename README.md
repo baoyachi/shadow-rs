@@ -24,12 +24,16 @@
 * Git information, such as the commit that produced the build artifact
 * What version of the Rust toolchain was used in compilation
 * The build variant, e.g. `debug` or `release`
-* ... And more!
+* ... And more! 
+
+Strongly recommend using **shadow-rs** on the [LSP](https://microsoft.github.io/language-server-protocol/) service developed in Rust.
 
 You can use this crate to programmatically check where a binary came from and how it was built.
 
 Currently, integration into **wasm** is also supported. For detailed settings, please refer to the
 link [example_wasm](https://github.com/baoyachi/shadow-rs/tree/master/example_wasm).
+
+
 
 ![build_module](./build_module.png)
 
