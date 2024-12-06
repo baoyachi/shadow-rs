@@ -1,4 +1,4 @@
-[`shadow-rs`][docsrs]: Build-time information stored in your Rust project (binary, lib, cdylib, dylib).
+[`shadow-rs`][docsrs]: Build-time information stored in your Rust project (binary, lib, cdylib, dylib,wasm).
 ========================================
 <p align="center">
   <img
