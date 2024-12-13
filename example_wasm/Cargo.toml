@@ -11,3 +11,7 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 shadow-rs = { path = "../", default-features = false, features = ["tzdb"] }
+
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
