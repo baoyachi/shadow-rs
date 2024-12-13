@@ -18,7 +18,7 @@ exclude = ["shadow-rs.png", "build_module.png"]
 all-features = true
 
 [dependencies]
-is_debug = "1.0.1"
+is_debug = "1.0.2"
 const_format = { version = "0.2.22", default-features = false }
 time = { version = "0.3.36", features = ["formatting", "local-offset", "parsing"], default-features = false }
 
