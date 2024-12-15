@@ -81,7 +81,7 @@ const CLAP_LONG_VERSION_TAG_CONST: (&str, &str) = (
 tag:{}
 commit_hash:{}
 build_time:{}
-build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST_CHANNEL
+build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME_2822, RUST_VERSION, RUST_CHANNEL
 );"##,
 );
 
