@@ -15,7 +15,6 @@ pub fn now_date_time() -> DateTime {
     // `SOURCE_DATE_EPOCH` env variable.
     //
     // https://reproducible-builds.org/docs/source-date-epoch/
-    println!("cargo:rerun-if-env-changed=SOURCE_DATE_EPOCH");
     match std::env::var_os("SOURCE_DATE_EPOCH") {
         None => DateTime::now(),
         Some(timestamp) => {

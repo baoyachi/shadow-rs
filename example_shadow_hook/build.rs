@@ -1,9 +1,9 @@
-use shadow_rs::SdResult;
+use shadow_rs::{SdResult, ShadowBuilder};
 use std::fs::File;
 use std::io::Write;
 
-fn main() -> SdResult<()> {
-    shadow_rs::new_hook(hook)
+fn main() {
+    ShadowBuilder::builder().hook(hook).build().unwrap();
 }
 
 fn hook(file: &File) -> SdResult<()> {

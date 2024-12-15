@@ -1,5 +1,8 @@
-fn main() -> shadow_rs::SdResult<()> {
-    // shadow_rs::new()
+use shadow_rs::ShadowBuilder;
 
-    shadow_rs::new_deny(Default::default())
+fn main() {
+    ShadowBuilder::builder()
+        .deny_const(Default::default())
+        .build()
+        .unwrap();
 }
