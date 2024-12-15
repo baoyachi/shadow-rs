@@ -37,12 +37,16 @@ link [example_wasm](https://github.com/baoyachi/shadow-rs/tree/master/example_wa
 
 ![build_module](./build_module.png)
 
-# Note on Caching
+# BuildPattern
+The BuildPattern enum defines strategies for triggering package rebuilding. **Default mode is `Lazy`**.
 
-`shadow-rs` build information **is not always rebuilt** when you build a project. `shadow-rs` outputs several hints to
-Cargo in order to force rebuilds when required, but this does not always work. You can enforce up-to-date build
-information by running `cargo clean` before the build, or use a CI/CD pipeline tool. For more details,
-see <https://github.com/baoyachi/shadow-rs/issues/95>.
+* `Lazy`: The lazy mode. In this mode, if the current Rust environment is set to `debug`,
+  the rebuild package will not run every time the build script is triggered.
+  If the environment is set to `release`, it behaves the same as the `RealTime` mode.
+* `RealTime`: The real-time mode. It will always trigger rebuilding a package upon any change,
+  regardless of whether the Rust environment is set to `debug` or `release`.
+* `Custom`: The custom build mode, an enhanced version of `RealTime` mode, allowing for user-defined conditions
+  to trigger rebuilding a package.
 
 # Examples
 
@@ -80,8 +84,8 @@ shadow-rs = "{latest version}"
 Now in the root of your project (same directory as `Cargo.toml`) add a file `build.rs`:
 
 ```rust
-fn main() -> shadow_rs::SdResult<()> {
-    shadow_rs::new()
+fn main() {
+  ShadowBuilder::builder().build().unwrap();
 }
 ```
 

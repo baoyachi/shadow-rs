@@ -38,8 +38,10 @@
 //! Now in the root of your project (same directory as `Cargo.toml`) add a file `build.rs`:
 //!
 //! ```ignore
-//! fn main() -> shadow_rs::SdResult<()> {
-//!     shadow_rs::new()
+//! fn main() {
+//!     ShadowBuilder::builder()
+//!         .build_pattern(BuildPattern::RealTime)
+//!         .build().unwrap();
 //! }
 //! ```
 //!
@@ -179,7 +181,7 @@ use crate::gen_const::{
 };
 pub use err::{SdResult, ShadowError};
 
-use crate::build::{BuildPattern, ShadowBuilder};
+pub use crate::build::{BuildPattern, ShadowBuilder};
 use crate::hook::HookExt;
 pub use {build::ShadowConst, env::*, git::*};
 
@@ -229,8 +231,11 @@ macro_rules! shadow {
 ///    shadow_rs::new()
 /// }
 /// ```
+#[deprecated(
+    since = "0.37.0",
+    note = "Please use  [`ShadowBuilder::builder`] instead"
+)]
 pub fn new() -> SdResult<()> {
-    // Shadow::build(default_deny())?;
     ShadowBuilder::builder().build()?;
     Ok(())
 }
@@ -266,8 +271,11 @@ pub fn default_deny() -> BTreeSet<ShadowConst> {
 ///    shadow_rs::new_deny(deny)
 /// }
 /// ```
+#[deprecated(
+    since = "0.37.0",
+    note = "Please use  [`ShadowBuilder::builder`] instead"
+)]
 pub fn new_deny(deny_const: BTreeSet<ShadowConst>) -> SdResult<()> {
-    // Shadow::build(deny_const)?;
     ShadowBuilder::builder().deny_const(deny_const).build()?;
     Ok(())
 }
@@ -295,12 +303,14 @@ pub fn new_deny(deny_const: BTreeSet<ShadowConst>) -> SdResult<()> {
 ///
 /// ```
 ///
+#[deprecated(
+    since = "0.37.0",
+    note = "Please use  [`ShadowBuilder::builder`] instead"
+)]
 pub fn new_hook<F>(f: F) -> SdResult<()>
 where
     F: HookExt,
 {
-    // let shadow = Shadow::build(f.default_deny())?;
-    // shadow.hook(f.hook_inner())
     ShadowBuilder::builder()
         .deny_const(f.default_deny())
         .hook(f.hook_inner())
@@ -319,19 +329,65 @@ pub(crate) fn get_std_env() -> BTreeMap<String, String> {
 
 /// `shadow-rs` configuration.
 ///
-/// If you use the recommended utility functions [`new`], [`new_deny`], or [`new_hook`], you do not have to handle [`Shadow`] configurations themselves.
-/// However, this struct provides more fine-grained access to `shadow-rs` configuration, such as using a denylist and a hook function at the same time.
+/// This struct encapsulates the configuration for the `shadow-rs` build process. It allows for fine-grained control over
+/// various aspects of the build, including file output, build constants, environment variables, deny lists, and build patterns.
+///
+/// While it is possible to construct a [`Shadow`] instance manually, it is highly recommended to use the [`ShadowBuilder`] builder pattern structure
+/// provided by `shadow-rs`. The builder pattern simplifies the setup process and ensures that all necessary configurations are properly set up,
+/// allowing you to customize multiple aspects simultaneously, such as using a denylist and a hook function at the same time.
+///
+/// # Fields
+///
+/// * `f`: The file that `shadow-rs` writes build information to. This file will contain serialized build constants and other metadata.
+/// * `map`: A map of build constant identifiers to their corresponding `ConstVal`. These are the values that will be written into the file.
+/// * `std_env`: A map of environment variables obtained through [`std::env::vars`]. These variables can influence the build process.
+/// * `deny_const`: A set of build constant identifiers that should be excluded from the build process. This can be populated via [`ShadowBuilder::deny_const`].
+/// * `out_path`: The path where the generated files will be placed. This is usually derived from the `OUT_DIR` environment variable but can be customized via [`ShadowBuilder::out_path`].
+/// * `build_pattern`: Determines the strategy for triggering package rebuilds (`Lazy`, `RealTime`, or `Custom`). This affects when Cargo will rerun the build script and can be configured via [`ShadowBuilder::build_pattern`].
+///
+/// # Example
+///
+/// ```rust
+/// use std::collections::BTreeSet;
+/// use shadow_rs::{ShadowBuilder, BuildPattern, CARGO_TREE, CARGO_METADATA};
+///
+/// ShadowBuilder::builder()
+///    .build_pattern(BuildPattern::RealTime)
+///    .deny_const(BTreeSet::from([CARGO_TREE, CARGO_METADATA]))
+///    .build().unwrap();
+/// ```
+///
 #[derive(Debug)]
 pub struct Shadow {
     /// The file that `shadow-rs` writes build information to.
+    ///
+    /// This file will contain all the necessary information about the build, including serialized build constants and other metadata.
     pub f: File,
+
     /// The values of build constants to be written.
+    ///
+    /// This is a mapping from `ShadowConst` identifiers to their corresponding `ConstVal` objects. Each entry in this map represents a build constant that will be included in the final build.
     pub map: BTreeMap<ShadowConst, ConstVal>,
+
     /// Build environment variables, obtained through [`std::env::vars`].
+    ///
+    /// These environment variables can affect the build process and are captured here for consistency and reproducibility.
     pub std_env: BTreeMap<String, String>,
-    /// Constants in the deny list, passed through [`new_deny`] or [`Shadow::build`].
+
+    /// Constants in the deny list, passed through [`ShadowBuilder::deny_const`].
+    ///
+    /// This set contains build constant identifiers that should be excluded from the build process. By specifying these, you can prevent certain constants from being written into the build file.
     pub deny_const: BTreeSet<ShadowConst>,
 
+    /// The output path where generated files will be placed.
+    ///
+    /// This specifies the directory where the build script will write its output. It's typically set using the `OUT_DIR` environment variable but can be customized using [`ShadowBuilder::out_path`].
+    pub out_path: String,
+
+    /// Determines the strategy for triggering package rebuilds.
+    ///
+    /// This field sets the pattern for how often the package should be rebuilt. Options include `Lazy`, `RealTime`, and `Custom`, each with its own implications on the build frequency and conditions under which a rebuild is triggered.
+    /// It can be configured using [`ShadowBuilder::build_pattern`].
     pub build_pattern: BuildPattern,
 }
 
@@ -380,14 +436,18 @@ impl Shadow {
 
     /// Create a new [`Shadow`] configuration with a provided denylist.
     /// The project source path and output file are automatically derived from Cargo build environment variables.
+    #[deprecated(
+        since = "0.37.0",
+        note = "Please use  [`ShadowBuilder::builder`] instead"
+    )]
     pub fn build(deny_const: BTreeSet<ShadowConst>) -> SdResult<Shadow> {
-        // let src_path = std::env::var("CARGO_MANIFEST_DIR")?;
-        // let out_path = std::env::var("OUT_DIR")?;
-        // Self::build_with(src_path, out_path, deny_const)
-
         ShadowBuilder::builder().deny_const(deny_const).build()
     }
 
+    #[deprecated(
+        since = "0.37.0",
+        note = "Please use  [`ShadowBuilder::builder`] instead"
+    )]
     pub fn build_with(
         src_path: String,
         out_path: String,
@@ -420,6 +480,7 @@ impl Shadow {
             map: Default::default(),
             std_env: Default::default(),
             deny_const,
+            out_path: out_path.to_string(),
             build_pattern,
         };
         shadow.std_env = get_std_env();
@@ -469,6 +530,10 @@ impl Shadow {
     }
 
     /// Request Cargo to re-run the build script if any environment variable observed by this [`Shadow`] configuration changes.
+    #[deprecated(
+        since = "0.37.0",
+        note = "Please use  [`ShadowBuilder::build_pattern`] instead"
+    )]
     pub fn cargo_rerun_if_env_changed(&self) {
         for k in self.std_env.keys() {
             println!("cargo:rerun-if-env-changed={k}");
@@ -477,6 +542,10 @@ impl Shadow {
 
     /// Request Cargo to re-run the build script if any of the specified environment variables change.
     /// This function is not influenced by this [`Shadow`] configuration.
+    #[deprecated(
+        since = "0.37.0",
+        note = "Please use  [`ShadowBuilder::build_pattern`] instead"
+    )]
     pub fn cargo_rerun_env_inject(&self, env: &[&str]) {
         for k in env {
             println!("cargo:rerun-if-env-changed={}", *k);
@@ -484,8 +553,10 @@ impl Shadow {
     }
 
     fn gen_const(&mut self) -> SdResult<()> {
+        let out_dir = &self.out_path;
+        self.build_pattern.rerun_if(self.map.keys(), out_dir);
+
         for (k, v) in self.map.clone() {
-            println!("cargo:rerun-if-env-changed={k}");
             self.write_const(k, v)?;
         }
         Ok(())
