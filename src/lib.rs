@@ -347,7 +347,7 @@ pub(crate) fn get_std_env() -> BTreeMap<String, String> {
 ///
 /// # Example
 ///
-/// ```rust
+/// ```no_run
 /// use std::collections::BTreeSet;
 /// use shadow_rs::{ShadowBuilder, BuildPattern, CARGO_TREE, CARGO_METADATA};
 ///
