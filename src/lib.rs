@@ -686,7 +686,10 @@ mod tests {
 
     #[test]
     fn test_build() -> SdResult<()> {
-        Shadow::build_with("./".into(), "./".into(), Default::default())?;
+        ShadowBuilder::builder()
+            .src_path("./")
+            .out_path("./")
+            .build()?;
         let shadow = fs::read_to_string("./shadow.rs")?;
         assert!(!shadow.is_empty());
         assert!(shadow.lines().count() > 0);
@@ -695,13 +698,16 @@ mod tests {
 
     #[test]
     fn test_build_deny() -> SdResult<()> {
-        let mut deny = BTreeSet::new();
-        deny.insert(CARGO_TREE);
-        Shadow::build_with("./".into(), "./".into(), deny)?;
+        ShadowBuilder::builder()
+            .src_path("./")
+            .out_path("./")
+            .deny_const(BTreeSet::from([CARGO_TREE]))
+            .build()?;
+
         let shadow = fs::read_to_string("./shadow.rs")?;
         assert!(!shadow.is_empty());
         assert!(shadow.lines().count() > 0);
-        println!("{shadow}");
+        // println!("{shadow}");
         let expect = "pub const CARGO_TREE :&str";
         assert!(!shadow.contains(expect));
         Ok(())
