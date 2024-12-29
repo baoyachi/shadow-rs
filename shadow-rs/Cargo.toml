@@ -21,7 +21,8 @@ all-features = true
 is_debug = "1.0.2"
 const_format = { version = "0.2.22", default-features = false }
 time = { version = "0.3.36", features = ["formatting", "local-offset", "parsing"], default-features = false }
-
+#TODO: not sure how to bootstrap this, but once shadow-rs-consumer is published on crates.io, this dep should point to that version
+shadow-rs-consumer = { path = "../shadow-rs-consumer"}
 
 #! Optional Dependencies:
 
