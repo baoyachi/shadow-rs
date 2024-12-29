@@ -7,4 +7,8 @@ members = [
     "example_wasm",
 ]
 
+exclude = [
+    "example_no_std"
+]
+
 resolver = "2"

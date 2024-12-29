@@ -174,10 +174,11 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
+#[cfg(feature = "std")]
 use crate::gen_const::{
-    cargo_metadata_fn, clap_long_version_branch_const, clap_long_version_tag_const,
-    clap_version_branch_const, clap_version_tag_const, version_branch_const, version_tag_const,
-    BUILD_CONST_CLAP_LONG_VERSION, BUILD_CONST_VERSION,
+    clap_long_version_branch_const, clap_long_version_tag_const, clap_version_branch_const,
+    clap_version_tag_const, version_branch_const, version_tag_const, BUILD_CONST_CLAP_LONG_VERSION,
+    BUILD_CONST_VERSION,
 };
 pub use err::{SdResult, ShadowError};
 
@@ -185,7 +186,12 @@ pub use crate::build::{BuildPattern, ShadowBuilder};
 use crate::hook::HookExt;
 pub use {build::ShadowConst, env::*, git::*};
 
-pub use shadow_rs_consumer::shadow;
+pub use shadow_rs_consumer;
+
+#[cfg(feature = "std")]
+use crate::gen_const::cargo_metadata_fn;
+#[cfg(feature = "std")]
+pub use shadow_rs_consumer::{formatcp, shadow};
 
 pub trait Format {
     fn human_format(&self) -> String;
@@ -195,7 +201,6 @@ const SHADOW_RS: &str = "shadow.rs";
 
 pub const CARGO_CLIPPY_ALLOW_ALL: &str =
     "#[allow(clippy::all, clippy::pedantic, clippy::restriction, clippy::nursery)]";
-
 
 /// Generates build information for the current project.
 /// This function must be called from `build.rs`.
@@ -502,8 +507,10 @@ impl Shadow {
         self.gen_const()?;
 
         //write version function
+        #[cfg(feature = "std")]
         let gen_version = self.gen_version()?;
 
+        #[cfg(feature = "std")]
         self.gen_build_in(gen_version)?;
 
         Ok(())
@@ -555,7 +562,9 @@ impl Shadow {
     }
 
     fn gen_use_shadow_consumer(&self) -> SdResult<()> {
-        writeln!(&self.f, "use shadow_rs::formatcp;")?;
+        #[cfg(feature = "std")]
+        writeln!(&self.f, "use shadow_rs::shadow_rs_consumer;")?;
+
         Ok(())
     }
 
@@ -596,6 +605,7 @@ impl Shadow {
         Ok(())
     }
 
+    #[cfg(feature = "std")]
     fn gen_version(&mut self) -> SdResult<Vec<&'static str>> {
         let (ver_fn, clap_ver_fn, clap_long_ver_fn) = match self.map.get(TAG) {
             None => (
@@ -626,6 +636,7 @@ impl Shadow {
         Ok(vec![BUILD_CONST_VERSION, BUILD_CONST_CLAP_LONG_VERSION])
     }
 
+    #[cfg(feature = "std")]
     fn gen_build_in(&self, gen_const: Vec<&'static str>) -> SdResult<()> {
         let mut print_val = String::from("\n");
 

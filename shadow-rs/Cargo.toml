@@ -38,8 +38,9 @@ cargo_metadata = { version = "0.18.1", optional = true, default-features = false
 serde_json = { version = "1", default-features = false, optional = true }
 
 [features]
-default = ["git2", "tzdb"]
+default = ["std", "git2", "tzdb"]
 metadata = ["cargo_metadata", "serde_json"]
+std = []
 
 [dev-dependencies]
 winnow = "0.6"
