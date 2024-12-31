@@ -189,7 +189,7 @@ pub trait Format {
     fn human_format(&self) -> String;
 }
 
-const SHADOW_RS: &str = "shadow.rs";
+const DEFINE_SHADOW_RS: &str = "shadow.rs";
 
 pub const CARGO_CLIPPY_ALLOW_ALL: &str =
     "#[allow(clippy::all, clippy::pedantic, clippy::restriction, clippy::nursery)]";
@@ -469,9 +469,9 @@ impl Shadow {
         let out = {
             let path = Path::new(out_path);
             if !out_path.ends_with('/') {
-                path.join(format!("{out_path}/{SHADOW_RS}"))
+                path.join(format!("{out_path}/{DEFINE_SHADOW_RS}"))
             } else {
-                path.join(SHADOW_RS)
+                path.join(DEFINE_SHADOW_RS)
             }
         };
 
@@ -690,7 +690,7 @@ mod tests {
             .src_path("./")
             .out_path("./")
             .build()?;
-        let shadow = fs::read_to_string("./shadow.rs")?;
+        let shadow = fs::read_to_string(DEFINE_SHADOW_RS)?;
         assert!(!shadow.is_empty());
         assert!(shadow.lines().count() > 0);
         Ok(())
@@ -704,7 +704,7 @@ mod tests {
             .deny_const(BTreeSet::from([CARGO_TREE]))
             .build()?;
 
-        let shadow = fs::read_to_string("./shadow.rs")?;
+        let shadow = fs::read_to_string(DEFINE_SHADOW_RS)?;
         assert!(!shadow.is_empty());
         assert!(shadow.lines().count() > 0);
         // println!("{shadow}");
