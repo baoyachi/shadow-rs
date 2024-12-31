@@ -1,5 +1,6 @@
+use crate::date_time::DEFINE_SOURCE_DATE_EPOCH;
 use crate::hook::HookExt;
-use crate::{default_deny, SdResult, Shadow};
+use crate::{default_deny, SdResult, Shadow, DEFINE_SHADOW_RS};
 use is_debug::is_debug;
 use std::collections::BTreeSet;
 use std::fmt::{Display, Formatter};
@@ -128,8 +129,8 @@ impl BuildPattern {
         }
 
         other_keys.for_each(|key| println!("cargo:rerun-if-env-changed={key}"));
-        println!("cargo:rerun-if-env-changed=SOURCE_DATE_EPOCH");
-        println!("cargo:rerun-if-changed={}/shadow.rs", out_dir);
+        println!("cargo:rerun-if-env-changed={}", DEFINE_SOURCE_DATE_EPOCH);
+        println!("cargo:rerun-if-changed={}/{}", out_dir, DEFINE_SHADOW_RS);
     }
 }
 

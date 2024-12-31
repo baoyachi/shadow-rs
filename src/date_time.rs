@@ -10,19 +10,28 @@ pub enum DateTime {
     Utc(OffsetDateTime),
 }
 
+pub(crate) const DEFINE_SOURCE_DATE_EPOCH: &str = "SOURCE_DATE_EPOCH";
+
 pub fn now_date_time() -> DateTime {
     // Enable reproducibility for uses of `now_date_time` by respecting the
     // `SOURCE_DATE_EPOCH` env variable.
     //
     // https://reproducible-builds.org/docs/source-date-epoch/
-    match std::env::var_os("SOURCE_DATE_EPOCH") {
+    match std::env::var_os(DEFINE_SOURCE_DATE_EPOCH) {
         None => DateTime::now(),
         Some(timestamp) => {
             let epoch = timestamp
                 .into_string()
-                .expect("Input SOURCE_DATE_EPOCH could not be parsed")
+                .unwrap_or_else(|_| {
+                    panic!("Input {} could not be parsed", DEFINE_SOURCE_DATE_EPOCH)
+                })
                 .parse::<i64>()
-                .expect("Input SOURCE_DATE_EPOCH could not be cast to a number");
+                .unwrap_or_else(|_| {
+                    panic!(
+                        "Input {} could not be cast to a number",
+                        DEFINE_SOURCE_DATE_EPOCH
+                    )
+                });
             DateTime::Utc(OffsetDateTime::from_unix_timestamp(epoch).unwrap())
         }
     }
@@ -177,7 +186,7 @@ mod tests {
 
     #[test]
     fn test_source_date_epoch() {
-        std::env::set_var("SOURCE_DATE_EPOCH", "1628080443");
+        std::env::set_var(DEFINE_SOURCE_DATE_EPOCH, "1628080443");
         let time = now_date_time();
         assert_eq!(time.human_format(), "2021-08-04 12:34:03 +00:00");
     }
