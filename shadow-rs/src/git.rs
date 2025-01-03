@@ -367,7 +367,7 @@ pub fn branch() -> String {
     #[cfg(feature = "git2")]
     {
         use crate::git::git2_mod::{git2_current_branch, git_repo};
-        git_repo(".")
+        git_repo("../..")
             .map(|x| git2_current_branch(&x))
             .unwrap_or_else(|_| command_current_branch())
             .unwrap_or_default()
@@ -393,7 +393,7 @@ pub fn git_clean() -> bool {
     #[cfg(feature = "git2")]
     {
         use crate::git::git2_mod::git_repo;
-        git_repo(".")
+        git_repo("../..")
             .map(|x| Git::git2_dirty_stage(&x))
             .map(|x| x.trim().is_empty())
             .unwrap_or(true)
@@ -413,7 +413,7 @@ pub fn git_status_file() -> String {
     #[cfg(feature = "git2")]
     {
         use crate::git::git2_mod::git_repo;
-        git_repo(".")
+        git_repo("../..")
             .map(|x| Git::git2_dirty_stage(&x))
             .unwrap_or_default()
     }
@@ -437,7 +437,7 @@ struct GitCommandExecutor<'a> {
 
 impl Default for GitCommandExecutor<'_> {
     fn default() -> Self {
-        Self::new(Path::new("."))
+        Self::new(Path::new("../.."))
     }
 }
 
@@ -541,7 +541,7 @@ fn command_git_status_file() -> String {
 
 /// Command exec git current branch
 fn command_current_branch() -> Option<String> {
-    find_branch_in(Path::new("."))
+    find_branch_in(Path::new("../"))
 }
 
 fn find_branch_in(path: &Path) -> Option<String> {
@@ -599,7 +599,7 @@ mod tests {
         #[cfg(feature = "git2")]
         {
             use crate::git::git2_mod::{git2_current_branch, git_repo};
-            let git2_branch = git_repo(".")
+            let git2_branch = git_repo("../")
                 .map(|x| git2_current_branch(&x))
                 .unwrap_or(None);
             let command_branch = command_current_branch();

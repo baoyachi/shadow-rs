@@ -140,6 +140,37 @@ fn main() {
 }
 ```
 
+## Setup for `no_std`
+Add this to your Cargo.toml
+```toml
+[dependencies]
+shadow-rs-consumer = "{latest version}"
+
+[build-dependencies]
+shadow-rs = { version = "{latest version}", default-features = false }
+```
+
+Add this line to your `build.rs`:
+```rust
+fn main() {
+  ShadowBuilder::builder().build().unwrap();
+}
+```
+
+In your project code, add this:
+
+```rust
+use shadow_rs_consumer::shadow;
+
+shadow!(build);
+```
+
+Make use of your build constants:
+```rust
+log::info!("{}", build::SHORT_COMMIT); //8405e28e
+```
+
+
 #### Reproducibility
 
 This tool includes the current time in the binary which would normally make it non-reproducible.

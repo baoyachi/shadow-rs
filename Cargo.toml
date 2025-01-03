@@ -1,47 +1,14 @@
-[package]
-name = "shadow-rs"
-version = "0.37.0"
-authors = ["baoyachi <liaoymxsdl@gmail.com>"]
-edition = "2021"
-description = "A build-time information stored in your rust project"
-keywords = ["cargo", "build-script", "build", "shadow", "compile"]
-readme = "README.md"
-categories = ["development-tools", "development-tools::build-utils"]
-repository = "https://github.com/baoyachi/shadow-rs"
-documentation = "https://docs.rs/shadow-rs"
-homepage = "https://github.com/baoyachi/shadow-rs"
-license = "MIT AND Apache-2.0"
-exclude = ["shadow-rs.png", "build_module.png"]
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[package.metadata.docs.rs]
-all-features = true
-
-[dependencies]
-is_debug = "1.0.2"
-const_format = { version = "0.2.22", default-features = false }
-time = { version = "0.3.36", features = ["formatting", "local-offset", "parsing"], default-features = false }
-
-
-#! Optional Dependencies:
-
-## Use `libgit2` as a backend for git operations
-git2 = { version = "0.19.0", default-features = false, optional = true }
-
-## Better support for querying the local system time
-tzdb = { version = "0.6.0", optional = true, default-features = false, features = ["local"] }
-
-document-features = { version = "0.2", optional = true }
-
-cargo_metadata = { version = "0.18.1", optional = true, default-features = false }
-serde_json = { version = "1", default-features = false, optional = true }
-
-[features]
-default = ["git2", "tzdb"]
-metadata = ["cargo_metadata", "serde_json"]
-
-[dev-dependencies]
-winnow = "0.6"
-
 [workspace]
-members = ["example_shadow", "example_shadow_hook", "example_wasm"]
+members = [
+    "shadow-rs",
+    "shadow-rs-consumer",
+    "example_shadow",
+    "example_shadow_hook",
+    "example_wasm",
+]
+
+exclude = [
+    "example_no_std"
+]
+
+resolver = "2"

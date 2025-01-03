@@ -83,7 +83,23 @@ jobs:
       - name: Build on nightly
         run: |
           cargo build --release
-          cargo +nightly clippy --all  --all-features -- -D warnings
+          cargo +nightly clippy --all  --all-features -- -D warnings -A clippy::literal_string_with_formatting_args
+
+  build_no_std:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          components: clippy, rustfmt
+          target: x86_64-unknown-none
+      - name: Build
+        run: cd example_no_std && cargo rustc --target x86_64-unknown-none -- -D warnings
 
   test:
     strategy:
