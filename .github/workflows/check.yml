@@ -106,7 +106,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Test
         run: |
-          cargo install --features vendored-openssl cargo-tarpaulin
           cargo test --all-features
           cargo test --examples
       - name: Coverage
