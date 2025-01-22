@@ -100,12 +100,13 @@ jobs:
         uses: actions-rs/install@v0.1
         with:
           crate: cargo-tarpaulin
-          version: 0.14.2
+          version: 0.31.5
           use-tool-cache: true
       - name: Checkout
         uses: actions/checkout@v4
       - name: Test
         run: |
+          cargo install --features vendored-openssl cargo-tarpaulin
           cargo test --all-features
           cargo test --examples
       - name: Coverage
