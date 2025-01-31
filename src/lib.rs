@@ -327,6 +327,23 @@ pub(crate) fn get_std_env() -> BTreeMap<String, String> {
     env_map
 }
 
+fn is_same_contents<P1: AsRef<Path>, P2: AsRef<Path>>(p1: P1, p2: P2) -> SdResult<bool> {
+    let c1 = std::fs::read_to_string(p1.as_ref())?;
+    let c2 = std::fs::read_to_string(p2.as_ref())?;
+
+    // Skip the auto-generated header comment which always changes
+    let c1 = c1
+        .split('\n')
+        .skip_while(|line| line.starts_with("//"))
+        .collect::<Vec<_>>();
+    let c2 = c2
+        .split('\n')
+        .skip_while(|line| line.starts_with("//"))
+        .collect::<Vec<_>>();
+
+    Ok(c1 == c2)
+}
+
 /// `shadow-rs` configuration.
 ///
 /// This struct encapsulates the configuration for the `shadow-rs` build process. It allows for fine-grained control over
@@ -474,9 +491,10 @@ impl Shadow {
                 path.join(DEFINE_SHADOW_RS)
             }
         };
+        let tmp_out = out.with_file_name(format!(".{DEFINE_SHADOW_RS}.tmp"));
 
         let mut shadow = Shadow {
-            f: File::create(out)?,
+            f: File::create(&tmp_out)?,
             map: Default::default(),
             std_env: Default::default(),
             deny_const,
@@ -501,6 +519,10 @@ impl Shadow {
         shadow.filter_deny();
 
         shadow.write_all()?;
+
+        if !is_same_contents(&tmp_out, &out).unwrap_or(false) {
+            std::fs::rename(tmp_out, out)?;
+        }
 
         // handle hook
         if let Some(h) = builder.get_hook() {
