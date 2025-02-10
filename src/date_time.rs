@@ -122,13 +122,13 @@ mod tests {
         use winnow::ascii::{digit1, space1};
         use winnow::error::{ContextError, ParseError};
         use winnow::token::{literal, take};
-        use winnow::{PResult, Parser};
+        use winnow::{ModalResult, Parser};
 
-        fn u8_len2(input: &mut &str) -> PResult<u8> {
+        fn u8_len2(input: &mut &str) -> ModalResult<u8> {
             take(2_usize).try_map(str::parse).parse_next(input)
         }
 
-        fn non_zero_u8_len2<const LIMIT: u8>(input: &mut &str) -> PResult<NonZeroU8> {
+        fn non_zero_u8_len2<const LIMIT: u8>(input: &mut &str) -> ModalResult<NonZeroU8> {
             take(2_usize)
                 .try_map(str::parse)
                 .verify(|x| *x <= unsafe { NonZeroU8::new_unchecked(LIMIT) })
@@ -136,7 +136,7 @@ mod tests {
         }
 
         //
-        fn non_zero_u32(input: &mut &str) -> PResult<NonZeroU32> {
+        fn non_zero_u32(input: &mut &str) -> ModalResult<NonZeroU32> {
             digit1.try_map(str::parse).parse_next(input)
         }
 
