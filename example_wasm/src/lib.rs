@@ -5,6 +5,7 @@ use shadow_rs::shadow;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
+#[allow(clippy::const_is_empty)]
 pub fn version() -> JsValue {
     let json = json!({
         "branch/tag":if shadow::BRANCH.is_empty(){ shadow::BRANCH } else{ shadow::LAST_TAG },
