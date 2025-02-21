@@ -174,23 +174,16 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
-#[cfg(feature = "std")]
 use crate::gen_const::{
-    clap_long_version_branch_const, clap_long_version_tag_const, clap_version_branch_const,
-    clap_version_tag_const, version_branch_const, version_tag_const, BUILD_CONST_CLAP_LONG_VERSION,
-    BUILD_CONST_VERSION,
+    cargo_metadata_fn, clap_long_version_branch_const, clap_long_version_tag_const,
+    clap_version_branch_const, clap_version_tag_const, version_branch_const, version_tag_const,
+    BUILD_CONST_CLAP_LONG_VERSION, BUILD_CONST_VERSION,
 };
 pub use err::{SdResult, ShadowError};
 
 pub use crate::build::{BuildPattern, ShadowBuilder};
 use crate::hook::HookExt;
 pub use {build::ShadowConst, env::*, git::*};
-
-
-#[cfg(feature = "std")]
-use crate::gen_const::cargo_metadata_fn;
-#[cfg(feature = "std")]
-pub use shadow_rs::{formatcp, shadow};
 
 pub trait Format {
     fn human_format(&self) -> String;

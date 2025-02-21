@@ -1,4 +1,3 @@
-#[cfg(feature = "std")]
 use crate::{Shadow, CARGO_CLIPPY_ALLOW_ALL, CARGO_METADATA};
 
 macro_rules! gen_const {
@@ -108,7 +107,6 @@ pub(crate) const BUILD_CONST_VERSION: &str = "VERSION";
 #[allow(dead_code)]
 pub(crate) const BUILD_CONST_CLAP_LONG_VERSION: &str = "CLAP_LONG_VERSION";
 
-#[cfg(feature = "std")]
 pub(crate) fn cargo_metadata_fn(shadow: &Shadow) -> String {
     if !shadow.map.contains_key(CARGO_METADATA) {
         return "".to_string();
