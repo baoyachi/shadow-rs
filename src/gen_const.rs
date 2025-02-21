@@ -2,7 +2,6 @@ use crate::{Shadow, CARGO_CLIPPY_ALLOW_ALL, CARGO_METADATA};
 
 macro_rules! gen_const {
     ($fn_name:ident, $fn_body:expr) => {
-        #[allow(unused)]
         pub fn $fn_name() -> String {
             let (doc, content) = $fn_body;
             format!(
@@ -16,7 +15,6 @@ macro_rules! gen_const {
     };
 }
 
-#[allow(dead_code)]
 const VERSION_BRANCH_CONST: (&str, &str) = (
     r#"/// A long version string describing the project.
 /// The version string contains the package version, branch, commit hash, build time, and build environment on separate lines.
@@ -30,7 +28,6 @@ build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, R
 );"##,
 );
 
-#[allow(dead_code)]
 const VERSION_TAG_CONST: (&str, &str) = (
     r#"/// A long version string describing the project.
 /// The version string contains the package version, current Git tag, commit hash, build time, and build environment on separate lines.
@@ -44,7 +41,6 @@ build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST
 );"##,
 );
 
-#[allow(dead_code)]
 const CLAP_VERSION_BRANCH_CONST: (&str, &str) = (
     r#"#[deprecated = "Replaced with `CLAP_LONG_VERSION`"]"#,
     r##"pub const CLAP_VERSION:&str = shadow_rs::formatcp!(r#"{}
@@ -55,7 +51,6 @@ build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, R
 );"##,
 );
 
-#[allow(dead_code)]
 const CLAP_VERSION_TAG_CONST: (&str, &str) = (
     r#"#[deprecated = "Replaced with `CLAP_LONG_VERSION`"]"#,
     r##"pub const CLAP_VERSION:&str = shadow_rs::formatcp!(r#"{}
@@ -66,7 +61,6 @@ build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST
 );"##,
 );
 
-#[allow(dead_code)]
 const CLAP_LONG_VERSION_BRANCH_CONST: (&str, &str) = (
     r#"/// A long version string describing the project.
 /// The version string contains the package version, branch, commit hash, build time, and build environment on separate lines.
@@ -79,7 +73,6 @@ build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, R
 );"##,
 );
 
-#[allow(dead_code)]
 const CLAP_LONG_VERSION_TAG_CONST: (&str, &str) = (
     r#"/// A long version string describing the project.
 /// The version string contains the package version, current Git tag, commit hash, build time, and build environment on separate lines.
@@ -102,9 +95,7 @@ gen_const!(
 );
 gen_const!(clap_long_version_tag_const, CLAP_LONG_VERSION_TAG_CONST);
 
-#[allow(dead_code)]
 pub(crate) const BUILD_CONST_VERSION: &str = "VERSION";
-#[allow(dead_code)]
 pub(crate) const BUILD_CONST_CLAP_LONG_VERSION: &str = "CLAP_LONG_VERSION";
 
 pub(crate) fn cargo_metadata_fn(shadow: &Shadow) -> String {
