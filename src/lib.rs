@@ -501,8 +501,6 @@ impl Shadow {
     fn write_all(&mut self) -> SdResult<()> {
         self.gen_header()?;
 
-        self.gen_use_shadow_consumer()?;
-
         self.gen_const()?;
 
         //write version function
@@ -557,13 +555,6 @@ impl Shadow {
             DateTime::now().to_rfc2822()
         );
         writeln!(&self.f, "{desc}\n\n")?;
-        Ok(())
-    }
-
-    fn gen_use_shadow_consumer(&self) -> SdResult<()> {
-        #[cfg(feature = "std")]
-        writeln!(&self.f, "use shadow_rs::shadow_rs_consumer;")?;
-
         Ok(())
     }
 

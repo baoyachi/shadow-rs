@@ -22,7 +22,7 @@ const VERSION_BRANCH_CONST: (&str, &str) = (
     r#"/// A long version string describing the project.
 /// The version string contains the package version, branch, commit hash, build time, and build environment on separate lines.
 /// This constant is suitable for printing to the user."#,
-    r##"pub const VERSION:&str = shadow_rs_consumer::formatcp!(r#"
+    r##"pub const VERSION:&str = shadow_rs::formatcp!(r#"
 pkg_version:{}
 branch:{}
 commit_hash:{}
@@ -36,7 +36,7 @@ const VERSION_TAG_CONST: (&str, &str) = (
     r#"/// A long version string describing the project.
 /// The version string contains the package version, current Git tag, commit hash, build time, and build environment on separate lines.
 /// This constant is suitable for printing to the user."#,
-    r##"pub const VERSION:&str = shadow_rs_consumer::formatcp!(r#"
+    r##"pub const VERSION:&str = shadow_rs::formatcp!(r#"
 pkg_version:{}
 tag:{}
 commit_hash:{}
@@ -48,7 +48,7 @@ build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST
 #[allow(dead_code)]
 const CLAP_VERSION_BRANCH_CONST: (&str, &str) = (
     r#"#[deprecated = "Replaced with `CLAP_LONG_VERSION`"]"#,
-    r##"pub const CLAP_VERSION:&str = shadow_rs_consumer::formatcp!(r#"{}
+    r##"pub const CLAP_VERSION:&str = shadow_rs::formatcp!(r#"{}
 branch:{}
 commit_hash:{}
 build_time:{}
@@ -59,7 +59,7 @@ build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, R
 #[allow(dead_code)]
 const CLAP_VERSION_TAG_CONST: (&str, &str) = (
     r#"#[deprecated = "Replaced with `CLAP_LONG_VERSION`"]"#,
-    r##"pub const CLAP_VERSION:&str = shadow_rs_consumer::formatcp!(r#"{}
+    r##"pub const CLAP_VERSION:&str = shadow_rs::formatcp!(r#"{}
 tag:{}
 commit_hash:{}
 build_time:{}
@@ -72,7 +72,7 @@ const CLAP_LONG_VERSION_BRANCH_CONST: (&str, &str) = (
     r#"/// A long version string describing the project.
 /// The version string contains the package version, branch, commit hash, build time, and build environment on separate lines.
 /// This constant is intended to be used by clap or other CLI tools as a long version string."#,
-    r##"pub const CLAP_LONG_VERSION:&str = shadow_rs_consumer::formatcp!(r#"{}
+    r##"pub const CLAP_LONG_VERSION:&str = shadow_rs::formatcp!(r#"{}
 branch:{}
 commit_hash:{}
 build_time:{}
@@ -85,7 +85,7 @@ const CLAP_LONG_VERSION_TAG_CONST: (&str, &str) = (
     r#"/// A long version string describing the project.
 /// The version string contains the package version, current Git tag, commit hash, build time, and build environment on separate lines.
 /// This constant is intended to be used by clap or other CLI tools as a long version string."#,
-    r##"pub const CLAP_LONG_VERSION:&str = shadow_rs_consumer::formatcp!(r#"{}
+    r##"pub const CLAP_LONG_VERSION:&str = shadow_rs::formatcp!(r#"{}
 tag:{}
 commit_hash:{}
 build_time:{}

@@ -150,26 +150,6 @@ shadow-rs = { version = "{latest version}", default-features = false , features=
 shadow-rs = { version = "{latest version}", default-features = false }
 ```
 
-Add this line to your `build.rs`:
-```rust
-fn main() {
-  ShadowBuilder::builder().build().unwrap();
-}
-```
-
-In your project code, add this:
-
-```rust
-use shadow_rs_consumer::shadow;
-
-shadow!(build);
-```
-
-Make use of your build constants:
-```rust
-log::info!("{}", build::SHORT_COMMIT); //8405e28e
-```
-
 
 #### Reproducibility
 
