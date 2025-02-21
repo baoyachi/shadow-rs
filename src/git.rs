@@ -541,7 +541,7 @@ fn command_git_status_file() -> String {
 
 /// Command exec git current branch
 fn command_current_branch() -> Option<String> {
-    find_branch_in(Path::new("../"))
+    find_branch_in(Path::new("."))
 }
 
 fn find_branch_in(path: &Path) -> Option<String> {
