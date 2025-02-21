@@ -9,10 +9,10 @@ build = "build.rs"
 
 [dependencies]
 clap = "4.0.1"
-shadow-rs = { path = "../shadow-rs",features = ["metadata"] }
+shadow-rs = { path = "../",features = ["metadata"] }
 
 [build-dependencies]
-shadow-rs = { path = "../shadow-rs" }
+shadow-rs = { path = "../" }
 
 # Test cargo-clippy. For more detailed information about the issue, visit: https://github.com/baoyachi/shadow-rs/issues/151
 [lints.clippy]
