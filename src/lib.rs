@@ -186,12 +186,11 @@ pub use crate::build::{BuildPattern, ShadowBuilder};
 use crate::hook::HookExt;
 pub use {build::ShadowConst, env::*, git::*};
 
-pub use shadow_rs_consumer;
 
 #[cfg(feature = "std")]
 use crate::gen_const::cargo_metadata_fn;
 #[cfg(feature = "std")]
-pub use shadow_rs_consumer::{formatcp, shadow};
+pub use shadow_rs::{formatcp, shadow};
 
 pub trait Format {
     fn human_format(&self) -> String;

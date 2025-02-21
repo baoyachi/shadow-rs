@@ -144,7 +144,7 @@ fn main() {
 Add this to your Cargo.toml
 ```toml
 [dependencies]
-shadow-rs-consumer = "{latest version}"
+shadow-rs = { version = "{latest version}", default-features = false , features=["runtime"]}
 
 [build-dependencies]
 shadow-rs = { version = "{latest version}", default-features = false }

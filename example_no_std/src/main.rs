@@ -1,18 +1,23 @@
 #![no_std]
 #![no_main]
 
-use shadow_rs_consumer::shadow;
+use esp_backtrace as _;
+use esp_hal::delay::Delay;
+use esp_hal::prelude::*;
+use log::info;
+
 
 shadow!(build);
+#[entry]
+fn main() -> ! {
+    esp_println::logger::init_logger_from_env();
 
-use core::panic::PanicInfo;
+    let delay = Delay::new();
 
-#[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
-    loop {}
-}
+    info!("{}", build::VERSION);
 
-#[allow(clippy::all, clippy::pedantic, clippy::restriction, clippy::nursery)]
-pub fn func() {
-    log::info!("short_commit: {}", build::SHORT_COMMIT);
+    loop {
+        info!("Hello world!");
+        delay.delay(500.millis());
+    }
 }
