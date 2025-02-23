@@ -45,7 +45,6 @@
 //! }
 //! ```
 //!
-//! If you want to exclude some build constants, you can use [`new_deny`] instead of [`new`].
 //!
 //! ### 3) Integrate Shadow
 //! In your main Rust file (usually `main.rs` or `lib.rs`), add this:
@@ -176,13 +175,11 @@ use std::path::Path;
 
 use crate::gen_const::{
     cargo_metadata_fn, clap_long_version_branch_const, clap_long_version_tag_const,
-    clap_version_branch_const, clap_version_tag_const, version_branch_const, version_tag_const,
-    BUILD_CONST_CLAP_LONG_VERSION, BUILD_CONST_VERSION,
+    version_branch_const, version_tag_const, BUILD_CONST_CLAP_LONG_VERSION, BUILD_CONST_VERSION,
 };
 pub use err::{SdResult, ShadowError};
 
 pub use crate::build::{BuildPattern, ShadowBuilder};
-use crate::hook::HookExt;
 pub use {build::ShadowConst, env::*, git::*};
 
 pub trait Format {
@@ -219,27 +216,6 @@ macro_rules! shadow {
     };
 }
 
-/// Generates build information for the current project.
-/// This function must be called from `build.rs`.
-///
-/// # Example
-///
-/// ```ignore
-/// // build.rs
-///
-/// fn main() -> shadow_rs::SdResult<()> {
-///    shadow_rs::new()
-/// }
-/// ```
-#[deprecated(
-    since = "0.37.0",
-    note = "Please use  [`ShadowBuilder::builder`] instead"
-)]
-pub fn new() -> SdResult<()> {
-    ShadowBuilder::builder().build()?;
-    Ok(())
-}
-
 /// Since [cargo metadata](https://crates.io/crates/cargo_metadata) details about workspace
 /// membership and resolved dependencies for the current package, storing this data can result in
 /// significantly larger crate sizes. As such, the CARGO_METADATA const is disabled by default.
@@ -250,72 +226,6 @@ pub fn new() -> SdResult<()> {
 #[allow(clippy::all, clippy::pedantic, clippy::restriction, clippy::nursery)]
 pub fn default_deny() -> BTreeSet<ShadowConst> {
     BTreeSet::from([CARGO_METADATA])
-}
-
-/// Identical to [`new`], but additionally accepts a build output denylist.
-/// This list determines constants to be excluded in the build output.
-///
-/// Note that not all constants can be excluded independently, since some constants depend on others.
-/// See [`ShadowConst`] for a list of constants that can be excluded.
-///
-/// # Example
-///
-/// ```ignore
-/// // build.rs
-///
-/// use std::collections::BTreeSet;
-///
-/// fn main() -> shadow_rs::SdResult<()> {
-///    let mut deny = BTreeSet::new();
-///    deny.insert(shadow_rs::CARGO_TREE);
-///    shadow_rs::new_deny(deny)
-/// }
-/// ```
-#[deprecated(
-    since = "0.37.0",
-    note = "Please use  [`ShadowBuilder::builder`] instead"
-)]
-pub fn new_deny(deny_const: BTreeSet<ShadowConst>) -> SdResult<()> {
-    ShadowBuilder::builder().deny_const(deny_const).build()?;
-    Ok(())
-}
-
-/// Identical to [`new`], but additionally accepts an output hook.
-///
-/// The hook receives the output file of `shadow-rs`, and it can add additional entries to the
-/// output of `shadow-rs` by writing to this file.
-/// Note that since the output will be compiled as a Rust module, inserting invalid Rust code will lead to a compile error later on.
-///
-/// # Example
-///
-/// ```ignore
-/// // build.rs
-///
-/// fn main() -> shadow_rs::SdResult<()> {
-///    shadow_rs::new_hook(append_write_const)
-/// }
-///
-/// fn append_write_const(mut file: &File) -> SdResult<()> {
-///    let foo: &str = r#"pub const foo: &str = "foo";"#;
-///    writeln!(file, "{}", foo)?;
-///    Ok(())
-/// }
-///
-/// ```
-///
-#[deprecated(
-    since = "0.37.0",
-    note = "Please use  [`ShadowBuilder::builder`] instead"
-)]
-pub fn new_hook<F>(f: F) -> SdResult<()>
-where
-    F: HookExt,
-{
-    ShadowBuilder::builder()
-        .deny_const(f.default_deny())
-        .hook(f.hook_inner())
-        .build()?;
-    Ok(())
 }
 
 /// Returns the contents of [`std::env::vars`] as an ordered map.
@@ -434,32 +344,6 @@ impl Shadow {
         self.deny_const.contains(&deny_const)
     }
 
-    /// Create a new [`Shadow`] configuration with a provided denylist.
-    /// The project source path and output file are automatically derived from Cargo build environment variables.
-    #[deprecated(
-        since = "0.37.0",
-        note = "Please use  [`ShadowBuilder::builder`] instead"
-    )]
-    pub fn build(deny_const: BTreeSet<ShadowConst>) -> SdResult<Shadow> {
-        ShadowBuilder::builder().deny_const(deny_const).build()
-    }
-
-    #[deprecated(
-        since = "0.37.0",
-        note = "Please use  [`ShadowBuilder::builder`] instead"
-    )]
-    pub fn build_with(
-        src_path: String,
-        out_path: String,
-        deny_const: BTreeSet<ShadowConst>,
-    ) -> SdResult<Shadow> {
-        ShadowBuilder::builder()
-            .deny_const(deny_const)
-            .src_path(src_path)
-            .out_path(out_path)
-            .build()
-    }
-
     fn build_inner(builder: ShadowBuilder) -> SdResult<Shadow> {
         let out_path = builder.get_out_path()?;
         let src_path = builder.get_src_path()?;
@@ -529,29 +413,6 @@ impl Shadow {
         Ok(())
     }
 
-    /// Request Cargo to re-run the build script if any environment variable observed by this [`Shadow`] configuration changes.
-    #[deprecated(
-        since = "0.37.0",
-        note = "Please use  [`ShadowBuilder::build_pattern`] instead"
-    )]
-    pub fn cargo_rerun_if_env_changed(&self) {
-        for k in self.std_env.keys() {
-            println!("cargo:rerun-if-env-changed={k}");
-        }
-    }
-
-    /// Request Cargo to re-run the build script if any of the specified environment variables change.
-    /// This function is not influenced by this [`Shadow`] configuration.
-    #[deprecated(
-        since = "0.37.0",
-        note = "Please use  [`ShadowBuilder::build_pattern`] instead"
-    )]
-    pub fn cargo_rerun_env_inject(&self, env: &[&str]) {
-        for k in env {
-            println!("cargo:rerun-if-env-changed={}", *k);
-        }
-    }
-
     fn gen_const(&mut self) -> SdResult<()> {
         let out_dir = &self.out_path;
         self.build_pattern.rerun_if(self.map.keys(), out_dir);
@@ -612,30 +473,17 @@ impl Shadow {
     }
 
     fn gen_version(&mut self) -> SdResult<Vec<&'static str>> {
-        let (ver_fn, clap_ver_fn, clap_long_ver_fn) = match self.map.get(TAG) {
-            None => (
-                version_branch_const(),
-                clap_version_branch_const(),
-                clap_long_version_branch_const(),
-            ),
+        let (ver_fn, clap_long_ver_fn) = match self.map.get(TAG) {
+            None => (version_branch_const(), clap_long_version_branch_const()),
             Some(tag) => {
                 if !tag.v.is_empty() {
-                    (
-                        version_tag_const(),
-                        clap_version_tag_const(),
-                        clap_long_version_tag_const(),
-                    )
+                    (version_tag_const(), clap_long_version_tag_const())
                 } else {
-                    (
-                        version_branch_const(),
-                        clap_version_branch_const(),
-                        clap_long_version_branch_const(),
-                    )
+                    (version_branch_const(), clap_long_version_branch_const())
                 }
             }
         };
         writeln!(&self.f, "{ver_fn}\n")?;
-        writeln!(&self.f, "{clap_ver_fn}\n")?;
         writeln!(&self.f, "{clap_long_ver_fn}\n")?;
 
         Ok(vec![BUILD_CONST_VERSION, BUILD_CONST_CLAP_LONG_VERSION])
