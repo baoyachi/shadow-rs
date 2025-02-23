@@ -1,12 +1,25 @@
 use crate::date_time::DEFINE_SOURCE_DATE_EPOCH;
 use crate::hook::HookExt;
-use crate::{default_deny, SdResult, Shadow, DEFINE_SHADOW_RS};
+use crate::shadow::DEFINE_SHADOW_RS;
+use crate::{SdResult, Shadow, CARGO_METADATA};
 use is_debug::is_debug;
 use std::collections::BTreeSet;
 use std::fmt::{Display, Formatter};
 
 /// `shadow-rs` build constant identifiers.
 pub type ShadowConst = &'static str;
+
+/// Since [cargo metadata](https://crates.io/crates/cargo_metadata) details about workspace
+/// membership and resolved dependencies for the current package, storing this data can result in
+/// significantly larger crate sizes. As such, the CARGO_METADATA const is disabled by default.
+///
+/// Should you choose to retain this information, you have the option to customize a deny_const
+/// object and override the `new_deny` method parameters accordingly.
+///
+#[allow(clippy::all, clippy::pedantic, clippy::restriction, clippy::nursery)]
+pub fn default_deny() -> BTreeSet<ShadowConst> {
+    BTreeSet::from([CARGO_METADATA])
+}
 
 /// Serialized values for build constants.
 #[derive(Debug, Clone)]

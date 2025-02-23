@@ -6,11 +6,21 @@ use crate::{Format, Shadow};
 use is_debug::build_channel;
 use std::collections::BTreeMap;
 use std::env;
+use std::env as std_env;
 use std::process::Command;
 
 #[derive(Default, Debug)]
 pub struct SystemEnv {
     map: BTreeMap<ShadowConst, ConstVal>,
+}
+
+/// Returns the contents of [`std::env::vars`] as an ordered map.
+pub(crate) fn get_std_env() -> BTreeMap<String, String> {
+    let mut env_map = BTreeMap::new();
+    for (k, v) in std_env::vars() {
+        env_map.insert(k, v);
+    }
+    env_map
 }
 
 const BUILD_OS_DOC: &str = r#"
