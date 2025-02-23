@@ -37,7 +37,7 @@ jobs:
       - name: Build Release
         run: cargo build --release
       - name: Run tests
-        run: cargo test --all -- --nocapture
+        run: cargo test
 
       # Run examples with debug
       - name: Run examples with debug
@@ -51,7 +51,7 @@ jobs:
       - name: Check example_shadow
         run: |
           cargo fmt --all -- --check
-          cargo clippy --all -- -D warnings
+          cargo clippy --all-targets --all-features -- -D warnings
           cargo run
         working-directory: ./example_shadow
 
@@ -59,7 +59,7 @@ jobs:
       - name: Check example_shadow_hook
         run: |
           cargo fmt --all -- --check
-          cargo clippy --all -- -D warnings
+          cargo clippy --all-targets --all-features -- -D warnings
           cargo run
         working-directory: ./example_shadow_hook
 
@@ -74,6 +74,18 @@ jobs:
           wasm-pack build --target web
         working-directory: ./example_wasm
 
+      - uses: dtolnay/rust-toolchain@v1
+        with:
+          target: riscv32imc-unknown-none-elf
+          toolchain: stable
+          components: rust-src
+      - name: Run no_std example
+        run: |
+          cargo fmt --all -- --check
+          cargo clippy --release -- -D warnings
+          cargo b --release
+        working-directory: ./example_no_std
+
       # build on nightly
       - uses: actions-rs/toolchain@v1
         with:
@@ -83,7 +95,7 @@ jobs:
       - name: Build on nightly
         run: |
           cargo build --release
-          cargo +nightly clippy --all  --all-features -- -D warnings -A clippy::literal_string_with_formatting_args
+          cargo +nightly clippy --all-features -- -D warnings -A clippy::literal_string_with_formatting_args
 
   test:
     strategy:

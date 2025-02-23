@@ -76,13 +76,13 @@ gen_const!(clap_long_version_tag_const, CLAP_LONG_VERSION_TAG_CONST);
 pub(crate) const BUILD_CONST_VERSION: &str = "VERSION";
 pub(crate) const BUILD_CONST_CLAP_LONG_VERSION: &str = "CLAP_LONG_VERSION";
 
+#[allow(dead_code)]
 pub(crate) fn cargo_metadata_fn(shadow: &Shadow) -> String {
     if !shadow.map.contains_key(CARGO_METADATA) {
         return "".to_string();
     }
     format!(
         r#"
-use std::str::from_utf8;
 use shadow_rs::cargo_metadata::Metadata;
 use shadow_rs::serde_json;
 
@@ -97,7 +97,7 @@ use shadow_rs::serde_json;
 #[allow(dead_code)]
 {}
 pub fn cargo_metadata() -> Result<Metadata, String> {{
-    let metadata_json = from_utf8(CARGO_METADATA.as_ref()).map_err(|err| format!("generate 'CARGO_METADATA' value from UTF8 error:{{}}",err))?;
+    let metadata_json = std::str::from_utf8(CARGO_METADATA.as_ref()).map_err(|err| format!("generate 'CARGO_METADATA' value from UTF8 error:{{}}",err))?;
     let meta: Metadata = serde_json::from_str(metadata_json).map_err(|err| err.to_string())?;
     Ok(meta)
 }}"#,
