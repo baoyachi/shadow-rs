@@ -51,7 +51,7 @@ jobs:
       - name: Check example_shadow
         run: |
           cargo fmt --all -- --check
-          cargo clippy --all -- -D warnings
+          cargo clippy --all-targets --all-features -- -D warnings
           cargo run
         working-directory: ./example_shadow
 
@@ -59,7 +59,7 @@ jobs:
       - name: Check example_shadow_hook
         run: |
           cargo fmt --all -- --check
-          cargo clippy --all -- -D warnings
+          cargo clippy --all-targets --all-features -- -D warnings
           cargo run
         working-directory: ./example_shadow_hook
 
@@ -82,7 +82,7 @@ jobs:
       - name: Run no_std example
         run: |
           cargo fmt --all -- --check
-          cargo clippy --release --all -- -D warnings
+          cargo clippy --release -- -D warnings
           cargo b --release
         working-directory: ./example_no_std
 
