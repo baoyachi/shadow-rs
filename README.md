@@ -30,10 +30,10 @@ Strongly recommend using **shadow-rs** on the [LSP](https://microsoft.github.io/
 
 You can use this crate to programmatically check where a binary came from and how it was built.
 
-Currently, integration into **wasm** is also supported. For detailed settings, please refer to the
-link [example_wasm](https://github.com/baoyachi/shadow-rs/tree/master/example_wasm).
-
-
+Currently, integration into **wasm**,**no_std** is also supported. For detailed settings, please refer to the
+link:
+* [example_wasm](https://github.com/baoyachi/shadow-rs/tree/master/example_wasm)
+* [example_no_std](https://github.com/baoyachi/shadow-rs/tree/master/example_no_std)
 
 ![build_module](./build_module.png)
 
@@ -68,7 +68,7 @@ Modify your `Cargo.toml` like so:
 build = "build.rs"
 
 [dependencies]
-shadow-rs = "{latest version}"
+shadow-rs = { version = "{latest version}", default-features = false }
 
 [build-dependencies]
 shadow-rs = "{latest version}"
@@ -144,7 +144,7 @@ fn main() {
 Add this to your Cargo.toml
 ```toml
 [dependencies]
-shadow-rs = { version = "{latest version}", default-features = false}
+shadow-rs = { version = "{latest version}", default-features = false }
 
 [build-dependencies]
 shadow-rs = { version = "{latest version}", features = ["no_std"] }

@@ -1,7 +1,6 @@
 [package]
 name = "example_no_std"
 version = "0.1.8"
-authors = ["baoyachi <liaoymxsdl@gmail.com>", "mchodzikiewicz <mchodzikiewicz@gmail.com>"]
 edition = "2021"
 build = "build.rs"
 

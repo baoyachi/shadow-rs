@@ -27,7 +27,7 @@
 //! build = "build.rs"
 //!
 //! [dependencies]
-//! shadow-rs = "{latest version}"
+//! shadow-rs = { version = "{latest version}", default-features = false }
 //!
 //! [build-dependencies]
 //! shadow-rs = "{latest version}"
