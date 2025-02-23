@@ -41,26 +41,6 @@ build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST
 );"##,
 );
 
-const CLAP_VERSION_BRANCH_CONST: (&str, &str) = (
-    r#"#[deprecated = "Replaced with `CLAP_LONG_VERSION`"]"#,
-    r##"pub const CLAP_VERSION:&str = shadow_rs::formatcp!(r#"{}
-branch:{}
-commit_hash:{}
-build_time:{}
-build_env:{},{}"#,PKG_VERSION, BRANCH, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST_CHANNEL
-);"##,
-);
-
-const CLAP_VERSION_TAG_CONST: (&str, &str) = (
-    r#"#[deprecated = "Replaced with `CLAP_LONG_VERSION`"]"#,
-    r##"pub const CLAP_VERSION:&str = shadow_rs::formatcp!(r#"{}
-tag:{}
-commit_hash:{}
-build_time:{}
-build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST_CHANNEL
-);"##,
-);
-
 const CLAP_LONG_VERSION_BRANCH_CONST: (&str, &str) = (
     r#"/// A long version string describing the project.
 /// The version string contains the package version, branch, commit hash, build time, and build environment on separate lines.
@@ -87,8 +67,6 @@ build_env:{},{}"#,PKG_VERSION, TAG, SHORT_COMMIT, BUILD_TIME, RUST_VERSION, RUST
 
 gen_const!(version_branch_const, VERSION_BRANCH_CONST);
 gen_const!(version_tag_const, VERSION_TAG_CONST);
-gen_const!(clap_version_branch_const, CLAP_VERSION_BRANCH_CONST);
-gen_const!(clap_version_tag_const, CLAP_VERSION_TAG_CONST);
 gen_const!(
     clap_long_version_branch_const,
     CLAP_LONG_VERSION_BRANCH_CONST
@@ -134,7 +112,6 @@ mod tests {
     #[test]
     fn test_version_fn() {
         assert!(version_tag_const().contains(VERSION_TAG_CONST.0));
-        assert!(clap_version_branch_const().contains(CLAP_VERSION_BRANCH_CONST.1));
         assert!(clap_long_version_branch_const().contains(CLAP_LONG_VERSION_BRANCH_CONST.1));
     }
 }
