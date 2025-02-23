@@ -144,10 +144,10 @@ fn main() {
 Add this to your Cargo.toml
 ```toml
 [dependencies]
-shadow-rs = { version = "{latest version}", default-features = false , features=["runtime"]}
+shadow-rs = { version = "{latest version}", default-features = false}
 
 [build-dependencies]
-shadow-rs = { version = "{latest version}", default-features = false }
+shadow-rs = { version = "{latest version}", features = ["no_std"] }
 ```
 
 
