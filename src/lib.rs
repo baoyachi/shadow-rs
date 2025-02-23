@@ -145,19 +145,31 @@
 //! pub const GIT_STATUS_FILE: &str = "* src/lib.rs (dirty)";
 //! ```
 //!
+
+#![cfg_attr(not(feature = "std"), no_std)]
+
 #[cfg(feature = "metadata")]
 pub extern crate cargo_metadata;
 #[cfg(feature = "metadata")]
 pub extern crate serde_json;
 
+#[cfg(feature = "build")]
 mod build;
+#[cfg(feature = "build")]
 mod ci;
+#[cfg(feature = "build")]
 mod date_time;
+#[cfg(feature = "build")]
 mod env;
+#[cfg(feature = "build")]
 mod err;
+#[cfg(feature = "build")]
 mod gen_const;
+#[cfg(feature = "build")]
 mod git;
+#[cfg(feature = "build")]
 mod hook;
+#[cfg(feature = "build")]
 mod shadow;
 
 /// Re-exported from the const_format crate
@@ -165,15 +177,21 @@ pub use const_format::*;
 /// Re-exported from the is_debug crate
 pub use is_debug::*;
 
-pub use crate::build::{BuildPattern, ShadowBuilder};
-pub use crate::date_time::DateTime;
-pub use err::{SdResult, ShadowError};
-pub use shadow::Shadow;
-pub use {build::default_deny, build::ShadowConst, env::*, git::*};
+#[cfg(feature = "build")]
+mod pub_export {
+    pub use crate::build::{BuildPattern, ShadowBuilder};
+    pub use crate::date_time::DateTime;
+    pub use crate::err::{SdResult, ShadowError};
+    pub use crate::shadow::Shadow;
+    pub use {crate::build::default_deny, crate::build::ShadowConst, crate::env::*, crate::git::*};
 
-pub trait Format {
-    fn human_format(&self) -> String;
+    pub trait Format {
+        fn human_format(&self) -> String;
+    }
 }
+
+#[cfg(feature = "build")]
+pub use pub_export::*;
 
 pub const CARGO_CLIPPY_ALLOW_ALL: &str =
     "#[allow(clippy::all, clippy::pedantic, clippy::restriction, clippy::nursery)]";

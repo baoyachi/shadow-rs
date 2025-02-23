@@ -19,9 +19,8 @@ esp-hal = { version = "0.22.0", features = [
 	"esp32c3",
 ] }
 esp-println = { version = "0.12.0", features = ["esp32c3", "log"] }
-serde = { version = "*", default-features = false }
-shadow-rs = { path = "../shadow-rs", default-features = false, features = ["runtime"] }
+shadow-rs = { path = "../", default-features = false }
 log = "0.4.22"
 
 [build-dependencies]
-shadow-rs = { path = "../shadow-rs", default-features = false }
+shadow-rs = { path = "../", features = ["no_std"] }

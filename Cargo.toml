@@ -18,9 +18,9 @@ exclude = ["shadow-rs.png", "build_module.png"]
 all-features = true
 
 [dependencies]
-is_debug = "1.1.0"
+is_debug = { version = "1.1.0", default-features = false }
 const_format = { version = "0.2.22", default-features = false }
-time = { version = "0.3.36", features = ["formatting", "local-offset", "parsing"], default-features = false }
+time = { version = "0.3.36", features = ["formatting", "local-offset", "parsing"], default-features = false, optional = true }
 
 
 #! Optional Dependencies:
@@ -37,11 +37,17 @@ cargo_metadata = { version = "0.18.1", optional = true, default-features = false
 serde_json = { version = "1", default-features = false, optional = true }
 
 [features]
-default = ["git2", "tzdb"]
+default = ["git2", "tzdb", "build"]
 metadata = ["cargo_metadata", "serde_json"]
+
+std = []
+no_std = []
+
+build = ["time", "tzdb", "is_debug/std", "std"]
+
 
 [dev-dependencies]
 winnow = "0.6"
 
-#[workspace]
-#members = ["example_shadow", "example_shadow_hook", "example_wasm", "example_no_std"]
+[workspace]
+members = ["example_shadow", "example_shadow_hook", "example_wasm", "example_no_std"]

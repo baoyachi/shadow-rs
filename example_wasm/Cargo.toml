@@ -17,7 +17,7 @@ wasm-bindgen = "0.2.92"
 shadow-rs = { path = "../", default-features = false, features = ["tzdb"] }
 
 [build-dependencies]
-shadow-rs = { path = "../", default-features = false, features = ["tzdb"] }
+shadow-rs = { path = "../" }
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = false

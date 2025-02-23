@@ -6,6 +6,7 @@ use esp_hal::delay::Delay;
 use esp_hal::prelude::*;
 use log::info;
 
+use shadow_rs::shadow;
 
 shadow!(build);
 #[entry]

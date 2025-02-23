@@ -2,8 +2,8 @@ use crate::build::{ConstType, ConstVal};
 use crate::ci::CiType;
 use crate::env::{new_project, new_system_env};
 use crate::gen_const::{
-    cargo_metadata_fn, clap_long_version_branch_const, clap_long_version_tag_const,
-    version_branch_const, version_tag_const, BUILD_CONST_CLAP_LONG_VERSION, BUILD_CONST_VERSION,
+    clap_long_version_branch_const, clap_long_version_tag_const, version_branch_const,
+    version_tag_const, BUILD_CONST_CLAP_LONG_VERSION, BUILD_CONST_VERSION,
 };
 use crate::git::new_git;
 use crate::{
@@ -291,17 +291,22 @@ impl Shadow {
             print_val.push_str(tmp.as_str());
         }
 
-        let everything_define = format!(
-            "/// Prints all built-in `shadow-rs` build constants to standard output.\n\
+        #[cfg(not(feature = "no_std"))]
+        {
+            let everything_define = format!(
+                "/// Prints all built-in `shadow-rs` build constants to standard output.\n\
             #[allow(dead_code)]\n\
             {CARGO_CLIPPY_ALLOW_ALL}\n\
             pub fn print_build_in() {\
             {{print_val}}\
             }\n",
-        );
-        writeln!(&self.f, "{everything_define}")?;
+            );
 
-        writeln!(&self.f, "{}", cargo_metadata_fn(self))?;
+            writeln!(&self.f, "{everything_define}")?;
+
+            use crate::gen_const::cargo_metadata_fn;
+            writeln!(&self.f, "{}", cargo_metadata_fn(self))?;
+        }
 
         Ok(())
     }
