@@ -7,7 +7,7 @@ build = "build.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-esp-backtrace = { version = "0.14.2", features = [
+esp-backtrace = { version = "0.15.1", features = [
 	"esp32c3",
 	"exception-handler",
 	"panic-handler",
