@@ -3,13 +3,13 @@
 
 use esp_backtrace as _;
 use esp_hal::delay::Delay;
-use esp_hal::prelude::*;
+use esp_hal::main;
 use log::info;
 
 use shadow_rs::shadow;
 
 shadow!(build);
-#[entry]
+#[main]
 fn main() -> ! {
     esp_println::logger::init_logger_from_env();
 
@@ -19,6 +19,6 @@ fn main() -> ! {
 
     loop {
         info!("Hello world!");
-        delay.delay(500.millis());
+        delay.delay_millis(500);
     }
 }
