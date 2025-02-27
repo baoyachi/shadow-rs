@@ -14,7 +14,7 @@ esp-backtrace = { version = "0.15.1", features = [
 	"println",
 ] }
 
-esp-hal = { version = "0.22.0", features = [
+esp-hal = { version = "0.23.1", features = [
 	"esp32c3",
 ] }
 esp-println = { version = "0.13.1", features = ["esp32c3", "log"] }
