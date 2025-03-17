@@ -482,6 +482,52 @@ fn command_last_tag() -> Option<String> {
     GitCommandExecutor::default().exec(&["describe", "--tags", "--abbrev=0", "HEAD"])
 }
 
+fn parse_git_describe(
+    last_tag: &str,
+    describe: &str,
+) -> SdResult<(String, Option<u32>, Option<String>)> {
+    if !describe.starts_with(last_tag) {
+        return Err(ShadowError::String("git describe result error".to_string()));
+    }
+
+    if last_tag == describe {
+        return Ok((describe.to_string(), None, None));
+    }
+
+    let parts: Vec<&str> = describe.rsplit('-').collect();
+
+    if parts.is_empty() || parts.len() == 2 {
+        return Err(ShadowError::String(
+            "git describe result error,expect:<tag>-<num_commits>-g<hash>".to_string(),
+        ));
+    }
+
+    if parts.len() > 2 {
+        let short_hash = parts[0]; // last part
+
+        if !short_hash.starts_with('g') {
+            return Err(ShadowError::String(
+                "git describe result error,expect commit hash end with:-g<hash>".to_string(),
+            ));
+        }
+        let short_hash = short_hash.trim_start_matches('g');
+
+        // Full example：v1.0.0-alpha0-5-ga1b2c3d
+        let num_commits_str = parts[1];
+        let num_commits = num_commits_str
+            .parse::<u32>()
+            .map_err(|e| ShadowError::String(e.to_string()))?;
+        let last_tag = parts[2..]
+            .iter()
+            .rev()
+            .copied()
+            .collect::<Vec<_>>()
+            .join("-");
+        return Ok((last_tag, Some(num_commits), Some(short_hash.to_string())));
+    }
+    Ok((describe.to_string(), None, None))
+}
+
 /// git clean:git status --porcelain
 /// check repository git status is clean
 fn command_git_clean() -> bool {
@@ -615,5 +661,66 @@ mod tests {
     fn test_command_last_tag() {
         let opt_last_tag = command_last_tag();
         assert!(opt_last_tag.is_some())
+    }
+
+    #[test]
+    fn test_parse_git_describe() {
+        let commit_hash = "24skp4489";
+        let describe = "v1.0.0";
+        assert_eq!(
+            parse_git_describe("v1.0.0", describe).unwrap(),
+            (describe.into(), None, None)
+        );
+
+        let describe = "v1.0.0-0-g24skp4489";
+        assert_eq!(
+            parse_git_describe("v1.0.0", describe).unwrap(),
+            ("v1.0.0".into(), Some(0), Some(commit_hash.into()))
+        );
+
+        let describe = "v1.0.0-1-g24skp4489";
+        assert_eq!(
+            parse_git_describe("v1.0.0", describe).unwrap(),
+            ("v1.0.0".into(), Some(1), Some(commit_hash.into()))
+        );
+
+        let describe = "v1.0.0-alpha-0-g24skp4489";
+        assert_eq!(
+            parse_git_describe("v1.0.0-alpha", describe).unwrap(),
+            ("v1.0.0-alpha".into(), Some(0), Some(commit_hash.into()))
+        );
+
+        let describe = "v1.0.0.alpha-0-g24skp4489";
+        assert_eq!(
+            parse_git_describe("v1.0.0.alpha", describe).unwrap(),
+            ("v1.0.0.alpha".into(), Some(0), Some(commit_hash.into()))
+        );
+
+        let describe = "v1.0.0-alpha";
+        assert_eq!(
+            parse_git_describe("v1.0.0-alpha", describe).unwrap(),
+            ("v1.0.0-alpha".into(), None, None)
+        );
+
+        let describe = "v1.0.0-alpha-99-0-g24skp4489";
+        assert_eq!(
+            parse_git_describe("v1.0.0-alpha-99", describe).unwrap(),
+            ("v1.0.0-alpha-99".into(), Some(0), Some(commit_hash.into()))
+        );
+
+        let describe = "v1.0.0-alpha-99-024skp4489";
+        assert!(parse_git_describe("v1.0.0-alpha-99", describe).is_err());
+
+        let describe = "v1.0.0-alpha-024skp4489";
+        assert!(parse_git_describe("v1.0.0-alpha", describe).is_err());
+
+        let describe = "v1.0.0-alpha-024skp4489";
+        assert!(parse_git_describe("v1.0.0-alpha", describe).is_err());
+
+        let describe = "v1.0.0-alpha-g024skp4489";
+        assert!(parse_git_describe("v1.0.0-alpha", describe).is_err());
+
+        let describe = "v1.0.0----alpha-g024skp4489";
+        assert!(parse_git_describe("v1.0.0----alpha", describe).is_err());
     }
 }
