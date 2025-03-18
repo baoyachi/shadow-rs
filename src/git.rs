@@ -689,7 +689,12 @@ mod tests {
         for (k, v) in map {
             println!("k:{},v:{:?}", k, v);
             assert!(!v.desc.is_empty());
-            if !k.eq(TAG) && !k.eq(LAST_TAG) && !k.eq(BRANCH) && !k.eq(GIT_STATUS_FILE) {
+            if !k.eq(TAG)
+                && !k.eq(LAST_TAG)
+                && !k.eq(COMMITS_SINCE_TAG)
+                && !k.eq(BRANCH)
+                && !k.eq(GIT_STATUS_FILE)
+            {
                 assert!(!v.v.is_empty());
                 continue;
             }
