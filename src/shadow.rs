@@ -248,7 +248,7 @@ impl Shadow {
             ConstType::Usize => format!(
                 "#[allow(dead_code)]\n\
                 {}\n\
-            pub const {} :{} = r#\"{}\"#;",
+            pub const {} :{} = {};",
                 CARGO_CLIPPY_ALLOW_ALL,
                 shadow_const.to_ascii_uppercase(),
                 ConstType::Usize,
