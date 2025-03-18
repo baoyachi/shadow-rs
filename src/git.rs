@@ -497,6 +497,7 @@ impl<'a> GitCommandExecutor<'a> {
 
     fn exec(&self, args: &[&str]) -> Option<String> {
         Command::new("git")
+            .env("GIT_OPTIONAL_LOCKS", "0")
             .current_dir(self.path)
             .args(args)
             .output()
