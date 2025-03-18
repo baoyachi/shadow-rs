@@ -11,16 +11,31 @@ const BRANCH_DOC: &str = r#"
 The name of the Git branch that this project was built from.
 This constant will be empty if the branch cannot be determined."#;
 pub const BRANCH: ShadowConst = "BRANCH";
+
 const TAG_DOC: &str = r#"
 The name of the Git tag that this project was built from.
 Note that this will be empty if there is no tag for the HEAD at the time of build."#;
 pub const TAG: ShadowConst = "TAG";
+
 const LAST_TAG_DOC: &str = r#"
 The name of the last Git tag on the branch that this project was built from.
 As opposed to [`TAG`], this does not require the current commit to be tagged, just one of its parents.
 
 This constant will be empty if the last tag cannot be determined."#;
 pub const LAST_TAG: ShadowConst = "LAST_TAG";
+
+pub const COMMITS_SINCE_TAG_DOC: &str = r#"
+The number of commits since the last Git tag on the branch that this project was built from.
+This value indicates how many commits have been made after the last tag and before the current commit.
+
+If there are no additional commits after the last tag (i.e., the current commit is exactly at a tag),
+this value will be `0`.
+
+This constant will be empty or `0` if the last tag cannot be determined or if there are no commits after it.
+"#;
+
+pub const COMMITS_SINCE_TAG: &str = "COMMITS_SINCE_TAG";
+
 const SHORT_COMMIT_DOC: &str = r#"
 The short hash of the Git commit that this project was built from.
 Note that this will always truncate [`COMMIT_HASH`] to 8 characters if necessary.
@@ -29,44 +44,52 @@ Depending on the amount of commits in your project, this may not yield a unique 
 
 This constant will be empty if the last commit cannot be determined."#;
 pub const SHORT_COMMIT: ShadowConst = "SHORT_COMMIT";
+
 const COMMIT_HASH_DOC: &str = r#"
 The full commit hash of the Git commit that this project was built from.
 An abbreviated, but not necessarily unique, version of this is [`SHORT_COMMIT`].
 
 This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_HASH: ShadowConst = "COMMIT_HASH";
+
 const COMMIT_DATE_DOC: &str = r#"The time of the Git commit that this project was built from.
 The time is formatted in modified ISO 8601 format (`YYYY-MM-DD HH-MM ±hh-mm` where hh-mm is the offset from UTC).
 
 This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_DATE: ShadowConst = "COMMIT_DATE";
+
 const COMMIT_DATE_2822_DOC: &str = r#"
 The name of the Git branch that this project was built from.
 The time is formatted according to [RFC 2822](https://datatracker.ietf.org/doc/html/rfc2822#section-3.3) (e.g. HTTP Headers).
 
 This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_DATE_2822: ShadowConst = "COMMIT_DATE_2822";
+
 const COMMIT_DATE_3339_DOC: &str = r#"
 The name of the Git branch that this project was built from.
 The time is formatted according to [RFC 3339 and ISO 8601](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6).
 
 This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_DATE_3339: ShadowConst = "COMMIT_DATE_3339";
+
 const COMMIT_AUTHOR_DOC: &str = r#"
 The author of the Git commit that this project was built from.
 
 This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_AUTHOR: ShadowConst = "COMMIT_AUTHOR";
+
 const COMMIT_EMAIL_DOC: &str = r#"
 The e-mail address of the author of the Git commit that this project was built from.
 
 This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_EMAIL: ShadowConst = "COMMIT_EMAIL";
+
 const GIT_CLEAN_DOC: &str = r#"
 Whether the Git working tree was clean at the time of project build (`true`), or not (`false`).
 
 This constant will be `false` if the last commit cannot be determined."#;
 pub const GIT_CLEAN: ShadowConst = "GIT_CLEAN";
+
 const GIT_STATUS_FILE_DOC: &str = r#"
 The Git working tree status as a list of files with their status, similar to `git status`.
 Each line of the list is preceded with `  * `, followed by the file name.
@@ -103,6 +126,16 @@ impl Git {
         }
     }
 
+    fn update_usize(&mut self, c: ShadowConst, v: usize) {
+        if let Some(val) = self.map.get_mut(c) {
+            *val = ConstVal {
+                desc: val.desc.clone(),
+                v: v.to_string(),
+                t: ConstType::Usize,
+            }
+        }
+    }
+
     fn init(&mut self, path: &Path, std_env: &BTreeMap<String, String>) -> SdResult<()> {
         // First, try executing using the git command.
         if let Err(err) = self.init_git() {
@@ -123,8 +156,13 @@ impl Git {
         }
 
         // use command get last tag
-        if let Some(x) = command_last_tag() {
+        let describe = command_git_describe();
+        if let Some(x) = describe.0 {
             self.update_str(LAST_TAG, x)
+        }
+
+        if let Some(x) = describe.1 {
+            self.update_usize(COMMITS_SINCE_TAG, x)
         }
 
         // try use ci branch,tag
@@ -177,10 +215,18 @@ impl Git {
 
             //get HEAD branch
             let tag = command_current_tag().unwrap_or_default();
-            let last_tag = command_last_tag().unwrap_or_default();
             self.update_str(BRANCH, branch);
             self.update_str(TAG, tag);
-            self.update_str(LAST_TAG, last_tag);
+
+            // use command get last tag
+            let describe = command_git_describe();
+            if let Some(x) = describe.0 {
+                self.update_str(LAST_TAG, x)
+            }
+
+            if let Some(x) = describe.1 {
+                self.update_usize(COMMITS_SINCE_TAG, x)
+            }
 
             if let Some(v) = reference.target() {
                 let commit = v.to_string();
@@ -310,6 +356,9 @@ pub(crate) fn new_git(
     git.map.insert(TAG, ConstVal::new(TAG_DOC));
 
     git.map.insert(LAST_TAG, ConstVal::new(LAST_TAG_DOC));
+
+    git.map
+        .insert(COMMITS_SINCE_TAG, ConstVal::new(COMMITS_SINCE_TAG_DOC));
 
     git.map.insert(COMMIT_HASH, ConstVal::new(COMMIT_HASH_DOC));
 
@@ -476,10 +525,75 @@ fn command_current_tag() -> Option<String> {
     GitCommandExecutor::default().exec(&["tag", "-l", "--contains", "HEAD"])
 }
 
-/// git describe --tags --abbrev=0 HEAD
-/// Command exec git last tag
-fn command_last_tag() -> Option<String> {
-    GitCommandExecutor::default().exec(&["describe", "--tags", "--abbrev=0", "HEAD"])
+/// git describe --tags HEAD
+/// Command exec git describe
+fn command_git_describe() -> (Option<String>, Option<usize>, Option<String>) {
+    let last_tag =
+        GitCommandExecutor::default().exec(&["describe", "--tags", "--abbrev=0", "HEAD"]);
+    if last_tag.is_none() {
+        return (None, None, None);
+    }
+
+    let tag = last_tag.unwrap();
+
+    let describe = GitCommandExecutor::default().exec(&["describe", "--tags", "HEAD"]);
+    if let Some(desc) = describe {
+        match parse_git_describe(&tag, &desc) {
+            Ok((tag, commits, hash)) => {
+                return (Some(tag), commits, hash);
+            }
+            Err(_) => {
+                return (Some(tag), None, None);
+            }
+        }
+    }
+    (Some(tag), None, None)
+}
+
+fn parse_git_describe(
+    last_tag: &str,
+    describe: &str,
+) -> SdResult<(String, Option<usize>, Option<String>)> {
+    if !describe.starts_with(last_tag) {
+        return Err(ShadowError::String("git describe result error".to_string()));
+    }
+
+    if last_tag == describe {
+        return Ok((describe.to_string(), None, None));
+    }
+
+    let parts: Vec<&str> = describe.rsplit('-').collect();
+
+    if parts.is_empty() || parts.len() == 2 {
+        return Err(ShadowError::String(
+            "git describe result error,expect:<tag>-<num_commits>-g<hash>".to_string(),
+        ));
+    }
+
+    if parts.len() > 2 {
+        let short_hash = parts[0]; // last part
+
+        if !short_hash.starts_with('g') {
+            return Err(ShadowError::String(
+                "git describe result error,expect commit hash end with:-g<hash>".to_string(),
+            ));
+        }
+        let short_hash = short_hash.trim_start_matches('g');
+
+        // Full example：v1.0.0-alpha0-5-ga1b2c3d
+        let num_commits_str = parts[1];
+        let num_commits = num_commits_str
+            .parse::<usize>()
+            .map_err(|e| ShadowError::String(e.to_string()))?;
+        let last_tag = parts[2..]
+            .iter()
+            .rev()
+            .copied()
+            .collect::<Vec<_>>()
+            .join("-");
+        return Ok((last_tag, Some(num_commits), Some(short_hash.to_string())));
+    }
+    Ok((describe.to_string(), None, None))
 }
 
 /// git clean:git status --porcelain
@@ -575,7 +689,12 @@ mod tests {
         for (k, v) in map {
             println!("k:{},v:{:?}", k, v);
             assert!(!v.desc.is_empty());
-            if !k.eq(TAG) && !k.eq(LAST_TAG) && !k.eq(BRANCH) && !k.eq(GIT_STATUS_FILE) {
+            if !k.eq(TAG)
+                && !k.eq(LAST_TAG)
+                && !k.eq(COMMITS_SINCE_TAG)
+                && !k.eq(BRANCH)
+                && !k.eq(GIT_STATUS_FILE)
+            {
                 assert!(!v.v.is_empty());
                 continue;
             }
@@ -612,8 +731,63 @@ mod tests {
     }
 
     #[test]
-    fn test_command_last_tag() {
-        let opt_last_tag = command_last_tag();
-        assert!(opt_last_tag.is_some())
+    fn test_parse_git_describe() {
+        let commit_hash = "24skp4489";
+        let describe = "v1.0.0";
+        assert_eq!(
+            parse_git_describe("v1.0.0", describe).unwrap(),
+            (describe.into(), None, None)
+        );
+
+        let describe = "v1.0.0-0-g24skp4489";
+        assert_eq!(
+            parse_git_describe("v1.0.0", describe).unwrap(),
+            ("v1.0.0".into(), Some(0), Some(commit_hash.into()))
+        );
+
+        let describe = "v1.0.0-1-g24skp4489";
+        assert_eq!(
+            parse_git_describe("v1.0.0", describe).unwrap(),
+            ("v1.0.0".into(), Some(1), Some(commit_hash.into()))
+        );
+
+        let describe = "v1.0.0-alpha-0-g24skp4489";
+        assert_eq!(
+            parse_git_describe("v1.0.0-alpha", describe).unwrap(),
+            ("v1.0.0-alpha".into(), Some(0), Some(commit_hash.into()))
+        );
+
+        let describe = "v1.0.0.alpha-0-g24skp4489";
+        assert_eq!(
+            parse_git_describe("v1.0.0.alpha", describe).unwrap(),
+            ("v1.0.0.alpha".into(), Some(0), Some(commit_hash.into()))
+        );
+
+        let describe = "v1.0.0-alpha";
+        assert_eq!(
+            parse_git_describe("v1.0.0-alpha", describe).unwrap(),
+            ("v1.0.0-alpha".into(), None, None)
+        );
+
+        let describe = "v1.0.0-alpha-99-0-g24skp4489";
+        assert_eq!(
+            parse_git_describe("v1.0.0-alpha-99", describe).unwrap(),
+            ("v1.0.0-alpha-99".into(), Some(0), Some(commit_hash.into()))
+        );
+
+        let describe = "v1.0.0-alpha-99-024skp4489";
+        assert!(parse_git_describe("v1.0.0-alpha-99", describe).is_err());
+
+        let describe = "v1.0.0-alpha-024skp4489";
+        assert!(parse_git_describe("v1.0.0-alpha", describe).is_err());
+
+        let describe = "v1.0.0-alpha-024skp4489";
+        assert!(parse_git_describe("v1.0.0-alpha", describe).is_err());
+
+        let describe = "v1.0.0-alpha-g024skp4489";
+        assert!(parse_git_describe("v1.0.0-alpha", describe).is_err());
+
+        let describe = "v1.0.0----alpha-g024skp4489";
+        assert!(parse_git_describe("v1.0.0----alpha", describe).is_err());
     }
 }
