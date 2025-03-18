@@ -245,6 +245,15 @@ impl Shadow {
                 ConstType::Slice,
                 val.v.as_bytes()
             ),
+            ConstType::Usize => format!(
+                "#[allow(dead_code)]\n\
+                {}\n\
+            pub const {} :{} = r#\"{}\"#;",
+                CARGO_CLIPPY_ALLOW_ALL,
+                shadow_const.to_ascii_uppercase(),
+                ConstType::Usize,
+                val.v.parse::<usize>().unwrap_or_default()
+            ),
         };
 
         writeln!(&self.f, "{desc}")?;
@@ -275,7 +284,7 @@ impl Shadow {
         // append gen const
         for (k, v) in &self.map {
             let tmp = match v.t {
-                ConstType::Str | ConstType::Bool => {
+                ConstType::Str | ConstType::Bool | ConstType::Usize => {
                     format!(r#"{}println!("{k}:{{{k}}}\n");{}"#, "\t", "\n")
                 }
                 ConstType::Slice => {

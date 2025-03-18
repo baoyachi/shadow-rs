@@ -24,6 +24,18 @@ As opposed to [`TAG`], this does not require the current commit to be tagged, ju
 This constant will be empty if the last tag cannot be determined."#;
 pub const LAST_TAG: ShadowConst = "LAST_TAG";
 
+pub const COMMITS_SINCE_TAG_DOC: &str = r#"
+The number of commits since the last Git tag on the branch that this project was built from.
+This value indicates how many commits have been made after the last tag and before the current commit.
+
+If there are no additional commits after the last tag (i.e., the current commit is exactly at a tag),
+this value will be `0`.
+
+This constant will be empty or `0` if the last tag cannot be determined or if there are no commits after it.
+"#;
+
+pub const COMMITS_SINCE_TAG: &str = "COMMITS_SINCE_TAG";
+
 const SHORT_COMMIT_DOC: &str = r#"
 The short hash of the Git commit that this project was built from.
 Note that this will always truncate [`COMMIT_HASH`] to 8 characters if necessary.
@@ -114,6 +126,16 @@ impl Git {
         }
     }
 
+    fn update_usize(&mut self, c: ShadowConst, v: usize) {
+        if let Some(val) = self.map.get_mut(c) {
+            *val = ConstVal {
+                desc: val.desc.clone(),
+                v: v.to_string(),
+                t: ConstType::Usize,
+            }
+        }
+    }
+
     fn init(&mut self, path: &Path, std_env: &BTreeMap<String, String>) -> SdResult<()> {
         // First, try executing using the git command.
         if let Err(err) = self.init_git() {
@@ -134,8 +156,13 @@ impl Git {
         }
 
         // use command get last tag
-        if let Some(x) = command_last_tag() {
+        let describe = command_git_describe();
+        if let Some(x) = describe.0 {
             self.update_str(LAST_TAG, x)
+        }
+
+        if let Some(x) = describe.1 {
+            self.update_usize(COMMITS_SINCE_TAG, x)
         }
 
         // try use ci branch,tag
@@ -188,10 +215,19 @@ impl Git {
 
             //get HEAD branch
             let tag = command_current_tag().unwrap_or_default();
-            let last_tag = command_last_tag().unwrap_or_default();
+            // let last_tag = command_last_tag().unwrap_or_default();
             self.update_str(BRANCH, branch);
             self.update_str(TAG, tag);
-            self.update_str(LAST_TAG, last_tag);
+
+            // use command get last tag
+            let describe = command_git_describe();
+            if let Some(x) = describe.0 {
+                self.update_str(LAST_TAG, x)
+            }
+
+            if let Some(x) = describe.1 {
+                self.update_usize(COMMITS_SINCE_TAG, x)
+            }
 
             if let Some(v) = reference.target() {
                 let commit = v.to_string();
@@ -321,6 +357,9 @@ pub(crate) fn new_git(
     git.map.insert(TAG, ConstVal::new(TAG_DOC));
 
     git.map.insert(LAST_TAG, ConstVal::new(LAST_TAG_DOC));
+
+    git.map
+        .insert(COMMITS_SINCE_TAG, ConstVal::new(COMMITS_SINCE_TAG_DOC));
 
     git.map.insert(COMMIT_HASH, ConstVal::new(COMMIT_HASH_DOC));
 
@@ -487,15 +526,9 @@ fn command_current_tag() -> Option<String> {
     GitCommandExecutor::default().exec(&["tag", "-l", "--contains", "HEAD"])
 }
 
-/// git describe --tags --abbrev=0 HEAD
-/// Command exec git last tag
-fn command_last_tag() -> Option<String> {
-    GitCommandExecutor::default().exec(&["describe", "--tags", "--abbrev=0", "HEAD"])
-}
-
 /// git describe --tags HEAD
 /// Command exec git describe
-fn command_git_describe() -> (Option<String>, Option<u32>, Option<String>) {
+fn command_git_describe() -> (Option<String>, Option<usize>, Option<String>) {
     let last_tag =
         GitCommandExecutor::default().exec(&["describe", "--tags", "--abbrev=0", "HEAD"]);
     if last_tag.is_none() {
@@ -515,13 +548,13 @@ fn command_git_describe() -> (Option<String>, Option<u32>, Option<String>) {
             }
         }
     }
-    return (Some(tag), None, None);
+    (Some(tag), None, None)
 }
 
 fn parse_git_describe(
     last_tag: &str,
     describe: &str,
-) -> SdResult<(String, Option<u32>, Option<String>)> {
+) -> SdResult<(String, Option<usize>, Option<String>)> {
     if !describe.starts_with(last_tag) {
         return Err(ShadowError::String("git describe result error".to_string()));
     }
@@ -551,7 +584,7 @@ fn parse_git_describe(
         // Full example：v1.0.0-alpha0-5-ga1b2c3d
         let num_commits_str = parts[1];
         let num_commits = num_commits_str
-            .parse::<u32>()
+            .parse::<usize>()
             .map_err(|e| ShadowError::String(e.to_string()))?;
         let last_tag = parts[2..]
             .iter()

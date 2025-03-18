@@ -70,6 +70,8 @@ pub enum ConstType {
     Bool,
     /// [`&[u8]`].
     Slice,
+    /// [`usize`].
+    Usize,
 }
 
 impl Display for ConstType {
@@ -78,6 +80,7 @@ impl Display for ConstType {
             ConstType::Str => write!(f, "&str"),
             ConstType::Bool => write!(f, "bool"),
             ConstType::Slice => write!(f, "&[u8]"),
+            ConstType::Usize => write!(f, "usize"),
         }
     }
 }
