@@ -355,11 +355,4 @@ mod tests {
         assert!(!shadow.contains(expect));
         Ok(())
     }
-
-    #[test]
-    fn test_env() {
-        for (k, v) in std::env::vars() {
-            println!("K:{k},V:{v}");
-        }
-    }
 }

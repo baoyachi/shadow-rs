@@ -688,7 +688,6 @@ mod tests {
         let env_map = get_std_env();
         let map = new_git(Path::new("./"), CiType::Github, &env_map);
         for (k, v) in map {
-            println!("k:{},v:{:?}", k, v);
             assert!(!v.desc.is_empty());
             if !k.eq(TAG)
                 && !k.eq(LAST_TAG)
