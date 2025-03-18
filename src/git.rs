@@ -11,16 +11,19 @@ const BRANCH_DOC: &str = r#"
 The name of the Git branch that this project was built from.
 This constant will be empty if the branch cannot be determined."#;
 pub const BRANCH: ShadowConst = "BRANCH";
+
 const TAG_DOC: &str = r#"
 The name of the Git tag that this project was built from.
 Note that this will be empty if there is no tag for the HEAD at the time of build."#;
 pub const TAG: ShadowConst = "TAG";
+
 const LAST_TAG_DOC: &str = r#"
 The name of the last Git tag on the branch that this project was built from.
 As opposed to [`TAG`], this does not require the current commit to be tagged, just one of its parents.
 
 This constant will be empty if the last tag cannot be determined."#;
 pub const LAST_TAG: ShadowConst = "LAST_TAG";
+
 const SHORT_COMMIT_DOC: &str = r#"
 The short hash of the Git commit that this project was built from.
 Note that this will always truncate [`COMMIT_HASH`] to 8 characters if necessary.
@@ -29,44 +32,52 @@ Depending on the amount of commits in your project, this may not yield a unique 
 
 This constant will be empty if the last commit cannot be determined."#;
 pub const SHORT_COMMIT: ShadowConst = "SHORT_COMMIT";
+
 const COMMIT_HASH_DOC: &str = r#"
 The full commit hash of the Git commit that this project was built from.
 An abbreviated, but not necessarily unique, version of this is [`SHORT_COMMIT`].
 
 This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_HASH: ShadowConst = "COMMIT_HASH";
+
 const COMMIT_DATE_DOC: &str = r#"The time of the Git commit that this project was built from.
 The time is formatted in modified ISO 8601 format (`YYYY-MM-DD HH-MM ±hh-mm` where hh-mm is the offset from UTC).
 
 This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_DATE: ShadowConst = "COMMIT_DATE";
+
 const COMMIT_DATE_2822_DOC: &str = r#"
 The name of the Git branch that this project was built from.
 The time is formatted according to [RFC 2822](https://datatracker.ietf.org/doc/html/rfc2822#section-3.3) (e.g. HTTP Headers).
 
 This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_DATE_2822: ShadowConst = "COMMIT_DATE_2822";
+
 const COMMIT_DATE_3339_DOC: &str = r#"
 The name of the Git branch that this project was built from.
 The time is formatted according to [RFC 3339 and ISO 8601](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6).
 
 This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_DATE_3339: ShadowConst = "COMMIT_DATE_3339";
+
 const COMMIT_AUTHOR_DOC: &str = r#"
 The author of the Git commit that this project was built from.
 
 This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_AUTHOR: ShadowConst = "COMMIT_AUTHOR";
+
 const COMMIT_EMAIL_DOC: &str = r#"
 The e-mail address of the author of the Git commit that this project was built from.
 
 This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_EMAIL: ShadowConst = "COMMIT_EMAIL";
+
 const GIT_CLEAN_DOC: &str = r#"
 Whether the Git working tree was clean at the time of project build (`true`), or not (`false`).
 
 This constant will be `false` if the last commit cannot be determined."#;
 pub const GIT_CLEAN: ShadowConst = "GIT_CLEAN";
+
 const GIT_STATUS_FILE_DOC: &str = r#"
 The Git working tree status as a list of files with their status, similar to `git status`.
 Each line of the list is preceded with `  * `, followed by the file name.
@@ -480,6 +491,31 @@ fn command_current_tag() -> Option<String> {
 /// Command exec git last tag
 fn command_last_tag() -> Option<String> {
     GitCommandExecutor::default().exec(&["describe", "--tags", "--abbrev=0", "HEAD"])
+}
+
+/// git describe --tags HEAD
+/// Command exec git describe
+fn command_git_describe() -> (Option<String>, Option<u32>, Option<String>) {
+    let last_tag =
+        GitCommandExecutor::default().exec(&["describe", "--tags", "--abbrev=0", "HEAD"]);
+    if last_tag.is_none() {
+        return (None, None, None);
+    }
+
+    let tag = last_tag.unwrap();
+
+    let describe = GitCommandExecutor::default().exec(&["describe", "--tags", "HEAD"]);
+    if let Some(desc) = describe {
+        match parse_git_describe(&tag, &desc) {
+            Ok((tag, commits, hash)) => {
+                return (Some(tag), commits, hash);
+            }
+            Err(_) => {
+                return (Some(tag), None, None);
+            }
+        }
+    }
+    return (Some(tag), None, None);
 }
 
 fn parse_git_describe(
