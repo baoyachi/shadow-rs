@@ -43,10 +43,6 @@ jobs:
       - name: Run examples with debug
         run: cargo run --example builtin_fn
 
-      # Run examples with debug
-      - name: Run examples with release
-        run: cargo run --example builtin_fn
-
       # example_shadow check
       - name: Check example_shadow
         run: |
