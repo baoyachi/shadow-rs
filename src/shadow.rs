@@ -176,7 +176,7 @@ impl Shadow {
 
     fn filter_deny(&mut self) {
         self.deny_const.iter().for_each(|x| {
-            self.map.remove(&*x);
+            self.map.remove(x);
         })
     }
 
