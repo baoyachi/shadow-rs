@@ -176,7 +176,7 @@ impl Shadow {
 
     fn filter_deny(&mut self) {
         self.deny_const.iter().for_each(|x| {
-            self.map.remove(&**x);
+            self.map.remove(x);
         })
     }
 
@@ -197,7 +197,7 @@ impl Shadow {
         let out_dir = &self.out_path;
         self.build_pattern.rerun_if(self.map.keys(), out_dir);
 
-        for (k, v) in self.map.clone() {
+        for (k, v) in &self.map {
             self.write_const(k, v)?;
         }
         Ok(())
@@ -215,7 +215,7 @@ impl Shadow {
         Ok(())
     }
 
-    fn write_const(&mut self, shadow_const: ShadowConst, val: ConstVal) -> SdResult<()> {
+    fn write_const(&self, shadow_const: ShadowConst, val: &ConstVal) -> SdResult<()> {
         let desc = format!("#[doc=r#\"{}\"#]", val.desc);
         let define = match val.t {
             ConstType::Str => format!(
@@ -336,23 +336,21 @@ mod tests {
         let shadow = fs::read_to_string(DEFINE_SHADOW_RS)?;
         assert!(!shadow.is_empty());
         assert!(shadow.lines().count() > 0);
-        Ok(())
-    }
 
-    #[test]
-    fn test_build_deny() -> SdResult<()> {
+        fs::remove_file(DEFINE_SHADOW_RS)?;
+
         ShadowBuilder::builder()
             .src_path("./")
             .out_path("./")
             .deny_const(BTreeSet::from([CARGO_TREE]))
             .build()?;
 
-        let shadow = fs::read_to_string(DEFINE_SHADOW_RS)?;
-        assert!(!shadow.is_empty());
-        assert!(shadow.lines().count() > 0);
-        // println!("{shadow}");
+        let content = fs::read_to_string(DEFINE_SHADOW_RS)?;
+        assert!(!content.is_empty());
+        assert!(content.lines().count() > 0);
         let expect = "pub const CARGO_TREE :&str";
-        assert!(!shadow.contains(expect));
+        assert!(!content.contains(expect));
+
         Ok(())
     }
 }
