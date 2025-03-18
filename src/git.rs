@@ -497,6 +497,7 @@ impl<'a> GitCommandExecutor<'a> {
 
     fn exec(&self, args: &[&str]) -> Option<String> {
         Command::new("git")
+            .env("GIT_OPTIONAL_LOCKS", "0")
             .current_dir(self.path)
             .args(args)
             .output()
@@ -687,7 +688,6 @@ mod tests {
         let env_map = get_std_env();
         let map = new_git(Path::new("./"), CiType::Github, &env_map);
         for (k, v) in map {
-            println!("k:{},v:{:?}", k, v);
             assert!(!v.desc.is_empty());
             if !k.eq(TAG)
                 && !k.eq(LAST_TAG)
