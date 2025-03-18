@@ -48,6 +48,3 @@ build = ["time", "tzdb", "is_debug/std", "std"]
 
 [dev-dependencies]
 winnow = "0.7"
-
-[workspace]
-members = ["example_shadow", "example_shadow_hook", "example_wasm", "example_no_std"]
