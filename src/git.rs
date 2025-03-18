@@ -215,7 +215,6 @@ impl Git {
 
             //get HEAD branch
             let tag = command_current_tag().unwrap_or_default();
-            // let last_tag = command_last_tag().unwrap_or_default();
             self.update_str(BRANCH, branch);
             self.update_str(TAG, tag);
 
@@ -724,12 +723,6 @@ mod tests {
         }
 
         assert_eq!(Some(branch()), command_current_branch());
-    }
-
-    #[test]
-    fn test_command_last_tag() {
-        let opt_last_tag = command_last_tag();
-        assert!(opt_last_tag.is_some())
     }
 
     #[test]
