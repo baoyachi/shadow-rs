@@ -43,28 +43,3 @@ where
         &self.0
     }
 }
-
-/// A struct representing a shadow hook with an inner function and a deny list.
-pub struct ShadowHook<F> {
-    /// The inner function that will be used as the hook.
-    pub hook: F,
-
-    /// The deny list associated with this hook.
-    pub deny: BTreeSet<ShadowConst>,
-}
-
-/// Implement the `HookExt` trait for the `ShadowHook` struct.
-impl<F> HookExt for ShadowHook<F>
-where
-    F: Fn(&File) -> SdResult<()>,
-{
-    /// Returns the deny list associated with this `ShadowHook`.
-    fn default_deny(&self) -> BTreeSet<ShadowConst> {
-        self.deny.clone()
-    }
-
-    /// Returns a reference to the inner function of this `ShadowHook`.
-    fn hook_inner(&self) -> &dyn Fn(&File) -> SdResult<()> {
-        &self.hook
-    }
-}

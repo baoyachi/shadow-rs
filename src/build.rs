@@ -145,8 +145,8 @@ impl BuildPattern {
         }
 
         other_keys.for_each(|key| println!("cargo:rerun-if-env-changed={key}"));
-        println!("cargo:rerun-if-env-changed={}", DEFINE_SOURCE_DATE_EPOCH);
-        println!("cargo:rerun-if-changed={}/{}", out_dir, DEFINE_SHADOW_RS);
+        println!("cargo:rerun-if-env-changed={DEFINE_SOURCE_DATE_EPOCH}");
+        println!("cargo:rerun-if-changed={out_dir}/{DEFINE_SHADOW_RS}");
     }
 }
 

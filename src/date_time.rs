@@ -22,15 +22,10 @@ pub fn now_date_time() -> DateTime {
         Some(timestamp) => {
             let epoch = timestamp
                 .into_string()
-                .unwrap_or_else(|_| {
-                    panic!("Input {} could not be parsed", DEFINE_SOURCE_DATE_EPOCH)
-                })
+                .unwrap_or_else(|_| panic!("Input {DEFINE_SOURCE_DATE_EPOCH} could not be parsed"))
                 .parse::<i64>()
                 .unwrap_or_else(|_| {
-                    panic!(
-                        "Input {} could not be cast to a number",
-                        DEFINE_SOURCE_DATE_EPOCH
-                    )
+                    panic!("Input {DEFINE_SOURCE_DATE_EPOCH} could not be cast to a number")
                 });
             DateTime::Utc(OffsetDateTime::from_unix_timestamp(epoch).unwrap())
         }

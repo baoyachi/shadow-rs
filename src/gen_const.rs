@@ -95,13 +95,12 @@ use shadow_rs::serde_json;
 /// - `Ok(Metadata)`: Contains the parsed metadata if successful.
 /// - `Err(String)`: Returns an error message if converting the environment variable to a UTF-8 string or parsing JSON fails.
 #[allow(dead_code)]
-{}
+{CARGO_CLIPPY_ALLOW_ALL}
 pub fn cargo_metadata() -> Result<Metadata, String> {{
     let metadata_json = std::str::from_utf8(CARGO_METADATA.as_ref()).map_err(|err| format!("generate 'CARGO_METADATA' value from UTF8 error:{{}}",err))?;
     let meta: Metadata = serde_json::from_str(metadata_json).map_err(|err| err.to_string())?;
     Ok(meta)
-}}"#,
-        CARGO_CLIPPY_ALLOW_ALL
+}}"#
     )
 }
 
