@@ -1,5 +1,6 @@
 use crate::build::{ConstType, ConstVal};
 use crate::ci::CiType;
+use crate::date_time::now_date_time;
 use crate::env::{new_project, new_system_env};
 use crate::gen_const::{
     clap_long_version_branch_const, clap_long_version_tag_const, version_branch_const,
@@ -7,7 +8,7 @@ use crate::gen_const::{
 };
 use crate::git::new_git;
 use crate::{
-    get_std_env, BuildPattern, DateTime, SdResult, ShadowBuilder, ShadowConst,
+    get_std_env, BuildPattern, SdResult, ShadowBuilder, ShadowConst,
     CARGO_CLIPPY_ALLOW_ALL, TAG,
 };
 use std::collections::{BTreeMap, BTreeSet};
@@ -209,7 +210,7 @@ impl Shadow {
 // Author: https://www.github.com/baoyachi
 // Generation time: {}
 "#,
-            DateTime::now().to_rfc2822()
+            now_date_time().to_rfc2822()
         );
         writeln!(&self.f, "{desc}\n\n")?;
         Ok(())
