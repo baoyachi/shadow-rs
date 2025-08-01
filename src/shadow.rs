@@ -8,8 +8,7 @@ use crate::gen_const::{
 };
 use crate::git::new_git;
 use crate::{
-    get_std_env, BuildPattern, SdResult, ShadowBuilder, ShadowConst,
-    CARGO_CLIPPY_ALLOW_ALL, TAG,
+    get_std_env, BuildPattern, SdResult, ShadowBuilder, ShadowConst, CARGO_CLIPPY_ALLOW_ALL, TAG,
 };
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs::File;
