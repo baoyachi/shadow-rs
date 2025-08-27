@@ -613,6 +613,7 @@ fn command_git_status_file() -> String {
     let git_status_files =
         move |args: &[&str], grep: &[&str], awk: &[&str]| -> SdResult<Vec<String>> {
             let git_shell = Command::new("git")
+                .env("GIT_OPTIONAL_LOCKS", "0")
                 .args(args)
                 .stdin(Stdio::piped())
                 .stdout(Stdio::piped())
