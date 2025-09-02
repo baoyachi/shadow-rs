@@ -372,8 +372,11 @@ impl Shadow {
 
             writeln!(&self.f, "{everything_define}")?;
 
-            use crate::gen_const::cargo_metadata_fn;
-            writeln!(&self.f, "{}", cargo_metadata_fn(self))?;
+            #[cfg(feature = "metadata")]
+            {
+                use crate::gen_const::cargo_metadata_fn;
+                writeln!(&self.f, "{}", cargo_metadata_fn(self))?;
+            }
         }
 
         Ok(())
