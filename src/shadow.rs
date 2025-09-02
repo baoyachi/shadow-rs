@@ -367,7 +367,8 @@ impl Shadow {
         #[cfg(not(feature = "no_std"))]
         {
             let print_build_in_define = format!(
-                "/// Prints all built-in `shadow-rs` build constants to standard output.\n\
+                "/// Prints all built-in `shadow-rs` build constants\n\
+                /// (except for slices) to standard output.\n\
             #[allow(dead_code)]\n\
             {CARGO_CLIPPY_ALLOW_ALL}\n\
             pub fn print_build_in() {{\n\
