@@ -280,35 +280,92 @@ impl Shadow {
 
     fn gen_build_in(&self, gen_const: Vec<&'static str>) -> SdResult<()> {
         let mut print_val = String::from("\n");
+        let mut params = String::from("\n");
+        let mut default = String::from("\n");
+        let mut all = String::from("\n");
 
         // append gen const
         for (k, v) in &self.map {
             let tmp = match v.t {
                 ConstType::Str | ConstType::Bool | ConstType::Usize => {
-                    format!(r#"{}println!("{k}:{{{k}}}\n");{}"#, "\t", "\n")
+                    default.push_str(&format!("\t\t\t{k}: true,\n"));
+                    all.push_str(&format!("\t\t\t{k}: true,\n"));
+                    format!(
+                        r#"{}if self.{k} {{ writeln!(f, "{k}:{{{k}}}\n")?; }}{}"#,
+                        "\t\t", "\n"
+                    )
                 }
                 ConstType::Slice => {
-                    format!(r#"{}println!("{k}:{{:?}}\n",{});{}"#, "\t", k, "\n",)
+                    default.push_str(&format!("\t\t\t{k}: false,\n"));
+                    all.push_str(&format!("\t\t\t{k}: true,\n"));
+                    format!(
+                        r#"{}if self.{k} {{ writeln!(f, "{k}:{{:?}}\n",{})?; }}{}"#,
+                        "\t\t", k, "\n",
+                    )
                 }
             };
             print_val.push_str(tmp.as_str());
+            params.push_str(&format!("\tpub {k}: bool,\n"));
         }
 
         // append gen fn
         for k in gen_const {
-            let tmp = format!(r#"{}println!("{k}:{{{k}}}\n");{}"#, "\t", "\n");
+            let tmp = format!(
+                r#"{}if self.{k} {{ writeln!(f, "{k}:{{{k}}}\n")?; }}{}"#,
+                "\t\t", "\n"
+            );
             print_val.push_str(tmp.as_str());
+            params.push_str(&format!("\tpub {k}: bool,\n"));
+            default.push_str(&format!("\t\t\t{k}: true,\n"));
+            all.push_str(&format!("\t\t\t{k}: true,\n"));
         }
+
+        default.push_str("\t\t");
+        all.push_str("\t\t");
+        print_val.push_str("\t\tOk(())\n\t");
 
         #[cfg(not(feature = "no_std"))]
         {
             let everything_define = format!(
-                "/// Prints all built-in `shadow-rs` build constants to standard output.\n\
+                "#[allow(non_snake_case)]\n\
+                {CARGO_CLIPPY_ALLOW_ALL}\n\
+                pub struct BuildInfoDisplay {\
+                    {{params}}\
+                }\n\n\
+                impl Default for BuildInfoDisplay {{\n\
+                    \t#[allow(dead_code)]\n\
+                    \t{CARGO_CLIPPY_ALLOW_ALL}\n\
+                    \t/// Every constant that `shadow-rs` tracks will be printed\n\
+                    \t/// except for slices (CARGO_METADATA for example)\n\
+                    \tfn default() -> Self {{\n\
+                        \t\tSelf {\
+                            {{default}}\
+                        }\n\
+                    \t}}\n\
+                }}\n\n\
+                impl BuildInfoDisplay {{\n\
+                    \t#[allow(dead_code)]\n\
+                    \t{CARGO_CLIPPY_ALLOW_ALL}\n\
+                    \t/// Every constant that `shadow-rs` tracks will be printed\n\
+                    \tpub fn all() -> Self {{\n\
+                        \t\tSelf {\
+                            {{all}}\
+                        }\n\
+                    \t}}\n\
+                }}\n\n\
+                impl std::fmt::Display for BuildInfoDisplay {{\n\
+                    \t#[allow(dead_code)]\n\
+                    \t{CARGO_CLIPPY_ALLOW_ALL}\n\
+                    \tfn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {\
+                        {{print_val}}\
+                    }\n\
+                }}\n\n\
+                /// Prints all built-in `shadow-rs` build constants to standard output.\n\
             #[allow(dead_code)]\n\
             {CARGO_CLIPPY_ALLOW_ALL}\n\
-            pub fn print_build_in() {\
-            {{print_val}}\
-            }\n",
+            pub fn print_build_in() {{\n\
+                \tprintln!(\"{{}}\", BuildInfoDisplay::default());\n\
+            }}\n",
             );
 
             writeln!(&self.f, "{everything_define}")?;
