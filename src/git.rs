@@ -358,7 +358,7 @@ pub(crate) fn new_git(
     git.map.insert(LAST_TAG, ConstVal::new(LAST_TAG_DOC));
 
     git.map
-        .insert(COMMITS_SINCE_TAG, ConstVal::new(COMMITS_SINCE_TAG_DOC));
+        .insert(COMMITS_SINCE_TAG, ConstVal::new_usize(COMMITS_SINCE_TAG_DOC));
 
     git.map.insert(COMMIT_HASH, ConstVal::new(COMMIT_HASH_DOC));
 
