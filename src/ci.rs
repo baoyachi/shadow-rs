@@ -1,18 +1,13 @@
 use std::fmt::{Display, Formatter};
 
 /// [`CiType`] holds the types of CI environment that `shadow-rs` can detect.
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub enum CiType {
     Github,
     Gitlab,
     // TODO: Recognize other CI types, especially Travis and Jenkins
+    #[default]
     None,
-}
-
-impl Default for CiType {
-    fn default() -> Self {
-        Self::None
-    }
 }
 
 impl Display for CiType {

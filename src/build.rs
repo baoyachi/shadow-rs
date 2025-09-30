@@ -59,6 +59,15 @@ impl ConstVal {
             t: ConstType::Slice,
         }
     }
+
+    pub fn new_usize<S: Into<String>>(desc: S) -> ConstVal {
+        // Creates a new `ConstVal` with an empty 0 as its value and `Usize` as its type.
+        ConstVal {
+            desc: desc.into(),
+            v: "0".to_string(),
+            t: ConstType::Usize,
+        }
+    }
 }
 
 /// Supported types of build constants.
