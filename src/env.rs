@@ -348,6 +348,10 @@ const BUILD_TIME_3339_DOC: &str = r#"
 The project build time, formatted according to [RFC 3339 and ISO 8601](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6)."#;
 const BUILD_TIME_3339: ShadowConst = "BUILD_TIME_3339";
 
+const BUILD_TIMESTAMP_DOC: &str = r#"
+The project build time as a Unix timestamp (seconds since Unix epoch)."#;
+const BUILD_TIMESTAMP: ShadowConst = "BUILD_TIMESTAMP";
+
 const BUILD_RUST_CHANNEL_DOC: &str = r#"
 The debug configuration with which the project was built.
 Note that this is not the Rust channel, but either `debug` or `release`, depending on whether debug assertions were enabled in the build or not. "#;
@@ -379,6 +383,15 @@ pub(crate) fn build_time(project: &mut Project) {
             desc: BUILD_TIME_3339_DOC.to_string(),
             v: time.to_rfc3339(),
             t: ConstType::Str,
+        },
+    );
+
+    project.map.insert(
+        BUILD_TIMESTAMP,
+        ConstVal {
+            desc: BUILD_TIMESTAMP_DOC.to_string(),
+            v: time.timestamp().to_string(),
+            t: ConstType::Int,
         },
     );
 }
