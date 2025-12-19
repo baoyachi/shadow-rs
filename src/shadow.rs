@@ -254,6 +254,15 @@ impl Shadow {
                 ConstType::Usize,
                 val.v.parse::<usize>().unwrap_or_default()
             ),
+            ConstType::Int => format!(
+                "#[allow(dead_code)]\n\
+                {}\n\
+            pub const {} :{} = {};",
+                CARGO_CLIPPY_ALLOW_ALL,
+                shadow_const.to_ascii_uppercase(),
+                ConstType::Int,
+                val.v.parse::<i64>().unwrap_or_default()
+            ),
         };
 
         writeln!(&self.f, "{desc}")?;
@@ -287,7 +296,7 @@ impl Shadow {
         // append gen const
         for (k, v) in &self.map {
             let tmp = match v.t {
-                ConstType::Str | ConstType::Bool | ConstType::Usize => {
+                ConstType::Str | ConstType::Bool | ConstType::Usize | ConstType::Int => {
                     default.push_str(&format!("\t\t\t{k}: true,\n"));
                     all.push_str(&format!("\t\t\t{k}: true,\n"));
                     format!(

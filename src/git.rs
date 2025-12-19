@@ -75,6 +75,12 @@ The timezone information from the original commit is preserved.
 This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_DATE_3339: ShadowConst = "COMMIT_DATE_3339";
 
+const COMMIT_TIMESTAMP_DOC: &str = r#"
+The time of the Git commit as a Unix timestamp (seconds since Unix epoch).
+
+This constant will be empty if the last commit cannot be determined."#;
+pub const COMMIT_TIMESTAMP: ShadowConst = "COMMIT_TIMESTAMP";
+
 const COMMIT_AUTHOR_DOC: &str = r#"
 The author of the Git commit that this project was built from.
 
@@ -139,6 +145,16 @@ impl Git {
         }
     }
 
+    fn update_int(&mut self, c: ShadowConst, v: i64) {
+        if let Some(val) = self.map.get_mut(c) {
+            *val = ConstVal {
+                desc: val.desc.clone(),
+                v: v.to_string(),
+                t: ConstType::Int,
+            }
+        }
+    }
+
     fn init(&mut self, path: &Path, std_env: &BTreeMap<String, String>) -> SdResult<()> {
         // First, try executing using the git command.
         if let Err(err) = self.init_git() {
@@ -194,11 +210,13 @@ impl Git {
                 self.update_str(COMMIT_DATE, date_time.human_format());
                 self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
                 self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
+                self.update_int(COMMIT_TIMESTAMP, date_time.timestamp());
             } else if let Ok(time_stamp) = git_info.date.parse::<i64>() {
                 if let Ok(date_time) = DateTime::timestamp_2_utc(time_stamp) {
                     self.update_str(COMMIT_DATE, date_time.human_format());
                     self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
                     self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
+                    self.update_int(COMMIT_TIMESTAMP, date_time.timestamp());
                 }
             }
         } else if let Ok(time_stamp) = git_info.date.parse::<i64>() {
@@ -206,6 +224,7 @@ impl Git {
                 self.update_str(COMMIT_DATE, date_time.human_format());
                 self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
                 self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
+                self.update_int(COMMIT_TIMESTAMP, date_time.timestamp());
             }
         }
 
@@ -408,6 +427,9 @@ pub(crate) fn new_git(
 
     git.map
         .insert(COMMIT_DATE_3339, ConstVal::new(COMMIT_DATE_3339_DOC));
+
+    git.map
+        .insert(COMMIT_TIMESTAMP, ConstVal::new(COMMIT_TIMESTAMP_DOC));
 
     git.map.insert(GIT_CLEAN, ConstVal::new_bool(GIT_CLEAN_DOC));
 

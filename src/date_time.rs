@@ -91,6 +91,12 @@ impl DateTime {
             DateTime::Local(dt) | DateTime::Utc(dt) => dt.format(&Rfc3339).unwrap_or_default(),
         }
     }
+
+    pub fn timestamp(&self) -> i64 {
+        match self {
+            DateTime::Local(dt) | DateTime::Utc(dt) => dt.unix_timestamp(),
+        }
+    }
 }
 
 impl Format for DateTime {
@@ -209,6 +215,7 @@ mod tests {
         assert_eq!(time.to_rfc2822(), "Wed, 04 Aug 2021 12:34:03 +0000");
         assert_eq!(time.to_rfc3339(), "2021-08-04T12:34:03Z");
         assert_eq!(time.human_format(), "2021-08-04 12:34:03 +00:00");
+        assert_eq!(time.timestamp(), 1628080443);
     }
 
     #[test]

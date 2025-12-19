@@ -188,6 +188,7 @@ in [`example_shadow`](https://github.com/baoyachi/shadow-rs/blob/master/example_
 | COMMIT_DATE        | 2021-08-04 12:34:03 +00:00                                                                           |
 | COMMIT_DATE_2822   | Thu, 24 Jun 2021 21:33:59 +0800                                                                      |  
 | COMMIT_DATE_3339   | 2021-06-24T21:33:59.972494+08:00                                                                     |
+| COMMIT_TIMESTAMP   | 1624548839 (i64)                                                                                     |
 | COMMIT_AUTHOR      | baoyachi                                                                                             |
 | COMMIT_EMAIL       | xxx@gmail.com                                                                                        |  
 | BUILD_OS           | macos-x86_64                                                                                         |  
@@ -203,6 +204,7 @@ in [`example_shadow`](https://github.com/baoyachi/shadow-rs/blob/master/example_
 | BUILD_TIME         | 2021-06-24 21:33:59                                                                                  |  
 | BUILD_TIME_2822    | Thu, 24 Jun 2021 21:33:59 +0800                                                                      |  
 | BUILD_TIME_3339    | 2021-06-24T15:53:55+08:00                                                                            |  
+| BUILD_TIMESTAMP    | 1624548839 (i64)                                                                                     |
 | BUILD_RUST_CHANNEL | release                                                                                              |  
 | GIT_CLEAN          | true                                                                                                 |  
 | GIT_STATUS_FILE    | * src/lib.rs (dirty)                                                                                 |  
