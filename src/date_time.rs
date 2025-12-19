@@ -225,4 +225,12 @@ mod tests {
         assert_eq!(time.to_rfc3339(), "2021-08-04T12:34:03+08:00");
         assert_eq!(time.human_format(), "2021-08-04 12:34:03 +08:00");
     }
+
+    #[test]
+    fn test_from_iso8601_string() {
+        let time = DateTime::from_iso8601_string("2021-08-04T12:34:03+08:00").unwrap();
+        assert_eq!(time.to_rfc2822(), "Wed, 04 Aug 2021 12:34:03 +0800");
+        assert_eq!(time.to_rfc3339(), "2021-08-04T12:34:03+08:00");
+        assert_eq!(time.human_format(), "2021-08-04 12:34:03 +08:00");
+    }
 }
