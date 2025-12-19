@@ -54,20 +54,23 @@ pub const COMMIT_HASH: ShadowConst = "COMMIT_HASH";
 
 const COMMIT_DATE_DOC: &str = r#"The time of the Git commit that this project was built from.
 The time is formatted in modified ISO 8601 format (`YYYY-MM-DD HH-MM ±hh-mm` where hh-mm is the offset from UTC).
+The timezone information from the original commit is preserved.
 
 This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_DATE: ShadowConst = "COMMIT_DATE";
 
 const COMMIT_DATE_2822_DOC: &str = r#"
-The name of the Git branch that this project was built from.
+The time of the Git commit that this project was built from.
 The time is formatted according to [RFC 2822](https://datatracker.ietf.org/doc/html/rfc2822#section-3.3) (e.g. HTTP Headers).
+The timezone information from the original commit is preserved.
 
 This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_DATE_2822: ShadowConst = "COMMIT_DATE_2822";
 
 const COMMIT_DATE_3339_DOC: &str = r#"
-The name of the Git branch that this project was built from.
+The time of the Git commit that this project was built from.
 The time is formatted according to [RFC 3339 and ISO 8601](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6).
+The timezone information from the original commit is preserved.
 
 This constant will be empty if the last commit cannot be determined."#;
 pub const COMMIT_DATE_3339: ShadowConst = "COMMIT_DATE_3339";
@@ -201,12 +204,28 @@ impl Git {
         self.update_str(SHORT_COMMIT, git_info.short_commit);
         self.update_str(COMMIT_HASH, git_info.commit);
 
-        let time_stamp = git_info.date.parse::<i64>()?;
-        if let Ok(date_time) = DateTime::timestamp_2_utc(time_stamp) {
-            self.update_str(COMMIT_DATE, date_time.human_format());
-            self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
-            self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
-            self.update_int(COMMIT_TIMESTAMP, date_time.timestamp());
+        // Try to parse ISO format with timezone first, fallback to UTC timestamp
+        if !git_info.date_iso.is_empty() {
+            if let Ok(date_time) = DateTime::from_iso8601_string(&git_info.date_iso) {
+                self.update_str(COMMIT_DATE, date_time.human_format());
+                self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
+                self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
+                self.update_int(COMMIT_TIMESTAMP, date_time.timestamp());
+            } else if let Ok(time_stamp) = git_info.date.parse::<i64>() {
+                if let Ok(date_time) = DateTime::timestamp_2_utc(time_stamp) {
+                    self.update_str(COMMIT_DATE, date_time.human_format());
+                    self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
+                    self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
+                    self.update_int(COMMIT_TIMESTAMP, date_time.timestamp());
+                }
+            }
+        } else if let Ok(time_stamp) = git_info.date.parse::<i64>() {
+            if let Ok(date_time) = DateTime::timestamp_2_utc(time_stamp) {
+                self.update_str(COMMIT_DATE, date_time.human_format());
+                self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
+                self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
+                self.update_int(COMMIT_TIMESTAMP, date_time.timestamp());
+            }
         }
 
         Ok(())
@@ -274,13 +293,26 @@ impl Git {
             }
             self.update_str(GIT_STATUS_FILE, status_file);
 
-            let time_stamp = commit.time().seconds().to_string().parse::<i64>()?;
-            if let Ok(date_time) = DateTime::timestamp_2_utc(time_stamp) {
-                self.update_str(COMMIT_DATE, date_time.human_format());
+            let commit_time = commit.time();
+            let time_stamp = commit_time.seconds();
+            let offset_minutes = commit_time.offset_minutes();
 
-                self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
+            // Create OffsetDateTime with the commit's timezone
+            if let Ok(utc_time) = time::OffsetDateTime::from_unix_timestamp(time_stamp) {
+                if let Ok(offset) = time::UtcOffset::from_whole_seconds(offset_minutes * 60) {
+                    let local_time = utc_time.to_offset(offset);
+                    let date_time = DateTime::Local(local_time);
 
-                self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
+                    self.update_str(COMMIT_DATE, date_time.human_format());
+                    self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
+                    self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
+                } else {
+                    // Fallback to UTC if offset parsing fails
+                    let date_time = DateTime::Utc(utc_time);
+                    self.update_str(COMMIT_DATE, date_time.human_format());
+                    self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
+                    self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
+                }
             }
         }
         Ok(())
@@ -500,6 +532,7 @@ struct GitHeadInfo {
     email: String,
     author: String,
     date: String,
+    date_iso: String,
 }
 
 struct GitCommandExecutor<'a> {
@@ -540,6 +573,7 @@ fn command_git_head() -> GitHeadInfo {
         author: cli(&["log", "-1", "--pretty=format:%an"]),
         email: cli(&["log", "-1", "--pretty=format:%ae"]),
         date: cli(&["show", "--pretty=format:%ct", "--date=raw", "-s"]),
+        date_iso: cli(&["log", "-1", "--pretty=format:%cI"]),
     }
 }
 
@@ -812,5 +846,26 @@ mod tests {
 
         let describe = "v1.0.0----alpha-g024skp4489";
         assert!(parse_git_describe("v1.0.0----alpha", describe).is_err());
+    }
+
+    #[test]
+    fn test_commit_date_timezone_preservation() {
+        use crate::DateTime;
+
+        // Test timezone-aware parsing
+        let iso_date = "2021-08-04T12:34:03+08:00";
+        let date_time = DateTime::from_iso8601_string(iso_date).unwrap();
+        assert_eq!(date_time.human_format(), "2021-08-04 12:34:03 +08:00");
+        assert!(date_time.to_rfc3339().contains("+08:00"));
+
+        // Test UTC timezone
+        let iso_date_utc = "2021-08-04T12:34:03Z";
+        let date_time_utc = DateTime::from_iso8601_string(iso_date_utc).unwrap();
+        assert_eq!(date_time_utc.human_format(), "2021-08-04 12:34:03 +00:00");
+
+        // Test negative timezone
+        let iso_date_neg = "2021-08-04T12:34:03-05:00";
+        let date_time_neg = DateTime::from_iso8601_string(iso_date_neg).unwrap();
+        assert_eq!(date_time_neg.human_format(), "2021-08-04 12:34:03 -05:00");
     }
 }

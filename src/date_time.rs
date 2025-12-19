@@ -75,6 +75,11 @@ impl DateTime {
         Ok(DateTime::Utc(time))
     }
 
+    pub fn from_iso8601_string(iso_string: &str) -> SdResult<Self> {
+        let time = OffsetDateTime::parse(iso_string, &Rfc3339).map_err(ShadowError::new)?;
+        Ok(DateTime::Local(time))
+    }
+
     pub fn to_rfc2822(&self) -> String {
         match self {
             DateTime::Local(dt) | DateTime::Utc(dt) => dt.format(&Rfc2822).unwrap_or_default(),
@@ -211,5 +216,13 @@ mod tests {
         assert_eq!(time.to_rfc3339(), "2021-08-04T12:34:03Z");
         assert_eq!(time.human_format(), "2021-08-04 12:34:03 +00:00");
         assert_eq!(time.timestamp(), 1628080443);
+    }
+
+    #[test]
+    fn test_from_iso8601_string() {
+        let time = DateTime::from_iso8601_string("2021-08-04T12:34:03+08:00").unwrap();
+        assert_eq!(time.to_rfc2822(), "Wed, 04 Aug 2021 12:34:03 +0800");
+        assert_eq!(time.to_rfc3339(), "2021-08-04T12:34:03+08:00");
+        assert_eq!(time.human_format(), "2021-08-04 12:34:03 +08:00");
     }
 }
