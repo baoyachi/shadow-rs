@@ -20,7 +20,7 @@ all-features = true
 [dependencies]
 is_debug = { version = "1.1.0", default-features = false }
 const_format = { version = "0.2.22", default-features = false }
-time = { version = "0.3.36", features = ["formatting", "local-offset", "parsing"], default-features = false, optional = true }
+time = { version = "0.3.47", features = ["formatting", "local-offset", "parsing"], default-features = false, optional = true }
 
 
 #! Optional Dependencies:
