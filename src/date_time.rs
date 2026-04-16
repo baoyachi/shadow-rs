@@ -1,14 +1,6 @@
 use crate::{Format, SdResult, ShadowError};
-use std::error::Error;
-use time::format_description::well_known::{Rfc2822, Rfc3339};
-#[cfg(feature = "tzdb")]
-use time::UtcOffset;
-use time::{format_description, OffsetDateTime};
 
-pub enum DateTime {
-    Local(OffsetDateTime),
-    Utc(OffsetDateTime),
-}
+pub struct DateTime(jiff::Zoned);
 
 pub(crate) const DEFINE_SOURCE_DATE_EPOCH: &str = "SOURCE_DATE_EPOCH";
 
@@ -27,7 +19,11 @@ pub fn now_date_time() -> DateTime {
                 .unwrap_or_else(|_| {
                     panic!("Input {DEFINE_SOURCE_DATE_EPOCH} could not be cast to a number")
                 });
-            DateTime::Utc(OffsetDateTime::from_unix_timestamp(epoch).unwrap())
+            DateTime(
+                jiff::Timestamp::from_second(epoch)
+                    .unwrap()
+                    .to_zoned(jiff::tz::TimeZone::UTC),
+            )
         }
     }
 }
@@ -39,89 +35,75 @@ impl Default for DateTime {
 }
 
 impl DateTime {
+    pub fn new(zoned: jiff::Zoned) -> Self {
+        Self(zoned)
+    }
+
     pub fn now() -> Self {
-        Self::local_now().unwrap_or_else(|_| DateTime::Utc(OffsetDateTime::now_utc()))
-    }
-
-    pub fn offset_datetime() -> OffsetDateTime {
-        let date_time = Self::now();
-        match date_time {
-            DateTime::Local(time) | DateTime::Utc(time) => time,
-        }
-    }
-
-    #[cfg(not(feature = "tzdb"))]
-    pub fn local_now() -> Result<Self, Box<dyn Error>> {
-        // Warning: This attempts to create a new OffsetDateTime with the current date and time in the local offset, which may fail.
-        // Currently, it always fails on MacOS.
-        // This issue does not exist with the "tzdb" feature (see below), which should be used instead.
-        OffsetDateTime::now_local()
-            .map(DateTime::Local)
-            .map_err(|e| e.into())
-    }
-
-    #[cfg(feature = "tzdb")]
-    pub fn local_now() -> Result<Self, Box<dyn Error>> {
-        let local_time = tzdb::now::local()?;
-        let time_zone_offset =
-            UtcOffset::from_whole_seconds(local_time.local_time_type().ut_offset())?;
-        let local_date_time = OffsetDateTime::from_unix_timestamp(local_time.unix_time())?
-            .to_offset(time_zone_offset);
-        Ok(DateTime::Local(local_date_time))
+        Self(jiff::Zoned::now())
     }
 
     pub fn timestamp_2_utc(time_stamp: i64) -> SdResult<Self> {
-        let time = OffsetDateTime::from_unix_timestamp(time_stamp).map_err(ShadowError::new)?;
-        Ok(DateTime::Utc(time))
+        let utc_time = jiff::Timestamp::from_second(time_stamp).map_err(ShadowError::new)?;
+        let zoned = utc_time.to_zoned(jiff::tz::TimeZone::UTC);
+        Ok(DateTime::new(zoned))
     }
 
     pub fn from_iso8601_string(iso_string: &str) -> SdResult<Self> {
-        let time = OffsetDateTime::parse(iso_string, &Rfc3339).map_err(ShadowError::new)?;
-        Ok(DateTime::Local(time))
+        let pieces = jiff::fmt::temporal::Pieces::parse(iso_string).map_err(ShadowError::new)?;
+
+        let time = match pieces.time() {
+            Some(time) => time,
+            None => {
+                return Err(ShadowError::from(format!(
+                    "iso string has no time, and thus cannot be parsed into a datetime",
+                )));
+            }
+        };
+        let dt = pieces.date().to_datetime(time);
+        let offset = match pieces.to_numeric_offset() {
+            Some(offset) => offset,
+            None => {
+                return Err(ShadowError::from(format!(
+                    "iso string has no offset, and thus cannot be parsed into a datetime",
+                )));
+            }
+        };
+        let zoned = jiff::tz::TimeZone::fixed(offset)
+            .to_zoned(dt)
+            .map_err(ShadowError::new)?;
+
+        Ok(DateTime::new(zoned))
     }
 
     pub fn to_rfc2822(&self) -> String {
-        match self {
-            DateTime::Local(dt) | DateTime::Utc(dt) => dt.format(&Rfc2822).unwrap_or_default(),
-        }
+        jiff::fmt::rfc2822::to_string(&self.0).unwrap_or_default()
     }
 
     pub fn to_rfc3339(&self) -> String {
-        match self {
-            DateTime::Local(dt) | DateTime::Utc(dt) => dt.format(&Rfc3339).unwrap_or_default(),
+        let ts = self.0.timestamp();
+        let offset = self.0.offset();
+        if self.0.time_zone() == &jiff::tz::TimeZone::UTC {
+            ts.to_string()
+        } else {
+            ts.display_with_offset(offset).to_string()
         }
     }
 
     pub fn timestamp(&self) -> i64 {
-        match self {
-            DateTime::Local(dt) | DateTime::Utc(dt) => dt.unix_timestamp(),
-        }
+        self.0.timestamp().as_second()
     }
 }
 
 impl Format for DateTime {
     fn human_format(&self) -> String {
-        match self {
-            DateTime::Local(dt) | DateTime::Utc(dt) => dt.human_format(),
-        }
-    }
-}
-
-impl Format for OffsetDateTime {
-    fn human_format(&self) -> String {
-        let fmt = format_description::parse(
-            "[year]-[month]-[day] [hour]:[minute]:[second] [offset_hour \
-         sign:mandatory]:[offset_minute]",
-        )
-        .unwrap();
-        self.format(&fmt).unwrap()
+        self.0.strftime("%Y-%m-%d %H:%M:%S %:z").to_string()
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use human_format_validate::parse_human_format;
 
     mod human_format_validate {
         use std::num::{NonZeroU32, NonZeroU8};
@@ -198,21 +180,9 @@ mod tests {
     }
 
     #[test]
-    fn test_local_now_human_format() {
-        let time = DateTime::local_now().unwrap().human_format();
-        #[cfg(unix)]
-        assert!(!std::fs::read("/etc/localtime").unwrap().is_empty());
-
-        assert!(parse_human_format(&time).is_ok());
-
-        println!("local now:{time}"); // 2022-07-14 00:40:05 +08:00
-        assert_eq!(time.len(), 26);
-    }
-
-    #[test]
     fn test_timestamp_2_utc() {
         let time = DateTime::timestamp_2_utc(1628080443).unwrap();
-        assert_eq!(time.to_rfc2822(), "Wed, 04 Aug 2021 12:34:03 +0000");
+        assert_eq!(time.to_rfc2822(), "Wed, 4 Aug 2021 12:34:03 +0000");
         assert_eq!(time.to_rfc3339(), "2021-08-04T12:34:03Z");
         assert_eq!(time.human_format(), "2021-08-04 12:34:03 +00:00");
         assert_eq!(time.timestamp(), 1628080443);
@@ -221,7 +191,7 @@ mod tests {
     #[test]
     fn test_from_iso8601_string() {
         let time = DateTime::from_iso8601_string("2021-08-04T12:34:03+08:00").unwrap();
-        assert_eq!(time.to_rfc2822(), "Wed, 04 Aug 2021 12:34:03 +0800");
+        assert_eq!(time.to_rfc2822(), "Wed, 4 Aug 2021 12:34:03 +0800");
         assert_eq!(time.to_rfc3339(), "2021-08-04T12:34:03+08:00");
         assert_eq!(time.human_format(), "2021-08-04 12:34:03 +08:00");
     }
