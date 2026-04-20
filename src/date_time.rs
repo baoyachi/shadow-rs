@@ -55,18 +55,14 @@ impl DateTime {
         let time = match pieces.time() {
             Some(time) => time,
             None => {
-                return Err(ShadowError::from(format!(
-                    "iso string has no time, and thus cannot be parsed into a datetime",
-                )));
+                return Err(ShadowError::from("iso string has no time, and thus cannot be parsed into a datetime".to_string()));
             }
         };
         let dt = pieces.date().to_datetime(time);
         let offset = match pieces.to_numeric_offset() {
             Some(offset) => offset,
             None => {
-                return Err(ShadowError::from(format!(
-                    "iso string has no offset, and thus cannot be parsed into a datetime",
-                )));
+                return Err(ShadowError::from("iso string has no offset, and thus cannot be parsed into a datetime".to_string()));
             }
         };
         let zoned = jiff::tz::TimeZone::fixed(offset)
