@@ -41,10 +41,10 @@ jobs:
 
       # Test Issue #237: verify build without metadata feature
       - name: Test build without metadata feature
-        run: cargo check --no-default-features --features "git2 tzdb build"
-      
+        run: cargo check --no-default-features --features "git2 jiff build"
+
       - name: Run tests without metadata feature
-        run: cargo test --no-default-features --features "git2 tzdb build"
+        run: cargo test --no-default-features --features "git2 jiff build"
 
       # Run examples with debug
       - name: Run examples with debug

@@ -297,22 +297,21 @@ impl Git {
             let time_stamp = commit_time.seconds();
             let offset_minutes = commit_time.offset_minutes();
 
-            // Create OffsetDateTime with the commit's timezone
-            if let Ok(utc_time) = time::OffsetDateTime::from_unix_timestamp(time_stamp) {
-                if let Ok(offset) = time::UtcOffset::from_whole_seconds(offset_minutes * 60) {
-                    let local_time = utc_time.to_offset(offset);
-                    let date_time = DateTime::Local(local_time);
+            // Create DateTime with the commit's timezone
+            if let Ok(utc_time) = jiff::Timestamp::from_second(time_stamp) {
+                let date_time =
+                    if let Ok(offset) = jiff::tz::Offset::from_seconds(offset_minutes * 60) {
+                        let tz = jiff::tz::TimeZone::fixed(offset);
+                        DateTime::new(utc_time.to_zoned(tz))
+                    } else {
+                        // Fallback to UTC if offset parsing fails
+                        let tz = jiff::tz::TimeZone::UTC;
+                        DateTime::new(utc_time.to_zoned(tz))
+                    };
 
-                    self.update_str(COMMIT_DATE, date_time.human_format());
-                    self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
-                    self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
-                } else {
-                    // Fallback to UTC if offset parsing fails
-                    let date_time = DateTime::Utc(utc_time);
-                    self.update_str(COMMIT_DATE, date_time.human_format());
-                    self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
-                    self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
-                }
+                self.update_str(COMMIT_DATE, date_time.human_format());
+                self.update_str(COMMIT_DATE_2822, date_time.to_rfc2822());
+                self.update_str(COMMIT_DATE_3339, date_time.to_rfc3339());
             }
         }
         Ok(())
