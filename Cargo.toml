@@ -43,4 +43,4 @@ build = ["jiff", "is_debug/std", "std"]
 
 
 [dev-dependencies]
-winnow = "0.7"
+winnow = "1.0"
