@@ -103,7 +103,7 @@ impl Display for ConstType {
 ///
 /// * `Lazy`: The lazy mode. In this mode, if the current Rust environment is set to `debug`,
 ///   the rebuild package will not run every time the build script is triggered.
-///   If the environment is set to `release`, it behaves the same as the `RealTime` mode.
+/// * `AlwaysLazy`: Same as `Lazy`, but applies to `release` rebuilds as well.
 /// * `RealTime`: The real-time mode. It will always trigger rebuilding a package upon any change,
 ///   regardless of whether the Rust environment is set to `debug` or `release`.
 /// * `Custom`: The custom build mode, an enhanced version of `RealTime` mode, allowing for user-defined conditions
@@ -113,6 +113,7 @@ impl Display for ConstType {
 pub enum BuildPattern {
     #[default]
     Lazy,
+    AlwaysLazy,
     RealTime,
     Custom {
         /// A list of paths that, if changed, will trigger a rebuild.
@@ -141,6 +142,9 @@ impl BuildPattern {
                 if is_debug() {
                     return;
                 }
+            }
+            BuildPattern::AlwaysLazy => {
+                return;
             }
             BuildPattern::RealTime => {}
             BuildPattern::Custom {
