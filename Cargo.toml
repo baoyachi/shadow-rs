@@ -25,7 +25,7 @@ jiff = { version = "0.2", optional = true }
 #! Optional Dependencies:
 
 ## Use `libgit2` as a backend for git operations
-git2 = { version = "0.20.0", default-features = false, optional = true }
+git2 = { version = "0.21.0", default-features = false, optional = true }
 
 document-features = { version = "0.2", optional = true }
 
