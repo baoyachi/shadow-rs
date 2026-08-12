@@ -136,6 +136,20 @@ impl BuildPattern {
         other_keys: impl Iterator<Item = &'a ShadowConst>,
         out_dir: &str,
     ) {
+        self.rerun_if_with(other_keys, out_dir, |directive| println!("{directive}"));
+    }
+
+    /// Emit the Cargo rebuild directives for this pattern.
+    ///
+    /// Kept separate from [`Self::rerun_if`] so the directive set can be tested
+    /// without capturing process stdout.
+    fn rerun_if_with<'a>(
+        &self,
+        other_keys: impl Iterator<Item = &'a ShadowConst>,
+        out_dir: &str,
+        emit: impl FnMut(String),
+    ) {
+        let mut emit = emit;
         match self {
             BuildPattern::Lazy => {
                 if is_debug() {
@@ -149,16 +163,49 @@ impl BuildPattern {
             } => {
                 if_env_changed
                     .iter()
-                    .for_each(|key| println!("cargo:rerun-if-env-changed={key}"));
+                    .for_each(|key| emit(format!("cargo:rerun-if-env-changed={key}")));
                 if_path_changed
                     .iter()
-                    .for_each(|p| println!("cargo:rerun-if-changed={p}"));
+                    .for_each(|p| emit(format!("cargo:rerun-if-changed={p}")));
             }
         }
 
-        other_keys.for_each(|key| println!("cargo:rerun-if-env-changed={key}"));
-        println!("cargo:rerun-if-env-changed={DEFINE_SOURCE_DATE_EPOCH}");
-        println!("cargo:rerun-if-changed={out_dir}/{DEFINE_SHADOW_RS}");
+        other_keys.for_each(|key| emit(format!("cargo:rerun-if-env-changed={key}")));
+        emit(format!(
+            "cargo:rerun-if-env-changed={DEFINE_SOURCE_DATE_EPOCH}"
+        ));
+        if !matches!(self, BuildPattern::Custom { .. }) {
+            emit(format!(
+                "cargo:rerun-if-changed={out_dir}/{DEFINE_SHADOW_RS}"
+            ));
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::BuildPattern;
+
+    #[test]
+    fn custom_does_not_watch_its_generated_shadow_file() {
+        let pattern = BuildPattern::Custom {
+            if_path_changed: vec!["Cargo.toml".into()],
+            if_env_changed: vec!["CUSTOM_INPUT".into()],
+        };
+        let mut directives = Vec::new();
+
+        pattern.rerun_if_with(std::iter::empty(), "/tmp/shadow-out", |directive| {
+            directives.push(directive)
+        });
+
+        assert_eq!(
+            directives,
+            vec![
+                "cargo:rerun-if-env-changed=CUSTOM_INPUT",
+                "cargo:rerun-if-changed=Cargo.toml",
+                "cargo:rerun-if-env-changed=SOURCE_DATE_EPOCH",
+            ]
+        );
     }
 }
 
