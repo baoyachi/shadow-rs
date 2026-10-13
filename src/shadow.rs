@@ -314,7 +314,7 @@ impl Shadow {
                 }
             };
             print_val.push_str(tmp.as_str());
-            params.push_str(&format!("\tpub {k}: bool,\n"));
+            params.push_str(&build_info_display_field(k));
         }
 
         // append gen fn
@@ -324,7 +324,7 @@ impl Shadow {
                 "\t\t", "\n"
             );
             print_val.push_str(tmp.as_str());
-            params.push_str(&format!("\tpub {k}: bool,\n"));
+            params.push_str(&build_info_display_field(k));
             default.push_str(&format!("\t\t\t{k}: true,\n"));
             all.push_str(&format!("\t\t\t{k}: true,\n"));
         }
@@ -398,6 +398,12 @@ impl Shadow {
     }
 }
 
+/// Declares the `BuildInfoDisplay` field that turns the constant `name` on or off,
+/// with a doc comment so the generated code builds under `#![deny(missing_docs)]`.
+fn build_info_display_field(name: &str) -> String {
+    format!("\t/// Whether the [`core::fmt::Display`] impl writes `{name}`.\n\tpub {name}: bool,\n")
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -427,6 +433,21 @@ mod tests {
         assert!(content.lines().count() > 0);
         let expect = "pub const CARGO_TREE :&str";
         assert!(!content.contains(expect));
+
+        // Every `BuildInfoDisplay` field has a doc comment, so the generated module
+        // builds under `#![deny(missing_docs)]`.
+        let lines: Vec<&str> = content.lines().collect();
+        let fields: Vec<usize> = (1..lines.len())
+            .filter(|&i| lines[i].trim_start().starts_with("pub ") && lines[i].ends_with(": bool,"))
+            .collect();
+        assert!(!fields.is_empty());
+        for i in fields {
+            assert!(
+                lines[i - 1].trim_start().starts_with("///"),
+                "undocumented field: {}",
+                lines[i]
+            );
+        }
 
         Ok(())
     }
